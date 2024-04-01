@@ -41,7 +41,7 @@ Other contributors:
 \itemize{
   \item Ken E Giller [contributor]
   \item Victor O Sadras [contributor]
-  \item University of Nottingham/Rothsmdted Research [funder]
+  \item University of Nottingham/Rothamsted Research [funder]
 }
 
 }
