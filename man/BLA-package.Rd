@@ -28,6 +28,13 @@ Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line
 Webb, R. A. (1972). Use of the boundary line in analysis of biological
   data. Journal of Horticultural Science, 47, 309-319.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://chawezimiti.github.io/BLA/}
+}
+
+}
 \author{
 \strong{Maintainer}: Chawezi Miti \email{chawezi.miti@nottingham.ac.uk} (\href{https://orcid.org/0000-0001-7776-8366}{ORCID}) [copyright holder]
 
