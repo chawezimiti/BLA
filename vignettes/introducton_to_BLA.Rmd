@@ -1,0 +1,340 @@
+---
+title: "Introduction to boundary line analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to boundary line analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This Vignette describe the theory of boundary line analysis and the process fitting the boundary line to a data set.
+
+# Background
+
+When a biological response, *y*, is observed as function of a single factor of interest, *x*, in uncontrolled environment i.e. when the influence of other factors is not controlled, a scatter of randomly distributed points is expected (i.e. conform to a bivariate normal distribution). However, if the data set is large enough to contain all possible instances of conditions, the data points that are observed in most favorable conditions will fall at the upper edges of the data cloud, which would be the maximum possible response of y to *x.* The data points that fall below the maximum response are as a result of the limiting effect of other factors that are not controlled for. Webb (1972) suggested a methodology that can be used to describe the relationship of data points at the upper edges of such data sets which is the most likely relationship of *y* and *x* when all other factors are not limiting. He refereed to this relationship as the boundary line.
+
+The initial boundary line method by Webb (1972) involves the selection of data points at the upper edges of the data cloud visually. The boundary line model was then fitted to the selected data points to describe the relationship. Currently, many other procedures of fitting the boundary line model to the dataset have been developed to improve the procedure some of which are statistical and some heuristic. These include binning, BOLIDES, quantile regression, makowski quantile regression and the censored bivariate normal methods. Similarly, data exploratory methods have been developed that provide evidence of boundary existence in a dataset which therefore, justifies the use of boundary line analysis on a data set (Milne et al. 2006). Colleagues of Webb (1972) who provided the initial data on which boundary line analysis was first applied were not convinced that the data realized a boundary, hence the need for testing of data sets for presence of boundary. If a boundary exists in data set, it is expected that the distribution of points at the upper edges of data cloud would be clustered and not randomly distributed because response can not go beyond the observed boundary. Data sets that exhibit such a distribution qualify for use in boundary line analysis.
+
+The BLA package provides a group of functions to carryout boundary line analysis on a data set in R software. It includes functions to explore data, test evidence of boundary in a data set, fit the boundary line and do post-hoc analysis after fitting boundary line.
+
+# Boundary line analysis using BLA package
+
+## Load the BLA package
+
+With the BLA package installed, the first step is to load it to your R session using the *library()* command.
+
+```{r setup}
+library(BLA)
+library(aplpack)
+```
+
+The package `aplpack` has also been loaded for outlier detection function `bagplot()`.
+
+```{r, echo=FALSE}
+options(scipen = 999)#  disabling scientific notation i.e 1.1*10^2
+```
+
+## Data
+
+The BLA package contains a data set called soil which consisting of soil pH, phosphorus and wheat yield measurements from farms in the UK. We will use this data set to illustrate the functions in the BLA package. To view the first six lines of the data, run the code below:
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+head(soil)
+
+```
+
+## Exploratory analysis
+
+An exploratory analysis is an important initial step in boundary line analysis. This step serve to show how the data is distributed using various indices and also check for outliers in the data set. If a variable in a dataset is skewed, especially in the independent variable, a transformation may be required so it can be assumed to be from a normal distribution. As the boundary line analysis is sensitive to outlying values, these must be identified and removed if required. The response variable, in this case P, you may expect to see a spike at the upper section of the distribution because of the clustering points but the rest of the data points must be normally distributed. Exploratory analysis also provides an objective test to check if the data meets the criteria for boundary line analysis as well as the form of model that can be fitted.
+
+### Normality test
+
+To check for the distribution of the data, the *`summa()`* function provides different indices which can be used to check for distribution normality of a given parameter. The function *`summaplot()`* give a graphical representation of the parameter distribution. Lets set the variables evapotranspiration and wheat yield in the data set to *x* and *y* respectively before applying the *`summa()`* and *`summaplot()`* functions
+
+```{r}
+x<-soil$P
+y<-soil$yield
+```
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+summa(x)
+summa(y)
+```
+
+From the results, wheat yield (*y*) variables can be considered to be normally distributed while the soil P (*x)* is skewed. For a variable to be assumed to be from a normal distribution, the indices skewness should be between -1 to 1 and Octile skewness between -0.2 to 0.2. A graphical representation of the distribution can be checked using
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+summaplot(x) 
+summaplot(y) 
+```
+
+The soil P can be log transformed and check the summary statistics and plot
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+summa(log(x))
+summaplot(log(x))
+
+x<-log(x) # transforms soil P to log 
+```
+
+From the results, variable log of soil P can be assumed to be from a normal distribution.
+
+### Outlier detection and removal
+
+Outliers are identified using the bagplot method. A bag plot is a multivariate equivalent of a box plot. The bagplot has three main components. There include
+
+1.  **depth median** which represent the center of the data cloud. This is equivalent to the median in a univariate box-plot
+
+2.  **Bag** which contains 50% of all the data points. This is equivalent to the inter-quartile range in a univariate box-plot.
+
+3.  **Loop** which contains all points that are outside the bag but are not outliers
+
+4.  **Outliers** which are values outside the loop
+
+```{r, fig.align='center', fig.dim=c(4,4)}
+
+vals_ur<-matrix(NA,length(x),2) #Create a matrix with x and y as required by the bag plot function
+vals_ur[,1]<-x 
+vals_ur[,2]<-y
+
+bag<-bagplot(vals_ur, ylim=c(0,20), show.whiskers =F) # run the bagplot function
+legend("topright", c("bag","loop","outliers", "d.median"), 
+        pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),
+       cex=0.7)
+
+vals<-rbind(bag$pxy.bag,bag$pxy.outer) # to remove outliers, select points in the bag and loop only
+
+```
+
+The variables x and y and now be extracted from the results of the bag plot with outliers removed
+
+```{r}
+x<-vals[,1]
+y<-vals[,2]
+```
+
+### Test for presence of boundary in dataset
+
+To check if the data constitutes a boundary, the function *`exp_boundary()`* can be used. This function determines evidence of boundary in data set when compared against an unbounded bivariate normally distributed data. The standard deviation (*sd*) of the the euclidean distance of the boundary points to the center of the data set is used to measure the density of the points at the upper edges of the data. The smaller the *sd* value, the denser the distribution. This function uses the principle of convex hull to select the points at the upper boundary. The default is selecting the first 10 consecutive convex hulls (*shells=10*). The convex hulls are then splits into two sections, the right and left sections, and evidence of boundary existence in both sections is checked by determining the probability of having the observed density of points at the upper edges of the data given that it is not bounded. We take 0.05 probability as the significance level.
+
+```{r,fig.align='center', fig.dim=c(5,4)}
+bound_test<-expl_boundary(x,y,shells = 10, simulations = 100, 
+                          pch=16, col="grey") # 
+
+bound_test
+```
+
+The p-values in the left and right section is `r bound_test$value[5]` and `r bound_test$value[6]` respectively. The results indicate evidence of boundary in both the left and right sections of the scatter. This suggests that there is a justification to fitting the boundary to the data. A graphical representation of the scatter plot with the boundary points is also given as well as the density histograms showing the observed standard deviation given 10000 simulated standard deviations from normal unbounded data .
+
+## Fitting boundary line using different methods
+
+From the exploratory tests, they indicated that the data provides evidence of boundary, there are no outliers and the variables, *x* and *y*, are normally distributed. We therefore, proceed to fit a boundary line model to the data set. There are several methods that can be used to fit a boundary line to the data set which can be classified as Heuristic (BOLIDES, Binning & quantile regression) and statistical methods (censored bivariate normal).
+
+### BOLIDES algorithm
+
+This method fit the boundary line following the boundary line determination technique proposed by Schnug *et al.* (1995). To fit the boundary line using the BOLIDES algorithm , the *`BOLIDES()`* function can be used. To check the required arguments for the function, the help page can be launched.
+
+```{r, eval=FALSE}
+?BOLIDES
+```
+
+The arguments *`x`* and *`y`*are the independent and dependent variable respectively and *`theta`* is a vector of starting values . The \`*model* \` argument is used to specify the model of the boundary line e.g. "blm" for the linear model. The *`xmax`* is an argument that describes the maximum value of the independent variable beyond which the relation of *`x`* and *`y`* is no longer theoretically feasible. Other arguments relate to the plot parameters as in the \`plot()\` function.
+
+All boundary fitting methods require initial starting values for the parameters of a proposed model. The initial starting values are optimized to find the parameters of the proposed model as in the *`optim()`* function in base R.
+
+To get the theta starting values, the *`BOLIDES()`* function is run with the argument `model="explore"`. This allows us to view the selected boundary points using the boundary line determination technique.
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+BOLIDES(x,y,model = "explore", pch=16, col="grey")
+```
+
+From the plot, it can be seen that a "trapezium" model will be more appropriate for this data set. The function *`startValues()`* can be used to determine initial start *theta* values. For more information on *`startValues()`* function see *`?startValues()`*
+
+```{r, eval=FALSE}
+?startValues()
+```
+
+With a scatter plot of *`y`* against *`x`* active in the plot window in `R`, run the function *`startValues("trapezium")`*, then click on the plot, five boundary points that follow the trapezium model in order of increasing *`x`* values.
+
+```{r, eval=FALSE}
+
+startValues("trapezium") # then select the five points at the edge of the dataset that make up the trapezium model in order of increasing x values.
+```
+
+The proposed start values will be produced. Note that this can be done for other models as well. Once all the arguments are set, the function can be run
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+
+theta<-c(4,3,14,104,-22) # start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. 
+
+model1<-BOLIDES(x,y, theta = theta,model = "trapezium",
+                xlab=expression("Phosphorus/ln(mg L"^-1*")"), 
+                ylab=expression("Yield/ t ha"^-1), pch=16, 
+                col="grey", bp_col="grey")
+
+model1
+
+```
+
+The results show that the optimized parameters and plot of the fitted model. There is no uncertainty in the parameters because this is a heuristic method.
+
+These parameters can then be used to determine boundary line response for any given value of *`x`*`.` Say you want to predict the maximum possible yield response at soil P values of 4.5, 7.4, 12.2, 20.1 and 54.5 mg/kg. Remember that our model was fitted on values of log soil P and therefore, these values must first be log transformed before the prediction is made. We can use the function *`predictBL()`* for this purpose. For more information on this function, see *?`predictBL()`* .
+
+```{r}
+
+P<-c(4.5, 7.4, 12.2, 20.1, 54.5)
+P_log<-log(P)
+
+Max_Response<-predictBL(model1, P_log) # the argument inputs are the boundary line model and the independent values (in this case P_log)
+
+Max_Response
+```
+
+### Binning method
+
+The binning methodology involves splitting the data into several sections in the x-axis and selecting a boundary point in each section based on a set criteria (mostly the 95$^{th}$ and 99$^{th}$ percentile) (Shatar and McBratney, 2004). To fit the boundary line using the binning method, the *`blbin()`* function can be used. To check the required arguments for the function, the help page can be launched.
+
+```{r, eval=FALSE}
+?blbin
+```
+
+The arguments *`x`* and *`y`* are the independent and dependent variable respectively and *theta* is a vector of starting values . The *`model`* argument is used to specify the model of the boundary line e.g. "blm" for the linear model. The *`bins`* argument describes the size of the bins with a vector of length 3 containing the minimum and maximum independent variable values, and the size of bins to be used for the data respectively. We assume that the 99$^{th}$ percentile (`tau=0.99`) is the boundary.
+
+The initial start theta values can be determined as previously shown in the previous section
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+bins<-c(1.61,4.74,0.313) 
+
+blbin(x,y, bins,model = "explore", tau=0.99, pch=16, col="grey")
+```
+
+From the plot, it can be seen that a "trapezium" model will be more appropriate for this data set.
+
+```{r, eval=FALSE}
+startValues("trapezium")
+```
+
+The values for *`theta`* can now be obtained and the function can now be run.
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+
+theta<-c(4.75, 3.23, 13.3, 24.87,-2.95 )
+
+model2<-blbin(x,y, bins,theta = theta,model = "trapezium", 
+              tau=0.99, 
+              xlab=expression("Phosphorus/ mg L"^-1), 
+              expression("Phosphorus/ln(mg L"^-1*")"), 
+              pch=16, col="grey", bp_col="grey")
+
+model2
+```
+
+The results show that the optimized parameters and plot. There is no uncertainty in the parameters because this is a heuristic method. These parameters can then be used to determine boundary line response for any given value of *`x`* using the *`predictBL()`* function.
+
+### Quantile regression method
+
+This method fits the boundary line using the principle of quantile regression (Cade and Noon, 2003). To fit the boundary line using the quantile regression method, the `blqr()` function can be used. To check the required arguments for the function, the help page can be launched.
+
+```{r, eval=FALSE}
+?blqr
+```
+
+The arguments *`x`* and *`y`* are the independent and dependent variable respectively and *`theta`* is a vector of starting values . The *`model`* argument is used to specify the model of the boundary line e.g. "blm" for the linear model. The argument *`tau`* describes the quantile value described as boundary. We assume that the 99$^{th}$ quantile (`tau=0.99`) value is the boundary.
+
+The initial start theta values can be determined as previously shown in the previous section. however, the *`blqr()`* function does not have the explore option and hence the *`startValues()`* function is used just on the plot of *`x`* and *`y`* directly according to the suggested model from the structure at the upper edge of the data. the trapezium model will be used for this data.
+
+```{r,fig.align='center', fig.dim=c(4,4), eval=FALSE}
+
+plot(x,y)
+
+startValues("trapezium")
+```
+
+The *theta* values can now be used in the *`blqr()`* function.
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+
+theta<-c(4,3,13.5,31,-4.5)
+
+model3<-blqr(x,y, theta = theta, model = "trapezium",
+             xlab=expression("Phosphorus/ mg L"^-1), 
+             ylab=expression("Phosphorus/ln(mg L"^-1*")"),
+             pch=16,tau=0.99, col="grey") # may take a few seconds to ran
+
+model3
+```
+
+The results show that the optimized parameters and plot. There is no uncertainty in the parameters because this is a heuristic method. These parameters can then be used to determine boundary line response for any given value of *`x`* using the *`predictBL()`* function.
+
+### Censored bivariate normal model
+
+To fit the boundary line using the Censored bivariate normal model method, see the vignette, *"Yield gap analysis using the censored bivariate normal model"*
+
+### Using your own defined model
+
+The illustrated methods for fitting the boundary line have some in-built models. These include the linear, linear+plateau, mitscherlich, schmidt, logistic, logistic model proposed by Fermont et al (2009), the inverse logistic, double logistic, quadratic and the trapezium models. However, there are some cases where one wants to fit another model which is not part of the built in models. The following step will illustrate how to fit a custom model. Though this will be illusterated using the *`BOLIDES()`* function, it also applies for the *`blbin()`* and *`blqr()`* functions.
+
+Assuming that the initial data exploratory step have been done, the first step is to check the structure of the boundary points using the argument *`model="explore"`* in the *`BOLIDES()`* function
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+BOLIDES(x,y,model="explore", pch=16, col="grey")
+```
+
+Lets say you want to fit a model
+
+$$
+y=\beta_0 - \beta_1(x-\beta_2)^2
+$$
+
+The model is written in form of an `R` function. The parameters should always be written in alphabetical order as ***a**, **b*** and ***c*** for a three parameter function, ***a**, **b**,**c*** and ***d*** for four parameter function and so on
+
+```{r}
+custom_function<-function(x,a,b,c){
+  y<- a - b*(x-c)^2
+}
+```
+
+The next step is to suggest the initial start `theta` values. these should be sensible values else the function will not converge. These should be arranges in alphabetical order as *`theta=c(a,b,c)`. Replace a, b and c* with numeric values of your choice*.*
+
+The arguments of `BOLIDES()` function can now be added. In this case, the argument model while be set to "other". The arguments equation is now set to your custom function (`equation=custom_function`)
+
+```{r,fig.align='center', fig.dim=c(4,4)}
+theta<-c(13.5,3,3.3)  
+
+model4<-BOLIDES(x,y, theta = theta,model = "other",
+                equation=custom_function,
+                xlab=expression("Phosphorus/mg L"^-1), 
+                ylab=expression("Phosphorus/ln(mg L"^-1*")"), 
+                pch=16, ylim=c(3.8,14.5), col="grey",bp_col="grey")
+
+model4
+```
+
+The parameters of the models are shown in the results. A prediction of the boundary response values for each value of *x* can the be done as previously shown using the *`predictBL()`* function.
+
+## Closing remarks
+
+The boundary line fitting methods illustrated here all use the optimization function to determine the parameters of the proposed models. To remove the risk of local optimum parameters, it is advised that the models are ran on several starting values and the results with the smallest error can be selected. Each method produces the error value in the output. It is residue mean square (RMS) for *`blbin()`* and *`BOLIDES()`* while *`blqr()`* it is the residue sum squares (RSS). For the *cbvn()*, use the likelihood value.
+
+# References
+
+1.  Cade, B. S., & Noon, B. R. (2003). A gentle introduction to quantile regression for ecologists. Frontiers in Ecology and the Environment, 1(8), 412-420.
+
+2.  Fermont, A. M., Van Asten, P. J., Tittonell, P., Van Wijk, M. T., & Giller, K. E. (2009). Closing the cassava yield gap: an analysis from smallholder farms in east africa. Field Crops Research, 112 (1), 24--36.
+
+3.  Lark, R. M., Gillingham, V., Langton, D., & Marchant, B. P. (2020). Boundary line models for soil nutrient concentrations and wheat yield in national-scale datasets. European Journal of Soil Science, 71 , 334-351. doi: <https://doi.org/10.1111/>[ejss.12891](https://doi.org/10.1111/ejss.12891)
+
+4.  Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing biological data for the presence of a boundary. Annals of Applied Biology, 149 , 213-222. doi:<https://doi.org/10.1111/j.1744-7348.2006.00085.x>
+
+5.  Shatar, T. M., & McBratney, A. B. (2004). Boundary-line analysis of field-scale yield response to soil properties. Journal of Agricultural Science, 142 , 553-560. doi: <https://doi.org/10.1017/S0021859604004642>
+
+6.  Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line determination technique (bolides). In P. C. Robert, R. H. Rust, & W. E. Larson (Eds.), site specific management for agricultural systems (p. 899-908). Wiley Online Library. doi: <https://doi.org/10.2134/1995.site-specificmanagement.c66>
+
+7.  Webb, R. A. (1972). Use of the boundary line in analysis of biological data. Journal of Horticultural Science, 47, 309--319.

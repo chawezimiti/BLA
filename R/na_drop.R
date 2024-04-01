@@ -1,0 +1,28 @@
+#' Remove NA values
+#'
+#' Removes missing values from a dataset.
+#'
+#'@param xin A numeric vector.
+#'
+#'@returns A vector without missing values
+#'
+#'@author Richard Murray Lark <murray.lark@@nottingham.ac.uk>
+#'
+#'@examples
+#'
+#'xin<-evapotranspiration$`ET(mm)`
+#'na.drop(xin)
+#'
+#' @keywords internal
+#' @export
+#'
+na.drop<-function(xin){
+  noNA<-as.numeric(length(which(is.na(xin)==T)))
+  if(noNA>0){
+    x<-as.numeric(na.omit(xin))
+    print(paste(noNA," missing value(s) removed"),quote=F)
+  }else{
+    x<-xin
+  }
+  return(x)
+}
