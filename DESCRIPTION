@@ -4,7 +4,7 @@ Title: Boundary Line Analysis
 Version: 0.0.1
 Authors@R: c(
     person("Chawezi", "Miti", , "chawezi.miti@nottingham.ac.uk", 
-           role = c("cre", "aut","cph"),
+           role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0001-7776-8366")),
     person("Richard M", "Lark", role = "aut",
            comment = c(ORCID = "0000-0003-2571-8521")),
@@ -12,8 +12,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-4509-0578")),
     person("Ken E", "Giller", role = "ctb"),
     person("Victor O", "Sadras", role = "ctb"),
-    person("University of Nottingham/Rothamsted Research", 
-           role = c("fnd"))
+    person("University of Nottingham/Rothamsted Research", role = "fnd")
   )
 Description: Tools to fit a boundary line model (Webb, 1972) to a data set
     and make statistical inferences about its parameters. It tests a data
