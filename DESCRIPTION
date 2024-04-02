@@ -10,7 +10,8 @@ Authors@R: c(
            comment = c(ORCID = "0000-0003-2571-8521")),
     person("Alice E", "Milne", role = "aut",
            comment = c(ORCID = "0000-0002-4509-0578")),
-    person("Ken E", "Giller", role = "ctb"),
+    person("Ken E", "Giller", role = "aut",
+           comment = c(ORCID = "0000-0002-5998-4652")),
     person("Victor O", "Sadras", role = "ctb"),
     person("University of Nottingham/Rothamsted Research", role = "fnd")
   )
@@ -37,4 +38,3 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
 URL: https://chawezimiti.github.io/BLA/
-
