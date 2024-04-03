@@ -10,7 +10,7 @@ template:
     heading_font: {google: "Roboto Slab"}
   navbar:
     structure:
-      right: [twitter]
+      right: [twitter, github]
     components:
       twitter:
         icon: fa-twitter
