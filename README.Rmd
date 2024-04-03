@@ -24,8 +24,8 @@ The BLA `R` package provides a series of tools to fit boundary line models to a
 data set as proposed by Webb (1972). It includes a suite of methods which have
 been introduced since the original manually drawn boundary lines were
 proposed. These include methods based on binning the independent
-variable, the BOLIDES algorithm of Schug et al. (1995), quantile regression
-and the censored bivariate normal model of Milne et al. (2006). It also houses data exploration techniques to check for outliers and to provide initial evidence for a limiting boundary in data sets as an initial steps before doing boundary line analysis. It also includes functions to determine suitable starting guess values for use in fitting various boundary line models most of which use numerical optimization procedures. Learn more in `vignette("Introduction to boundary line analysis")`.
+variable, the BOLIDES algorithm of Schug *et al*. (1995), quantile regression
+and the censored bivariate normal model of Milne *et al*. (2006). It also houses data exploration techniques to check for outliers and to provide initial evidence for a limiting boundary in data sets as an initial steps before doing boundary line analysis. It also includes functions to determine suitable starting guess values for use in fitting various boundary line models most of which use numerical optimization procedures. Learn more in `vignette("Introduction to boundary line analysis")`.
 
 ## How can I installation the package?
 
