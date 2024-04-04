@@ -22,7 +22,7 @@ in fitting various boundary line models most of which use numerical
 optimization procedures. Learn more in
 `vignette("Introduction to boundary line analysis")`.
 
-## How can I installation the package?
+## How can I install the package?
 
 Install released version from CRAN:
 
@@ -44,19 +44,20 @@ library(BLA)
 library(aplpack)
 
 # 1. Outlier detection using bagplot() function
-nobs<-length(soil$pH)
-vals_ur<-matrix(NA,nobs,2)
+
+nobs<-length(soil$pH) 
+vals_ur<-matrix(NA,nobs,2)#  create a matrix: bagplot inputs data as a matrix
 vals_ur[,1]<-soil$pH 
 vals_ur[,2]<-soil$yield
 
-bag<-bagplot(vals_ur,create.plot = F )
+bag<-bagplot(vals_ur,create.plot = F ) # bagplot identifies outliers
 vals<-rbind(bag$pxy.bag,bag$pxy.outer) # new excludes bivariate outliers
 
 # 2. Fit the boundary model in form of a linear plateau ("lp")
 
 x<-vals[,1]
 y<-vals[,2]
-theta =c(-12.99,2,13 ) # initial start values for optimisation
+theta =c(-12.99,2,13 ) # initial start values for optimization
 
 model<-BOLIDES(x,y, theta = theta,model = "lp",xlab=expression("pH"), 
         ylab=expression("Yield/ t ha"^-1), pch=16,
@@ -84,19 +85,21 @@ model
 #> [1] 0.1733124
 ```
 
-The boundary yield given the pH for each farm can be predicted:
+The boundary yield given the pH for each farm can be predicted using the
+function `predictBL()` :
 
 ``` r
 pH_values<-soil$pH
-pH_values[which(is.na(x)==T)]<-mean(x,na.rm=T)
+pH_values[which(is.na(x)==T)]<-mean(x,na.rm=T) # replace missing values with mean of pH
 predicted_yield<-predictBL(model,pH_values)
 
-head(predicted_yield) # predicted yield for the first six fams
+head(predicted_yield) # predicted yield for the first six farms
 #> [1] 13.98149 14.01119 14.01119 13.07033 14.01119 13.63981
 ```
 
-The critical pH value using the model parameters can be determined. This
-is the pH beyond which yield increase response is not expected.
+The critical pH value can be determined from the model parameters. The
+critical pH is the pH beyond which yield increase response is not
+expected.
 
 ``` r
 intercept<-model$Parameters[1]
@@ -110,6 +113,21 @@ print(critical_pH)
 ```
 
 Other boundary line post-hoc analysis procedures can be conducted. For
-more information, see the
-`vignette("Introduction to boundary line analysis")` and
-`vignette("Use of censored bivariate normal model function for yield gap analysis")`
+more information, See `vignette("cbvn_use")` and
+`vignette("introducton_to_BLA")`.
+
+## References
+
+1.  Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing
+    biological data for the presence of a boundary. Annals of Applied
+    Biology, 149 ,
+    213-222.doi:<https://doi.org/10.1111/j.1744-7348.2006.00085.x>
+
+2.  Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line
+    determination technique (bolides). In P. C. Robert, R. H. Rust,
+    & W. E. Larson (Eds.), site specific management for agricultural
+    systems (p. 899-908). Wiley Online Library.doi:
+    <https://doi.org/10.2134/1995.site-specificmanagement.c66>
+
+3.  Webb, R. A. (1972). Use of the boundary line in analysis of
+    biological data. Journal of Horticultural Science, 47, 309–319.

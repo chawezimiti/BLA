@@ -1,8 +1,8 @@
 ---
-title: "Introduction to boundary line analysis"
+title: "Boundary Line Analysis"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to boundary line analysis}
+  %\VignetteIndexEntry{Boundary Line Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -32,6 +32,7 @@ Webb, R. A. (1972). Use of the boundary line in analysis of biological
 Useful links:
 \itemize{
   \item \url{https://chawezimiti.github.io/BLA/}
+  \item Report bugs at \url{https://github.com/chawezimiti/BLA/issues}
 }
 
 }
@@ -42,11 +43,11 @@ Authors:
 \itemize{
   \item Richard M Lark (\href{https://orcid.org/0000-0003-2571-8521}{ORCID})
   \item Alice E Milne (\href{https://orcid.org/0000-0002-4509-0578}{ORCID})
+  \item Ken E Giller (\href{https://orcid.org/0000-0002-5998-4652}{ORCID})
 }
 
 Other contributors:
 \itemize{
-  \item Ken E Giller [contributor]
   \item Victor O Sadras [contributor]
   \item University of Nottingham/Rothamsted Research [funder]
 }
