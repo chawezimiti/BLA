@@ -20,7 +20,7 @@ sets as an initial steps before doing boundary line analysis. It also
 includes functions to determine suitable starting guess values for use
 in fitting various boundary line models most of which use numerical
 optimization procedures. Learn more in
-`vignette("Introduction to boundary line analysis")`.
+`vignette("Introduction_to_BLA")`.
 
 ## How can I install the package?
 
@@ -113,8 +113,8 @@ print(critical_pH)
 ```
 
 Other boundary line post-hoc analysis procedures can be conducted. For
-more information, See `vignette("cbvn_use")` and
-`vignette("introducton_to_BLA")`.
+more information, See `vignette("Censored_bivariate_normal_model")` and
+`vignette("Introduction_to_BLA")`.
 
 ## References
 
