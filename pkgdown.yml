@@ -2,9 +2,10 @@ pandoc: 3.1.11
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
+  BLA: BLA.html
   cbvn_use: cbvn_use.html
   introducton_to_BLA: introducton_to_BLA.html
-last_built: 2024-04-03T15:50Z
+last_built: 2024-04-04T10:01Z
 urls:
   reference: https://chawezimiti.github.io/BLA/reference
   article: https://chawezimiti.github.io/BLA/articles
