@@ -53,8 +53,8 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/cbvn_use.html">Use of censored bivariate normal model function for yield gap analysis</a>
-    <a class="dropdown-item" href="../articles/introducton_to_BLA.html">Introduction to boundary line analysis</a>
+    <a class="dropdown-item" href="../articles/Censored_bivariate_normal_model.html">Use of censored bivariate normal model function for yield gap analysis</a>
+    <a class="dropdown-item" href="../articles/Introduction_to_BLA.html">Introduction to boundary line analysis</a>
   </div>
 </li>
 <li class="nav-item">
@@ -306,17 +306,18 @@ probability as the significance level.</p>
 <span><span class="co">#&gt;     Index Section    value</span></span>
 <span><span class="co">#&gt; 1      sd    Left 1.045711</span></span>
 <span><span class="co">#&gt; 2      sd   Right 1.115379</span></span>
-<span><span class="co">#&gt; 3 Mean sd    Left 1.180542</span></span>
-<span><span class="co">#&gt; 4 Mean sd   Right 1.267544</span></span>
-<span><span class="co">#&gt; 5 p_value    Left 0.000000</span></span>
-<span><span class="co">#&gt; 6 p_value   Right 0.000000</span></span></code></pre></div>
-<p>The p-values in the left and right section is 0 and 0 respectively.
-The results indicate evidence of boundary in both the left and right
-sections of the scatter. This suggests that there is a justification to
-fitting the boundary to the data. A graphical representation of the
-scatter plot with the boundary points is also given as well as the
-density histograms showing the observed standard deviation given 10000
-simulated standard deviations from normal unbounded data .</p>
+<span><span class="co">#&gt; 3 Mean sd    Left 1.175504</span></span>
+<span><span class="co">#&gt; 4 Mean sd   Right 1.269898</span></span>
+<span><span class="co">#&gt; 5 p_value    Left 0.020000</span></span>
+<span><span class="co">#&gt; 6 p_value   Right 0.010000</span></span></code></pre></div>
+<p>The p-values in the left and right section is 0.02 and 0.01
+respectively. The results indicate evidence of boundary in both the left
+and right sections of the scatter. This suggests that there is a
+justification to fitting the boundary to the data. A graphical
+representation of the scatter plot with the boundary points is also
+given as well as the density histograms showing the observed standard
+deviation given 10000 simulated standard deviations from normal
+unbounded data .</p>
 </div>
 </div>
 <div class="section level3">
@@ -579,7 +580,7 @@ function.</p>
 <h4 id="censored-bivariate-normal-model">Censored bivariate normal model<a class="anchor" aria-label="anchor" href="#censored-bivariate-normal-model"></a>
 </h4>
 <p>To fit the boundary line using the Censored bivariate normal model
-method, see the <code><a href="../articles/cbvn_use.html">vignette("cbvn_use")</a></code>.</p>
+method, see the <code>vignette("cbvn_use")</code>.</p>
 </div>
 <div class="section level4">
 <h4 id="using-your-own-defined-model">Using your own defined model<a class="anchor" aria-label="anchor" href="#using-your-own-defined-model"></a>
@@ -649,7 +650,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; function(x,a,b,c){</span></span>
 <span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x56179fe04840&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55c376adfde0&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
