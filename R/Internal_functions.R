@@ -6,7 +6,7 @@
 #'@param uplo determines whether it is upper or lower boundary
 #'@param BLMod determines the boundary line model fitted
 #'
-#'@returns Parameters of nll_mef
+#' @returns Parameters of nll_mef
 #' @keywords internal
 #'
 #'@author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
