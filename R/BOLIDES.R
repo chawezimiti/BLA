@@ -172,9 +172,9 @@
 #' @examples
 #'
 #' x<-evapotranspiration$`ET(mm)`
-#'y<-evapotranspiration$`yield(t/ha)`
+#' y<-evapotranspiration$`yield(t/ha)`
 #'
-#'BOLIDES(x,y, theta = c(0.5,0.02), model= "blm", xmax = 350)
+#' BOLIDES(x,y, theta = c(0.5,0.02), model= "blm", xmax = 350)
 #'
 #'
 BOLIDES<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",

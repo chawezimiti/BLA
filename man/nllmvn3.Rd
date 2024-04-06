@@ -2,17 +2,17 @@
 % Please edit documentation in R/Internal_functions.R
 \name{nllmvn3}
 \alias{nllmvn3}
-\title{Internal functions}
+\title{Multivariate normal model}
 \usage{
 nllmvn3(pars)
 }
 \arguments{
-\item{pars}{input in nll_mef function}
+\item{pars}{Object from  jdensup function.}
 }
 \value{
-Parameters of null model
+Parameters of null multivariate normal model.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This function determines the parameters of the multivariate normal model.
 }
 \keyword{internal}

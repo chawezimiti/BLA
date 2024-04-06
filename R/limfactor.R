@@ -8,14 +8,10 @@
 #'
 #' @param ... vectors with predicted values from the boundary line models for
 #'   each factor being evaluated.
-#'
 #' @returns A dataframe consisting of the most limiting factor and the minimum
 #'   predicted response
-#'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
-#'
 #' @export
-#'
 #' @examples
 #'
 #' N<-rnorm(10,50,5) #assuming these are predicted responses using the fitted BL for N,P,K

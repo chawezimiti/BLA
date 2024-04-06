@@ -16,9 +16,8 @@ A vector without missing values
 Removes missing values from a dataset.
 }
 \examples{
-
-xin<-evapotranspiration$`ET(mm)`
-na.drop(xin)
+x<-evapotranspiration$`ET(mm)`
+na.drop(x)
 
 }
 \author{

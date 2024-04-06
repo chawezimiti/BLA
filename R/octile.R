@@ -3,18 +3,14 @@
 #' A function to calculate an estimate of the octile skewness from a set of data.
 #'
 #' @param x A vector of numeric values.
-#'
-#'@returns The octile skewness.
-#'
-#'@author Richard Murray Lark <murray.lark@@nottingham.ac.uk>
-#'
-#'@examples
-#'
-#' x<-evapotranspiration$`ET(mm)`
-#'ocskew(x)
-#'
+#' @returns The octile skewness.
+#' @author Richard Murray Lark <murray.lark@@nottingham.ac.uk>
 #' @keywords internal
 #' @export
+#'
+#' @examples
+#' x<-evapotranspiration$`ET(mm)`
+#' ocskew(x)
 #'
 ocskew<-function(x){
 

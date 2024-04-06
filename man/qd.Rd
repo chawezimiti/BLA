@@ -2,23 +2,27 @@
 % Please edit documentation in R/Internal_functions.R
 \name{qd}
 \alias{qd}
-\title{Internal functions}
+\title{Quadratic functions}
 \usage{
 qd(x, beta0, beta1, beta2)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{beta0}{is a parameter describing the possible maximum response}
+\item{beta0}{Parameter describing the constant.}
 
-\item{beta1}{is value of x at which the response is maximum}
+\item{beta1}{Linear parameter.}
 
-\item{beta2}{is a scaling parameter, which is zero if the boundary is a constant}
+\item{beta2}{Quadratic parameter.}
 }
 \value{
-Parameters of the model.
+Numeric vector of response value.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This is function fits the quadratic model.
+}
+\examples{
+qd(2, 0.5,2,1)
+
 }
 \keyword{internal}

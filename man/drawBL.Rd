@@ -2,25 +2,25 @@
 % Please edit documentation in R/Internal_functions.R
 \name{drawBL}
 \alias{drawBL}
-\title{Internal functions}
+\title{Draw the boundary line}
 \usage{
 drawBL(x, beta0, beta1, beta2, BLMod)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{beta0}{model parameter}
+\item{beta0}{Model parameter.}
 
-\item{beta1}{model parameter}
+\item{beta1}{Model parameter.}
 
-\item{beta2}{model parameter}
+\item{beta2}{Model parameter.}
 
-\item{BLMod}{determines the boundary line model fitted}
+\item{BLMod}{Determines the boundary line model fitted.}
 }
 \value{
-draws the model on plot
+Draws the model on plot.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This function draws the boundary line on the plot.
 }
 \keyword{internal}

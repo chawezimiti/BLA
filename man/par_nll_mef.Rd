@@ -2,19 +2,19 @@
 % Please edit documentation in R/Internal_functions.R
 \name{par_nll_mef}
 \alias{par_nll_mef}
-\title{Internal functions}
+\title{Rough partial derivative}
 \usage{
 par_nll_mef(x, UpLo, BLMod)
 }
 \arguments{
-\item{x}{input in nll_mef function}
+\item{x}{Numeric vector.}
 
-\item{UpLo}{determines whether it is upper or lower boundary}
+\item{UpLo}{Determines whether it is upper or lower boundary.}
 
-\item{BLMod}{determines the boundary line model fitted}
+\item{BLMod}{Determines the boundary line model fitted.}
 }
 \value{
-Parameters of par_nll_mef
+Rough partial derivative at x of nll.
 }
 \description{
 This is a set of functions that support the censored bivariate normal model.

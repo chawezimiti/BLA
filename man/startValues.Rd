@@ -4,7 +4,7 @@
 \alias{startValues}
 \title{Starting values for optimization functions}
 \usage{
-startValues(model = "blm", p = NULL, digits = 2, ...)
+startValues(model = "explore", p = NULL, digits = 2, ...)
 }
 \arguments{
 \item{model}{Selects the functional form of the boundary line. It includes
@@ -13,8 +13,8 @@ linear plateau model, \code{"mit"} for the Mitscherlich model, \code{"schmidt"}
 for the Schmidt model, \code{"logistic"} for logistic model, \code{"logisticfm"}
 for logistic model proposed by Fermont et al (2009), \code{"inv-logistic"} for
 the inverse logistic model, \code{"double-logistic"} for the double logistic model,
-\code{"qd"} for quadratic model and the \code{"trapezium"} for the trapezium model.
-The default is \code{"blm"}.}
+\code{"qd"} for quadratic model, \code{"trapezium"} for the trapezium model and
+\code{"explore"} for function use exploration. The default is \code{"explore"}.}
 
 \item{p}{The number of selected points used to obtain start values for the logistic
 type models. It is \code{NULL} for other models.}
@@ -36,6 +36,10 @@ model when using the functions \code{blbin()}, \code{blqr()}, \code{BOLIDES()},
 This function uses the \code{locator()} function. Once the model is selected,
 the points that make up the boundary points are selected using mouse click on
 the plots.
+}
+\examples{
+startValues(model="explore")
+
 }
 \author{
 Chawezi Miti <chawezi.miti@nottingham.ac.uk>

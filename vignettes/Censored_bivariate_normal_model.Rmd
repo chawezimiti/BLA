@@ -346,8 +346,8 @@ The censored bivariate normal model has been used to carryout a yield gap analys
 
 # References
 
-1\. Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing biological data for the presence of a boundary. Annals of Applied Biology, 149 , 213-222. doi:<https://doi.org/10.1111/j.1744-7348.2006.00085.x>
+1. Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing biological data for the presence of a boundary. Annals of Applied Biology, 149 , 213-222.
 
-2\. Lark, R. M., Gillingham, V., Langton, D., & Marchant, B. P. (2020). Boundary line models for soil nutrient concentrations and wheat yield in national-scale datasets.European Journal of Soil Science, 71 , 334-351. doi: <https://doi.org/10.1111/>[ejss.12891](https://doi.org/10.1111/ejss.12891)
+2. Lark, R. M., Gillingham, V., Langton, D., & Marchant, B. P. (2020). Boundary line models for soil nutrient concentrations and wheat yield in national-scale datasets.European Journal of Soil Science, 71 , 334-351.
 
-3\. Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the effect of water filled pore space on nitrous oxide emission from cores of arable soil. European Journal of Soil Science, 67 , 148-159. doi: <https://doi.org/10.1111/ejss.12318>
+3. Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the effect of water filled pore space on nitrous oxide emission from cores of arable soil. European Journal of Soil Science, 67 , 148-159.

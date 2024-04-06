@@ -5,16 +5,11 @@
 #' @param x A vector of numeric values.
 #' @param varname The name of the variable (optional), character so in quotes e.g.
 #'   "Clay content". If not used then the variable is called x on plots.
-#'
 #' @returns A histogram with a boxplot over it and QQ plot of the variable x.
-#'
 #' @author Richard Murray Lark <murray.lark@@nottingham.ac.uk>
-#'
 #' @examples
-#'
 #' x<-evapotranspiration$`ET(mm)`
 #' summaplot(x)
-#'
 #' @export
 #'
 summaplot<-function(x,varname){

@@ -169,7 +169,7 @@
 #' @author \enumerate{
 #' \item Chawezi Miti \email{chawezi.miti@@nottingham.ac.uk}
 #' \item Richard Murray Lark \email{murray.lark@@nottingham.ac.uk}
-#'}
+#' }
 #' @import mvtnorm
 #' @export
 #'

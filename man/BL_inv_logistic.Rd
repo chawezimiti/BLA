@@ -2,23 +2,27 @@
 % Please edit documentation in R/Internal_functions.R
 \name{BL_inv_logistic}
 \alias{BL_inv_logistic}
-\title{Internal functions}
+\title{Inverse logistic model}
 \usage{
 BL_inv_logistic(x, beta0, beta1, beta2)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{beta0}{is a parameter describing the possible maximum response}
+\item{beta0}{Parameter describing the possible maximum response.}
 
-\item{beta1}{is a scaling parameter}
+\item{beta1}{Scaling parameter.}
 
-\item{beta2}{is a parameter describing the shape of the model}
+\item{beta2}{Parameter describing the shape of the model.}
 }
 \value{
-Parameters of the model.
+Numeric vector of response value.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This function fits the inverse logistic model.
+}
+\examples{
+BL_inv_logistic(2, 20, 2, 4)
+
 }
 \keyword{internal}

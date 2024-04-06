@@ -11,7 +11,17 @@
 
 \item{...}{Other parameters associated with the \code{print()} function.}
 }
+\value{
+A object containing only the first four items.
+}
 \description{
-Prints an output with 5 elements.
+This is an S3 print function that Prints only the first 4 elements of
+wm class objects.
+}
+\examples{
+numbers<- 1:10
+class(numbers)<-"wm"
+numbers
+
 }
 \keyword{internal}

@@ -2,23 +2,27 @@
 % Please edit documentation in R/Internal_functions.R
 \name{mit}
 \alias{mit}
-\title{Internal functions}
+\title{Mitscherlich function}
 \usage{
 mit(x, beta0, beta1, beta2)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{beta0}{model parameter}
+\item{beta0}{Scaling parameter.}
 
-\item{beta1}{model parameter}
+\item{beta1}{Model parameter maximum response.}
 
-\item{beta2}{model parameter}
+\item{beta2}{Shape parameter.}
 }
 \value{
-Parameters of the model.
+Numeric vector of response value.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This is function fits the mitscherlich model.
+}
+\examples{
+mit(2, 20,1,5)
+
 }
 \keyword{internal}

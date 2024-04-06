@@ -16,7 +16,6 @@ The octile skewness.
 A function to calculate an estimate of the octile skewness from a set of data.
 }
 \examples{
-
 x<-evapotranspiration$`ET(mm)`
 ocskew(x)
 

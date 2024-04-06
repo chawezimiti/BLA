@@ -2,21 +2,21 @@
 % Please edit documentation in R/Internal_functions.R
 \name{par_nll_mef2}
 \alias{par_nll_mef2}
-\title{Internal functions}
+\title{Partial derivative}
 \usage{
 par_nll_mef2(x, UpLo, BLMod)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{UpLo}{determines whether it is upper or lower boundary}
+\item{UpLo}{Determines whether it is upper or lower boundary.}
 
-\item{BLMod}{determines the boundary line model fitted}
+\item{BLMod}{Determines the boundary line model fitted.}
 }
 \value{
 Parameters of par_nll_mef2
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This function determines rough partial derivative of x.
 }
 \keyword{internal}

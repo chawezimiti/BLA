@@ -2,17 +2,17 @@
 % Please edit documentation in R/Internal_functions.R
 \name{nll_mef_maxyield}
 \alias{nll_mef_maxyield}
-\title{Internal functions}
+\title{Flat upper BL model}
 \usage{
 nll_mef_maxyield(pars)
 }
 \arguments{
-\item{pars}{input in nll_mef function}
+\item{pars}{Object from  jdensup function.}
 }
 \value{
-Parameters of the max response model
+Parameters of the max response model.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This function fits a simple flat upper BL model.
 }
 \keyword{internal}

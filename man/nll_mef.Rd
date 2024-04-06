@@ -2,24 +2,21 @@
 % Please edit documentation in R/Internal_functions.R
 \name{nll_mef}
 \alias{nll_mef}
-\title{Internal functions}
+\title{Internal function}
 \usage{
 nll_mef(pars, uplo, BLMod)
 }
 \arguments{
-\item{pars}{input in nll_mef function}
+\item{pars}{Object from  jdensup function.}
 
-\item{uplo}{determines whether it is upper or lower boundary}
+\item{uplo}{Determines whether it is upper or lower boundary.}
 
-\item{BLMod}{determines the boundary line model fitted}
+\item{BLMod}{Determines the boundary line model fitted.}
 }
 \value{
-Parameters of nll_mef
+The nll for 3-parameter BL model.
 }
 \description{
 This is a set of functions that support the censored bivariate normal model.
-}
-\author{
-Chawezi Miti <chawezi.miti@nottingham.ac.uk>
 }
 \keyword{internal}

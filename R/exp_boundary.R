@@ -11,7 +11,7 @@
 #' @param x A numeric vector of values for the independent variable.
 #' @param y A numeric vector of values for the response variable.
 #' @param shells A numeric value indicating the number of boundary peels
-#' (default is 10).
+#'   (default is 10).
 #' @param simulations The number of simulations for the null bivariate normally
 #'   distributed data sets used to test the hypothesis (default is 1000).
 #' @param ... Additional graphical parameters as with the \code{par()} function.

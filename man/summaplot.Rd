@@ -19,10 +19,8 @@ A histogram with a boxplot over it and QQ plot of the variable x.
 A function to produce summary plots of a set of data.
 }
 \examples{
-
 x<-evapotranspiration$`ET(mm)`
 summaplot(x)
-
 }
 \author{
 Richard Murray Lark <murray.lark@nottingham.ac.uk>

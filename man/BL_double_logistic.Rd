@@ -2,29 +2,33 @@
 % Please edit documentation in R/Internal_functions.R
 \name{BL_double_logistic}
 \alias{BL_double_logistic}
-\title{Internal functions}
+\title{Double logistic model}
 \usage{
 BL_double_logistic(x, beta01, beta02, beta1, beta2, beta3, beta4)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{beta01}{model parameter}
+\item{beta01}{Maximum response model parameter one.}
 
-\item{beta02}{model parameter}
+\item{beta02}{Maximum response model parameter two.}
 
-\item{beta1}{model parameter}
+\item{beta1}{Scaling model parameter.}
 
-\item{beta2}{model parameter}
+\item{beta2}{Shape model parameter.}
 
-\item{beta3}{model parameter}
+\item{beta3}{Scaling model parameter.}
 
-\item{beta4}{model parameter}
+\item{beta4}{Shape model parameter.}
 }
 \value{
-Parameters of the model
+Numeric vector of response values.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This function fits the double logistic model.
+}
+\examples{
+BL_double_logistic(20, 20, 2, 5, 5, 2, 2)
+
 }
 \keyword{internal}

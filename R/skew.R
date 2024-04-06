@@ -4,17 +4,13 @@
 #' a set of data.
 #'
 #' @param x A vector of numeric values.
-#'
 #' @returns The coefficient of skewness.
-#'
 #' @author Richard Murray Lark <murray.lark@@nottingham.ac.uk>
-#'
+#' @keywords internal
+#' @export
 #' @examples
 #' x<-evapotranspiration$`ET(mm)`
 #' skew(x)
-#'
-#' @keywords internal
-#' @export
 #'
 skew<-function(x){
 

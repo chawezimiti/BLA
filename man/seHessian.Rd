@@ -2,16 +2,16 @@
 % Please edit documentation in R/Internal_functions.R
 \name{seHessian}
 \alias{seHessian}
-\title{Internal functions}
+\title{Hessian matrix}
 \usage{
 seHessian(a, hessian = FALSE, silent = FALSE)
 }
 \arguments{
-\item{a}{determines the boundary line model fitted}
+\item{a}{The hessian matrix.}
 
-\item{hessian}{If true hessian is used}
+\item{hessian}{If `True`, hessian matrix is used.}
 
-\item{silent}{condtion of matrix}
+\item{silent}{Condition of matrix.}
 }
 \description{
 This is a set of functions that support the censored bivariate normal model.

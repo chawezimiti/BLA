@@ -23,7 +23,6 @@ A function to calculate summary statistics of a set of data.
 \examples{
 x<-evapotranspiration$`ET(mm)`
 summa(x,2)
-
 }
 \author{
 Richard Murray Lark <murray.lark@nottingham.ac.uk>

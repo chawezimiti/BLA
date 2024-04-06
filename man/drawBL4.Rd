@@ -2,31 +2,31 @@
 % Please edit documentation in R/Internal_functions.R
 \name{drawBL4}
 \alias{drawBL4}
-\title{Internal functions}
+\title{Draw double logistic model}
 \usage{
 drawBL4(x, beta01, beta02, beta1, beta2, beta3, beta4, BLMod)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{beta01}{model parameter}
+\item{beta01}{Model parameter.}
 
-\item{beta02}{model parameter}
+\item{beta02}{Model parameter.}
 
-\item{beta1}{model parameter}
+\item{beta1}{Model parameter.}
 
-\item{beta2}{model parameter}
+\item{beta2}{Model parameter.}
 
-\item{beta3}{model parameter}
+\item{beta3}{Model parameter.}
 
-\item{beta4}{model parameter}
+\item{beta4}{Model parameter.}
 
-\item{BLMod}{determines the boundary line model fitted}
+\item{BLMod}{Determines the boundary line model fitted.}
 }
 \value{
-draws the model on plot
+Draws the model on plot.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This function draws the double logistic boundary line on a plot.
 }
 \keyword{internal}

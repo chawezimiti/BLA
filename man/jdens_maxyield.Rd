@@ -2,29 +2,29 @@
 % Please edit documentation in R/Internal_functions.R
 \name{jdens_maxyield}
 \alias{jdens_maxyield}
-\title{Internal functions}
+\title{Joint density of observed values for flat model}
 \usage{
 jdens_maxyield(X, ymax, sigh, mux, muy, sdx, sdy, rcorr)
 }
 \arguments{
-\item{X}{input in function}
+\item{X}{Numeric vector of independent variable.}
 
-\item{ymax}{maximumresponse}
+\item{ymax}{Maximum response value}
 
-\item{sigh}{measurement error}
+\item{sigh}{Measurement error.}
 
-\item{mux}{mean of x}
+\item{mux}{Mean of x}
 
-\item{muy}{mean of y}
+\item{muy}{Mean of y}
 
-\item{sdx}{standard deviation of x}
+\item{sdx}{Standard deviation of x}
 
-\item{sdy}{standard deviation of y}
+\item{sdy}{Standard deviation of y}
 
-\item{rcorr}{correlation of x and y}
+\item{rcorr}{Correlation of x and y}
 }
 \value{
-Parameters of jdens_maxyield
+Joint density of observed values x and y
 }
 \description{
 This is a set of functions that support the censored bivariate normal model.

@@ -10,8 +10,8 @@
 #'   for the Schmidt model, \code{"logistic"} for logistic model, \code{"logisticfm"}
 #'   for logistic model proposed by Fermont et al (2009), \code{"inv-logistic"} for
 #'   the inverse logistic model, \code{"double-logistic"} for the double logistic model,
-#'   \code{"qd"} for quadratic model and the \code{"trapezium"} for the trapezium model.
-#'   The default is \code{"blm"}.
+#'   \code{"qd"} for quadratic model, \code{"trapezium"} for the trapezium model and
+#'   \code{"explore"} for function use exploration. The default is \code{"explore"}.
 #' @param p The number of selected points used to obtain start values for the logistic
 #'   type models. It is \code{NULL} for other models.
 #' @param digits Number of decimal points for logistic type models (default is 2).
@@ -23,13 +23,15 @@
 #' the plots.
 #' @returns A list containing the parameters of the suggested model.
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
-#'
 #' @export
+#' @examples
+#' startValues(model="explore")
 #'
-startValues<-function(model="blm",p=NULL,digits = 2,...){
+startValues<-function(model="explore",p=NULL,digits = 2,...){
 
   if (model != "blm" && model != "lp" && model != "qd" && model!="trapezium" &&
-      model!="logistic" && model!="double-logistic" && model!="inv-logistic" ) {
+      model!="logistic" && model!="double-logistic" && model!="inv-logistic" &&
+      model!="explore") {
     stop("model type not recorgnised ")
   }
 
@@ -69,7 +71,16 @@ startValues<-function(model="blm",p=NULL,digits = 2,...){
   }
 
 
+  if(model=="explore"){
+    slope<-0
+    intercept<-0
+    cat("y = f(P\u2081,P\u2082|x)\n\n")
 
+    names(intercept)<-c("P\u2081")
+    names(slope)<-c("P\u2082")
+    result<-list(Param1=intercept, Param2=slope)
+    return(result)
+  }
 
   if(model=="blm"){
     d<-locator(n)

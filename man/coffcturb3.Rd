@@ -2,25 +2,25 @@
 % Please edit documentation in R/Internal_functions.R
 \name{coffcturb3}
 \alias{coffcturb3}
-\title{Internal functions}
+\title{Coffcturb}
 \usage{
 coffcturb3(x, mu, sig, a, c, sigh)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{mu}{mean}
+\item{mu}{Mean of x.}
 
-\item{sig}{fitting parameter}
+\item{sig}{Fitting parameter.}
 
-\item{a}{fitting parameter}
+\item{a}{Fitting parameter.}
 
-\item{c}{fitting parameter}
+\item{c}{Fitting parameter.}
 
-\item{sigh}{measurement error}
+\item{sigh}{Measurement error.}
 }
 \value{
-Parameters of coffcturb
+Parameters of coffcturb.
 }
 \description{
 This is a set of functions that support the censored bivariate normal model.

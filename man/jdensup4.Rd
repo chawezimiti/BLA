@@ -2,7 +2,7 @@
 % Please edit documentation in R/Internal_functions.R
 \name{jdensup4}
 \alias{jdensup4}
-\title{Internal functions}
+\title{Joint density of observed values}
 \usage{
 jdensup4(
   X,
@@ -22,38 +22,38 @@ jdensup4(
 )
 }
 \arguments{
-\item{X}{input in function}
+\item{X}{Numeric vector of independent variable.}
 
-\item{BLMod}{determines the boundary line model fitted}
+\item{BLMod}{Determines the boundary line model fitted.}
 
-\item{beta01}{model parameter}
+\item{beta01}{Model parameter.}
 
-\item{beta02}{model parameter}
+\item{beta02}{Model parameter.}
 
-\item{beta1}{model parameter}
+\item{beta1}{Model parameter.}
 
-\item{beta2}{model parameter}
+\item{beta2}{Model parameter.}
 
-\item{beta3}{model parameter}
+\item{beta3}{Model parameter.}
 
-\item{beta4}{model parameter}
+\item{beta4}{Model parameter.}
 
-\item{sigh}{measurement error}
+\item{sigh}{Measurement error.}
 
-\item{mux}{mean of x}
+\item{mux}{Mean of x.}
 
-\item{muy}{mean of y}
+\item{muy}{Mean of y.}
 
-\item{sdx}{standard deviation of x}
+\item{sdx}{Standard deviation of x.}
 
-\item{sdy}{standard deviation of y}
+\item{sdy}{Standard deviation of y.}
 
-\item{rcorr}{correlation of x and y}
+\item{rcorr}{Correlation of x and y.}
 }
 \value{
-Parameters of jdensup
+Joint density of observed values x and y.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This function determines the joint density of observed values x and y.
 }
 \keyword{internal}

@@ -8,13 +8,10 @@
 #'   first and third quartiles, sample variance, sample standard deviation,
 #'   coefficient of skewness, octile skewness, coefficient of kurtosis and
 #'   the number of probable outliers in a data set.
-#'
 #' @author Richard Murray Lark <murray.lark@@nottingham.ac.uk>
-#'
 #' @examples
 #' x<-evapotranspiration$`ET(mm)`
 #' summa(x,2)
-#'
 #' @export
 #'
 summa<-function(x,sigf){

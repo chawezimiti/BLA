@@ -2,23 +2,27 @@
 % Please edit documentation in R/Internal_functions.R
 \name{lp}
 \alias{lp}
-\title{Internal functions}
+\title{Linear plateau model}
 \usage{
 lp(x, beta0, beta1, beta2)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{beta0}{model parameter}
+\item{beta0}{Plateau parameter.}
 
-\item{beta1}{model parameter}
+\item{beta1}{Slope parameter.}
 
-\item{beta2}{model parameter}
+\item{beta2}{Intercept parameter.}
 }
 \value{
-Parameters of the model
+Numeric vector of response value.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This is function fits the linear plateau model.
+}
+\examples{
+lp(2, 20, 5, 2)
+
 }
 \keyword{internal}

@@ -35,7 +35,7 @@ install.packages("BLA")
 If you have data on pH and crop yield collected over several farms in a
 non experimental survey (other factors not controlled), you can
 determine the largest expected yields for a given pH value, also called
-the boundary pH value. various methods to fit the boundary model
+the boundary pH value. variousmethods to fit the boundary model
 including the `blbin()`, `BOLIDES()`, `blqr()` and `cbvn()`. The example
 below uses the `BOLIDES()` function:
 
@@ -118,16 +118,14 @@ more information, See `vignette("Censored_bivariate_normal_model")` and
 
 ## References
 
-1.  Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing
-    biological data for the presence of a boundary. Annals of Applied
-    Biology, 149 ,
-    213-222.doi:<https://doi.org/10.1111/j.1744-7348.2006.00085.x>
+Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing
+biological data for the presence of a boundary. Annals of Applied
+Biology, 149 , 213-222.
 
-2.  Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line
-    determination technique (bolides). In P. C. Robert, R. H. Rust,
-    & W. E. Larson (Eds.), site specific management for agricultural
-    systems (p. 899-908). Wiley Online Library.doi:
-    <https://doi.org/10.2134/1995.site-specificmanagement.c66>
+Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line
+determination technique (bolides). In P. C. Robert, R. H. Rust, & W. E.
+Larson (Eds.), site specific management for agricultural systems
+(p. 899-908). Wiley Online Library.
 
-3.  Webb, R. A. (1972). Use of the boundary line in analysis of
-    biological data. Journal of Horticultural Science, 47, 309–319.
+Webb, R. A. (1972). Use of the boundary line in analysis of biological
+data. Journal of Horticultural Science, 47, 309–319.

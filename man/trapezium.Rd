@@ -2,27 +2,31 @@
 % Please edit documentation in R/Internal_functions.R
 \name{trapezium}
 \alias{trapezium}
-\title{Internal functions}
+\title{Trapezium model}
 \usage{
 trapezium(x, beta0, beta1, beta2, beta3, beta4)
 }
 \arguments{
-\item{x}{independent variable}
+\item{x}{Numeric vector of independent variable.}
 
-\item{beta0}{model parameter}
+\item{beta0}{Maximum response model parameter.}
 
-\item{beta1}{model parameter}
+\item{beta1}{Intercept one model parameter.}
 
-\item{beta2}{model parameter}
+\item{beta2}{Slope one model parameter.}
 
-\item{beta3}{model parameter}
+\item{beta3}{Intercept two model parameter.}
 
-\item{beta4}{model parameter}
+\item{beta4}{Slope two model parameter.}
 }
 \value{
-Parameters of the model
+A numeric vector of response values.
 }
 \description{
-This is a set of functions that support the censored bivariate normal model.
+This function fits the trapezium model.
+}
+\examples{
+trapezium(3, 20, 5, 2, 5,2)
+
 }
 \keyword{internal}

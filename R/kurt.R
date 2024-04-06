@@ -4,17 +4,14 @@
 #' from a set of data.
 #'
 #' @param x A vector of numeric values.
-#'
 #' @returns The reduced coefficient of kurtosis.
-#'
 #' @author Richard Murray Lark <murray.lark@@nottingham.ac.uk>
+#' @keywords internal
+#' @export
 #'
 #' @examples
 #' x<-evapotranspiration$`ET(mm)`
 #' kurt(x)
-#'
-#' @keywords internal
-#' @export
 #'
 kurt<-function(x){
 
