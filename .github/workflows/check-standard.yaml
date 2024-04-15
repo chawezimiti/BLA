@@ -44,6 +44,18 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - name: Install Xvfb on Ubuntu
+        if: startsWith(matrix.config.os, 'ubuntu-')
+        run: sudo apt-get install xvfb
+
+      - name: Start Xvfb on Ubuntu
+        if: startsWith(matrix.config.os, 'ubuntu-')
+        run: Xvfb :99 -screen 0 1024x768x24 &
+
+      - name: Set DISPLAY Variable on Ubuntu
+        if: startsWith(matrix.config.os, 'ubuntu-')
+        run: export DISPLAY=:99
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
