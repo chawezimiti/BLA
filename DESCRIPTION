@@ -29,7 +29,8 @@ Imports:
     aplpack,
     MASS,
     mvtnorm,
-    tcltk
+    tcltk,
+    graphics
 Suggests: 
     knitr,
     rmarkdown,
