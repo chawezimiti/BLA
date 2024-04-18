@@ -48,21 +48,6 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install xquartz --cask
 
-      - name: Run R with xvfb on Ubuntu
-        if: runner.os == 'Linux'
-        runs-on: ubuntu-latest
-        steps:
-          - name: Install xvfb
-            run: sudo apt-get install xvfb
-          - name: Set up xvfb
-            run: |
-              sudo Xvfb :99 -ac -screen 0 1280x1024x16 &
-              export DISPLAY=:99.0
-          - name: Install package dependencies
-            run: R -e 'install.packages(c("aplpack", "MASS", "mvtnorm"), dependencies = TRUE)'
-          - name: Run tests with xvfb
-            run: xvfb-run R --no-save -e 'devtools::check()'
-
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
