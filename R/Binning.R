@@ -162,7 +162,7 @@
 #' farms in East Africa. Field Crops Research, 112 (1), 24–36.
 #'
 #' Schmidt, U., Thöni, H., & Kaupenjohann, M. (2000). Using a boundary line approach
-#' to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agroecosystems,
+#' to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agro-ecosystems,
 #' 57, 119-129.
 #'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>

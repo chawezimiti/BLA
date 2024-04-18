@@ -118,14 +118,14 @@ more information, See `vignette("Censored_bivariate_normal_model")` and
 
 ## References
 
-Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing
-biological data for the presence of a boundary. Annals of Applied
-Biology, 149 , 213-222.
+1.  Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing
+    biological data for the presence of a boundary. Annals of Applied
+    Biology, 149 , 213-222.
 
-Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line
-determination technique (bolides). In P. C. Robert, R. H. Rust, & W. E.
-Larson (Eds.), site specific management for agricultural systems
-(p. 899-908). Wiley Online Library.
+2.  Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line
+    determination technique (bolides). In P. C. Robert, R. H. Rust,
+    & W. E. Larson (Eds.), site specific management for agricultural
+    systems (p. 899-908). Wiley Online Library.
 
-Webb, R. A. (1972). Use of the boundary line in analysis of biological
-data. Journal of Horticultural Science, 47, 309–319.
+3.  Webb, R. A. (1972). Use of the boundary line in analysis of
+    biological data. Journal of Horticultural Science, 47, 309–319.
