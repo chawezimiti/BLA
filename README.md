@@ -24,10 +24,13 @@ optimization procedures. Learn more in
 
 ## How can I install the package?
 
-Install released version from CRAN:
+Install the current version on Github. You will need to install the
+package `devtools` before installing BLA.
 
 ``` r
-install.packages("BLA")
+library(devtools)
+
+install_github("https://chawezimiti.github.io/BLA")
 ```
 
 ## What can I use the BLA package for?
