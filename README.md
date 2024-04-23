@@ -8,19 +8,19 @@
 
 ## Overview
 
-The BLA `R` package provides a series of tools to fit boundary line
-models to a data set as proposed by Webb (1972). It includes a suite of
-methods which have been introduced since the original manually drawn
-boundary lines were proposed. These include methods based on binning the
-independent variable, the BOLIDES algorithm of Schug *et al*. (1995),
-quantile regression and the censored bivariate normal model of Milne *et
-al*. (2006). It also houses data exploration techniques to check for
-outliers and to provide initial evidence for a limiting boundary in data
-sets as an initial steps before doing boundary line analysis. It also
-includes functions to determine suitable starting guess values for use
-in fitting various boundary line models most of which use numerical
-optimization procedures. Learn more in
-`vignette("Introduction_to_BLA")`.
+The BLA `R` package provides a set of tools to fit boundary line models
+to a data set as proposed by [Webb
+(1972)](https://doi.org/10.1080/00221589.1972.11514472). It includes a
+suite of methods which have been introduced since the original
+manually-drawn boundary lines were proposed. These include methods based
+on binning the independent variable, the BOLIDES algorithm of Schug *et
+al*. (1995), quantile regression and the censored bivariate normal model
+of Milne *et al*. (2006). It also provides data exploration methods to
+check for outliers and to provide initial evidence for a limiting
+boundary in data sets as initial steps before doing boundary line
+analysis. It includes functions to determine suitable starting values
+for boundary line parameters for estimation by numerical optimization
+procedures. Learn more in `vignette("Introduction_to_BLA")`.
 
 ## How can I install the package?
 
@@ -35,11 +35,16 @@ install_github("https://chawezimiti.github.io/BLA")
 
 ## What can I use the BLA package for?
 
-If you have data on pH and crop yield collected over several farms in a
-non experimental survey (other factors not controlled), you can
-determine the largest expected yields for a given pH value, also called
-the boundary pH value. variousmethods to fit the boundary model
-including the `blbin()`, `BOLIDES()`, `blqr()` and `cbvn()`. The example
+The classical situation in which `BLA` is used is to model the
+relationship between some response variable for a biological system
+(e.g. the yield of a crop) and a variable which is potentially limiting
+on that response (e.g. soil pH). The approach is suitable for large data
+sets from surveys (i.e. cases in which multiple potential limiting
+factors occur but are not controlled experimentally. In the example of
+crop yield and pH, one can determine the largest expected yield for a
+given pH value, also called the boundary pH value. There are various
+methods to fit the boundary model in the `BLA` package, encoded in the
+functions `blbin()`, `BOLIDES()`, `blqr()` and `cbvn()`. The example
 below uses the `BOLIDES()` function:
 
 ``` r
@@ -124,11 +129,14 @@ more information, See `vignette("Censored_bivariate_normal_model")` and
 1.  Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing
     biological data for the presence of a boundary. Annals of Applied
     Biology, 149 , 213-222.
+    <https://doi.org/10.1111/j.1744-7348.2006.00085.x>
 
 2.  Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line
     determination technique (bolides). In P. C. Robert, R. H. Rust,
     & W. E. Larson (Eds.), site specific management for agricultural
     systems (p. 899-908). Wiley Online Library.
+    <https://doi.org/10.2134/1995.site-specificmanagement.c66>
 
 3.  Webb, R. A. (1972). Use of the boundary line in analysis of
     biological data. Journal of Horticultural Science, 47, 309–319.
+    <https://doi.org/10.1080/00221589.1972.11514472>

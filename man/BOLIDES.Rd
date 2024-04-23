@@ -188,7 +188,7 @@ Schmidt, U., Thöni, H., & Kaupenjohann, M. (2000). Using a boundary line approa
 to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agroecosystems,
 57, 119-129.
 Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line determination
-technique (bolides). In P. C. Robert, R. H. Rust, & W. E. Larson (Eds.), site
+technique (BOLIDES). In P. C. Robert, R. H. Rust, & W. E. Larson (Eds.), site
 specific management for agricultural systems (p. 899-908). Wiley Online Library.
 }
 \author{
