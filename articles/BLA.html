@@ -98,22 +98,30 @@ process fitting the boundary line to a data set.</p>
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>When a biological response, <em>y</em>, is observed as function of a
-single factor of interest, <em>x</em>, in uncontrolled environment
-i.e. when the influence of other factors is not controlled, a scatter of
-randomly distributed points is expected (i.e. conform to a bivariate
-normal distribution). However, if the data set is large enough to
-contain all possible instances of conditions, the data points that are
-observed in most favorable conditions will fall at the upper edges of
-the data cloud, which would be the maximum possible response of y to
-<em>x</em>. The data points that fall below the maximum response are as
-a result of the limiting effect of other factors that are not controlled
-for. Webb (1972) suggested a methodology that can be used to describe
-the relationship of data points at the upper edges of such data sets
-which is the most likely relationship of <em>y</em> and <em>x</em> when
-all other factors are not limiting. He refereed to this relationship as
+<p>When a biological response, <em><code>y</code></em>, is observed as
+function of a single factor of interest, <em><code>x</code></em>, in an
+uncontrolled environment i.e. when the influence of other factors is not
+controlled, a scatter of observations is observed due to the many
+sources of variation. If, for example, <em><code>x</code></em> along
+with other factors contributes in some additive way to variation of
+<em><code>y</code></em> then then a bivariate normal distribution may be
+expected. However, more complex effects are possible. For example, if
+the data set is large enough to contain a wide range of combinations of
+conditions, and x and other factors influence y in accordance with some
+non-linear process as characterized by the law of the minimum, or the
+law of the optimum (see Miti <em>et al</em>, 2024a), then the data
+points that are observed in most favourable conditions for the response
+<em><code>y</code></em> will fall at the upper edges of the data cloud,
+which would be the maximum possible response of <em><code>y</code></em>
+given some value of <em><code>x</code></em>. The data points that fall
+below the maximum response are as a result of the limiting effect of
+other factors that are not controlled for. Webb (1972) suggested a
+methodology that can be used to describe the relationship of data points
+at the upper edges of such data sets which is the most likely
+relationship of <em><code>y</code></em> and <em><code>x</code></em> when
+all other factors are not limiting. He referred to this relationship as
 the boundary line.</p>
-<p>The initial boundary line method by Webb (1972) involves the
+<p>The initial boundary line method by Webb (1972) involved the
 selection of data points at the upper edges of the data cloud visually.
 The boundary line model was then fitted to the selected data points to
 describe the relationship. Currently, many other procedures of fitting
@@ -124,18 +132,23 @@ regression and the censored bivariate normal methods. Similarly, data
 exploratory methods have been developed that provide evidence of
 boundary existence in a dataset which therefore, justifies the use of
 boundary line analysis on a data set (Milne <em>et al</em>. 2006).
-Colleagues of Webb (1972) who provided the initial data on which
-boundary line analysis was first applied were not convinced that the
+Colleagues of Webb (1972), who provided the initial data on which
+boundary line analysis was first applied, were not convinced that the
 data realized a boundary, hence the need for testing of data sets for
 presence of boundary. If a boundary exists in data set, it is expected
 that the distribution of points at the upper edges of data cloud would
 be clustered and not randomly distributed because response can not go
-beyond the observed boundary. Data sets that exhibit such a distribution
-qualify for use in boundary line analysis.</p>
-<p>The BLA package provides a group of functions to carryout boundary
-line analysis on a data set in R software. It includes functions to
-explore data, test evidence of boundary in a data set, fit the boundary
-line and do post-hoc analysis after fitting boundary line.</p>
+beyond the observed boundary. Evidence for such a distribution provides
+grounds for proceeding to a boundary line analysis, and Miti <em>et
+al</em>. (2024b) describe the method which this package provides to
+evaluate this evidence. It should be noted that more powerful testing
+against an alternative bivariate normal distribution can be done after
+fitting a boundary line model with the <code><a href="../reference/cbvn.html">cbvn()</a></code> function.</p>
+<p>The <code>BLA</code> package provides a group of functions to
+carryout boundary line analysis on a data set in <code>R</code>
+software. It includes functions to explore data, test evidence of
+boundary in a data set, fit the boundary line and do post-hoc analysis
+after fitting a boundary line.</p>
 </div>
 <div class="section level2">
 <h2 id="boundary-line-analysis-using-bla-package">Boundary line analysis using BLA package<a class="anchor" aria-label="anchor" href="#boundary-line-analysis-using-bla-package"></a>
@@ -143,14 +156,14 @@ line and do post-hoc analysis after fitting boundary line.</p>
 <div class="section level3">
 <h3 id="load-the-bla-package">Load the BLA package<a class="anchor" aria-label="anchor" href="#load-the-bla-package"></a>
 </h3>
-<p>With the BLA package installed, the first step is to load it to your
-R session using the <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> command.</p>
+<p>With the <code>BLA</code> package installed, the first step is to
+load it to your R session using the <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> command.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chawezimiti.github.io/BLA/">BLA</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: no DISPLAY variable so Tk is not available</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.uni-bielefeld.de/fakultaeten/wirtschaftswissenschaften/fakultaet/lehrende-ehemalige/pwolf/wolf_aplpack/index.xml" class="external-link">aplpack</a></span><span class="op">)</span></span></code></pre></div>
-<p>The package <code>aplpack</code> has also been loaded for outlier
-detection function <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot()</a></code>.</p>
+<p>The package <code>aplpack</code> has also been loaded for use in the
+outlier detection function <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot()</a></code>.</p>
 </div>
 <div class="section level3">
 <h3 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
@@ -158,8 +171,8 @@ detection function <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" 
 <p>The <code>BLA</code> package contains a data set called soil which
 consisting of soil pH, phosphorus and wheat yield measurements from
 farms in the UK. We will use this data set to illustrate the functions
-in the BLA package. To view the first six lines of the data, run the
-code below:</p>
+in the <code>BLA</code> package. To view the first six lines of the
+data, run the code below:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">soil</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      yield   pH  P</span></span>
@@ -174,27 +187,28 @@ code below:</p>
 <h3 id="exploratory-analysis">Exploratory analysis<a class="anchor" aria-label="anchor" href="#exploratory-analysis"></a>
 </h3>
 <p>An exploratory analysis is an important initial step in boundary line
-analysis. This step serve to show how the data is distributed using
-various indices and also check for outliers in the data set. If a
-variable in a dataset is skewed, especially in the independent variable,
-a transformation may be required so it can be assumed to be from a
-normal distribution. As the boundary line analysis is sensitive to
-outlying values, these must be identified and removed if required. The
-response variable, in this case P, you may expect to see a spike at the
-upper section of the distribution because of the clustering points but
-the rest of the data points must be normally distributed. Exploratory
-analysis also provides an objective test to check if the data meets the
-criteria for boundary line analysis as well as the form of model that
-can be fitted.</p>
+analysis. This step serves to show how the data are distributed using
+various indices and also to check for outliers in the data set. If a
+variable in a dataset is skewed, especially the independent variable, a
+transformation may be required so it can be assumed to be from a normal
+distribution. As the boundary line analysis is sensitive to outlying
+values, these must be identified and removed if required. Under the
+boundary line model we may expect to see non-normal variation of the
+response variable, in this case P, possibly with an increased density at
+the upper bound but the rest of the data points must appear as plausibly
+drawn from a normal distribution. Exploratory analysis, particularly
+using plots, and robust statistics such as the octile skewness, provides
+a basis to assess the plausibility of an underlying normal variable,
+perhaps with a censoring effect and whether a transformation is needed,
+as well as the form of model that can be fitted.</p>
 <div class="section level4">
 <h4 id="normality-test">Normality test<a class="anchor" aria-label="anchor" href="#normality-test"></a>
 </h4>
-<p>To check for the distribution of the data, the <code><a href="../reference/summa.html">summa()</a></code>
-function provides different indices which can be used to check for
-distribution normality of a given parameter. The function
-<code><a href="../reference/summaplot.html">summaplot()</a></code> give a graphical representation of the
-parameter distribution. Lets set the variables evapotranspiration and
-wheat yield in the data set to <em>x</em> and <em>y</em> respectively
+<p>To assess the distribution of the data, the <code><a href="../reference/summa.html">summa()</a></code>
+function provides different summary statistics. The function
+<code><a href="../reference/summaplot.html">summaplot()</a></code> give a graphical representation of the variable
+distribution. Let us set the variables P and wheat yield in the data set
+to <em><code>x</code></em> and <em><code>y</code></em> respectively
 before applying the <code><a href="../reference/summa.html">summa()</a></code> and <code><a href="../reference/summaplot.html">summaplot()</a></code>
 functions</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -211,12 +225,12 @@ functions</p>
 <span><span class="co">#&gt; [1,] 9.254813 9.36468   8.203703   10.39477 3.456026 1.859039 -0.4819805</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
 <span><span class="co">#&gt; [1,]     -0.05793291 1.292635            7</span></span></code></pre></div>
-<p>From the results, wheat yield (<em>y</em>) variables can be
-considered to be normally distributed while the soil P (<em>x</em>) is
-skewed. For a variable to be assumed to be from a normal distribution,
-the indices skewness should be between -1 to 1 and Octile skewness
-between -0.2 to 0.2. A graphical representation of the distribution can
-be checked using</p>
+<p>From the results, wheat yield (<em><code>y</code></em>) variables can
+be considered to be normally distributed while the soil P
+(<em><code>x</code></em>) is skewed. For a variable to be assumed to be
+from a normal distribution, the indices skewness should be between -1 to
+1 and Octile skewness between -0.2 to 0.2. A graphical representation of
+the distribution can be checked using</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summaplot.html">summaplot</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;"></p>
@@ -242,9 +256,11 @@ normal distribution.</p>
 <div class="section level4">
 <h4 id="outlier-detection-and-removal">Outlier detection and removal<a class="anchor" aria-label="anchor" href="#outlier-detection-and-removal"></a>
 </h4>
-<p>Outliers are identified using the bagplot method. A bag plot is a
-multivariate equivalent of a box plot. The bagplot has three main
-components. There include</p>
+<p>Outliers are identified using the bagplot method (Rousseeuw <em>et
+al</em>., 1999. A bag plot is a multivariate equivalent of a box plot.
+We utilise the <code>bagplo()</code> function from the
+<code>aplpack</code> package to produce bagplots.The bagplot has three
+main components. There are</p>
 <ol style="list-style-type: decimal">
 <li><p><strong>depth median</strong> which represent the center of the
 data cloud. This is equivalent to the median in a univariate
@@ -271,8 +287,9 @@ loop</p></li>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">bag</span><span class="op">$</span><span class="va">pxy.bag</span>,<span class="va">bag</span><span class="op">$</span><span class="va">pxy.outer</span><span class="op">)</span> <span class="co"># to remove outliers, select points in the bag and loop only</span></span></code></pre></div>
-<p>The variables <em>x</em> and <em>y</em> and now be extracted from the
-results of the bag plot with outliers removed</p>
+<p>The variables <em><code>x</code></em> and <em><code>y</code></em> and
+now be extracted from the results of the bag plot with outliers
+removed</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span><span class="op">&lt;-</span><span class="va">vals</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
 <span><span class="va">y</span><span class="op">&lt;-</span><span class="va">vals</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span></code></pre></div>
@@ -280,21 +297,22 @@ results of the bag plot with outliers removed</p>
 <div class="section level4">
 <h4 id="test-for-presence-of-boundary-in-dataset">Test for presence of boundary in dataset<a class="anchor" aria-label="anchor" href="#test-for-presence-of-boundary-in-dataset"></a>
 </h4>
-<p>To check if the data constitutes a boundary, the function
-<code>exp_boundary()</code> can be used. This function determines
-evidence of boundary in data set when compared against an unbounded
-bivariate normally distributed data. The standard deviation
-(<em>sd</em>) of the the euclidean distance of the boundary points to
-the center of the data set is used to measure the density of the points
-at the upper edges of the data. The smaller the <em>sd</em> value, the
-denser the distribution. This function uses the principle of convex hull
-to select the points at the upper boundary. The default is selecting the
-first 10 consecutive convex hulls (<code>shells=10</code>). The convex
-hulls are then splits into two sections, the right and left sections,
-and evidence of boundary existence in both sections is checked by
-determining the probability of having the observed density of points at
-the upper edges of the data given that it is not bounded. We take 0.05
-probability as the significance level.</p>
+<p>The function <code>exp_boundary()</code> can be used to evaluate
+evidence that observations are clustered near an upper boundary in a
+data set, testing this against an unbounded bivariate normal
+distribution as a null hypothesis. The standard deviation (<em>sd</em>)
+of the the Euclidean distance of the boundary points to the centre of
+the data set is used to measure the density of the points at the upper
+edges of the data. The smaller the <em>sd</em> value, the denser the
+distribution. This function uses the convex hull to select the points at
+the upper boundary. The default is selecting the first 10 consecutive
+convex hulls (<code>shells=10</code>). The convex hulls are then splits
+into two sections, the right and left sections, and evidence of boundary
+existence in both sections is checked by determining the probability of
+having the observed density of points at the upper edges of the data
+under the bivariate normal null hypothesis. More detail is provided by
+Miti <em>et al</em>. 2024b. We reject the null hypothesis if p&lt;
+0.05.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bound_test</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/expl_boundary.html">expl_boundary</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,shells <span class="op">=</span> <span class="fl">10</span>, simulations <span class="op">=</span> <span class="fl">100</span>, </span>
 <span>                          pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="co"># </span></span>
@@ -310,8 +328,8 @@ probability as the significance level.</p>
 <span><span class="co">#&gt; 4 Mean sd   Right 1.268895</span></span>
 <span><span class="co">#&gt; 5 p_value    Left 0.010000</span></span>
 <span><span class="co">#&gt; 6 p_value   Right 0.010000</span></span></code></pre></div>
-<p>The p-values in the left and right section is 0.01 and 0.01
-respectively. The results indicate evidence of boundary in both the left
+<p>The p-values in the left and right sections are both less than 0.05.
+These results indicate evidence of an upper boundary in both the left
 and right sections of the scatter. This suggests that there is a
 justification to fitting the boundary to the data. A graphical
 representation of the scatter plot with the boundary points is also
@@ -323,13 +341,15 @@ unbounded data .</p>
 <div class="section level3">
 <h3 id="fitting-boundary-line-using-different-methods">Fitting boundary line using different methods<a class="anchor" aria-label="anchor" href="#fitting-boundary-line-using-different-methods"></a>
 </h3>
-<p>From the exploratory tests, they indicated that the data provides
-evidence of boundary, there are no outliers and the variables,
-<em>x</em> and <em>y</em>, are normally distributed. We therefore,
-proceed to fit a boundary line model to the data set. There are several
-methods that can be used to fit a boundary line to the data set which
-can be classified as Heuristic (BOLIDES, Binning &amp; quantile
-regression) and statistical methods (censored bivariate normal).</p>
+<p>The exploratory tests indicated that the data provides evidence of an
+upper boundary, there are no outliers and the variables,
+<em><code>x</code></em> and <em><code>y</code></em>, appear normally
+distributed. We therefore, proceed to fit a boundary line model to the
+data set. There are several methods that can be used to fit a boundary
+line to the data set which can be classified as heuristic (BOLIDES,
+Binning &amp; quantile regression) and statistical methods (censored
+bivariate normal). Miti <em>et al.</em> (2024a) give more detail on each
+of these methods.</p>
 <div class="section level4">
 <h4 id="bolides-algorithm">BOLIDES algorithm<a class="anchor" aria-label="anchor" href="#bolides-algorithm"></a>
 </h4>
@@ -340,14 +360,15 @@ fit the boundary line using the BOLIDES algorithm , the
 arguments for the function, the help page can be launched.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">BOLIDES</span></span></code></pre></div>
-<p>The arguments <code>x</code> and <code>y</code> are the independent
-and dependent variable respectively and <code>theta</code> is a vector
-of starting values . The <code>model</code> argument is used to specify
-the model of the boundary line e.g. “blm” for the linear model. The
-<code>xmax</code> is an argument that describes the maximum value of the
-independent variable beyond which the relation of <code>x</code> and
-<code>y</code> is no longer theoretically feasible. Other arguments
-relate to the plot parameters as in the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>
+<p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
+the independent and dependent variable respectively and
+<code>theta</code> is a vector of starting values . The
+<code>model</code> argument is used to specify the model of the boundary
+line e.g. “blm” for the linear model. The <code>xmax</code> is an
+argument that describes the maximum value of the independent variable
+beyond which the relation of <em><code>x</code></em> and
+<em><code>y</code></em> is no longer theoretically feasible. Other
+arguments relate to the plot parameters as in the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>
 function.</p>
 <p>All boundary fitting methods require initial starting values for the
 parameters of a proposed model. The initial starting values are
@@ -374,11 +395,11 @@ more information on <code><a href="../reference/startValues.html">startValues()<
 <code>?startValues()</code>.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>With a scatter plot of <code>y</code> against <code>x</code> active
-in the plot window in <code>R</code>, run the function
-<code>startValues("trapezium")</code>, then click on the plot, five
-boundary points that follow the trapezium model in order of increasing
-<code>x</code> values.</p>
+<p>With a scatter plot of <em><code>y</code></em> against
+<em><code>x</code></em> active in the plot window in <code>R</code>, run
+the function <code>startValues("trapezium")</code>, then use the mouse
+to click on the plot at five boundary points that follow the trapezium
+model in order of increasing <em><code>x</code></em> values.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span> <span class="co"># then select the five points at the edge of the dataset that make up the trapezium model in order of increasing x values.</span></span></code></pre></div>
@@ -417,12 +438,12 @@ function can be run</p>
 model. There is no uncertainty in the parameters because this is a
 heuristic method.</p>
 <p>These parameters can then be used to determine boundary line response
-for any given value of <code>x</code>. Say you want to predict the
-maximum possible yield response at soil P values of 4.5, 7.4, 12.2, 20.1
-and 54.5 mg/kg. Remember that our model was fitted on values of log soil
-P and therefore, these values must first be log transformed before the
-prediction is made. We can use the function <code><a href="../reference/predictBL.html">predictBL()</a></code> for
-this purpose. For more information on this function, see
+for any given value of <em><code>x</code></em>. Say you want to predict
+the maximum possible yield response at soil P values of 4.5, 7.4, 12.2,
+20.1 and 54.5 mg/kg. Remember that our model was fitted on values of log
+soil P and therefore, these values must first be log transformed before
+the prediction is made. We can use the function <code><a href="../reference/predictBL.html">predictBL()</a></code>
+for this purpose. For more information on this function, see
 <code>?predictBL()</code> .</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -447,15 +468,16 @@ check the required arguments for the function, the help page can be
 launched.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">blbin</span></span></code></pre></div>
-<p>The arguments <code>x</code> and <code>y</code> are the independent
-and dependent variable respectively and <code>theta</code> is a vector
-of starting values . The <code>model</code> argument is used to specify
-the model of the boundary line e.g. <code>model="blm"</code> for the
-linear model. The <code>bins</code> argument describes the size of the
-bins with a vector of length 3 containing the minimum and maximum
-independent variable values, and the size of bins to be used for the
-data respectively. We assume that the 99<span class="math inline">\(^{\rm th}\)</span> percentile
-(<code>tau=0.99</code>) is the boundary.</p>
+<p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
+the independent and dependent variable respectively and
+<code>theta</code> is a vector of starting values . The
+<code>model</code> argument is used to specify the model of the boundary
+line e.g. <code>model="blm"</code> for the linear model. The
+<code>bins</code> argument describes the size of the bins with a vector
+of length 3 containing the minimum and maximum independent variable
+values, and the size of bins to be used for the data respectively. We
+assume that the 99<span class="math inline">\(^{\rm th}\)</span>
+percentile (<code>tau=0.99</code>) is the boundary.</p>
 <p>The initial start theta values can be determined as previously shown
 in the previous section</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -508,8 +530,8 @@ function can now be run.</p>
 <p>The results show that the optimized parameters and plot. There is no
 uncertainty in the parameters because this is a heuristic method. These
 parameters can then be used to determine boundary line response for any
-given value of <code>x</code> using the <code><a href="../reference/predictBL.html">predictBL()</a></code>
-function.</p>
+given value of <em><code>x</code></em> using the
+<code><a href="../reference/predictBL.html">predictBL()</a></code> function.</p>
 </div>
 <div class="section level4">
 <h4 id="quantile-regression-method">Quantile regression method<a class="anchor" aria-label="anchor" href="#quantile-regression-method"></a>
@@ -521,20 +543,22 @@ used. To check the required arguments for the function, the help page
 can be launched.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">blqr</span></span></code></pre></div>
-<p>The arguments <code>x</code> and <code>y</code> are the independent
-and dependent variable respectively and <code>theta</code> is a vector
-of starting values . The <code>model</code> argument is used to specify
-the model of the boundary line e.g. “blm” for the linear model. The
-argument <code>tau</code> describes the quantile value described as
-boundary. We assume that the 99<span class="math inline">\(^{th}\)</span> quantile (<code>tau=0.99</code>)
-value is the boundary.</p>
+<p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
+the independent and dependent variable respectively and
+<code>theta</code> is a vector of starting values . The
+<code>model</code> argument is used to specify the model of the boundary
+line e.g. “blm” for the linear model. The argument <code>tau</code>
+describes the quantile value described as boundary. We assume that the
+99<span class="math inline">\(^{\rm th}\)</span> quantile
+(<code>tau=0.99</code>) value is the boundary. This is an arbitrary
+assumption, and for this reason we treat the method as heuristic.</p>
 <p>The initial start theta values can be determined as previously shown
 in the previous section. however, the <code><a href="../reference/blqr.html">blqr()</a></code> function does
 not have the explore option and hence the <code><a href="../reference/startValues.html">startValues()</a></code>
-function is used just on the plot of <code>x</code> and <code>y</code>
-directly according to the suggested model from the structure at the
-upper edge of the data. The trapezium model will be used for this
-data.</p>
+function is used just on the plot of <em><code>x</code></em> and
+<em><code>y</code></em> directly according to the suggested model from
+the structure at the upper edge of the data. The trapezium model will be
+used for this data.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
@@ -570,17 +594,19 @@ data.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $RSS</span></span>
 <span><span class="co">#&gt; [1] 252.7349</span></span></code></pre></div>
-<p>The results show that the optimized parameters and plot. There is no
-uncertainty in the parameters because this is a heuristic method. These
-parameters can then be used to determine boundary line response for any
-given value of <code>x</code> using the <code><a href="../reference/predictBL.html">predictBL()</a></code>
-function.</p>
+<p>The results show that the optimized parameters and plot. The quantile
+regression method will produce measures of uncertainty for parameters,
+but BLA does not report these because they are conditional on the
+arbitrary choice of <code>tau</code>. These parameters can then be used
+to determine boundary line response for any given value of
+<em><code>x</code></em> using the <code><a href="../reference/predictBL.html">predictBL()</a></code> function.</p>
 </div>
 <div class="section level4">
 <h4 id="censored-bivariate-normal-model">Censored bivariate normal model<a class="anchor" aria-label="anchor" href="#censored-bivariate-normal-model"></a>
 </h4>
 <p>To fit the boundary line using the Censored bivariate normal model
-method, see the <code>vignette("cbvn_use")</code>.</p>
+method, see the
+<code><a href="../articles/Censored_bivariate_normal_model.html">vignette("Censored_bivariate_normal_model")</a></code>.</p>
 </div>
 <div class="section level4">
 <h4 id="using-your-own-defined-model">Using your own defined model<a class="anchor" aria-label="anchor" href="#using-your-own-defined-model"></a>
@@ -650,7 +676,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; function(x,a,b,c){</span></span>
 <span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55c08bf9e718&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x556b9dc76048&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
@@ -661,9 +687,9 @@ equation is now set to your custom function
 <span><span class="co">#&gt; $RMS</span></span>
 <span><span class="co">#&gt; [1] 0.5166668</span></span></code></pre></div>
 <p>The parameters of the models are shown in the results. A prediction
-of the boundary response values for each value of <code>x</code> can the
-be done as previously shown using the <code><a href="../reference/predictBL.html">predictBL()</a></code>
-function.</p>
+of the boundary response values for each value of
+<em><code>x</code></em> can the be done as previously shown using the
+<code><a href="../reference/predictBL.html">predictBL()</a></code> function.</p>
 </div>
 </div>
 <div class="section level3">
@@ -686,27 +712,35 @@ value.</p>
 <ol style="list-style-type: decimal">
 <li><p>Cade, B. S., &amp; Noon, B. R. (2003). A gentle introduction to
 quantile regression for ecologists. Frontiers in Ecology and the
-Environment, 1(8), 412-420.</p></li>
+Environment, 1(8), 412-420. <a href="https://doi.org/10.1890/1540-9295(2003)001%5B0412:AGITQR%5D2.0.CO;2" class="external-link uri">https://doi.org/10.1890/1540-9295(2003)001[0412:AGITQR]2.0.CO;2</a></p></li>
 <li><p>Fermont, A. M., Van Asten, P. J., Tittonell, P., Van Wijk, M. T.,
 &amp; Giller, K. E. (2009). Closing the cassava yield gap: an analysis
 from smallholder farms in east africa. Field Crops Research, 112 (1),
-24–36.</p></li>
+24–36. <a href="https://doi.org/10.1016/j.fcr.2009.01.009" class="external-link uri">https://doi.org/10.1016/j.fcr.2009.01.009</a></p></li>
 <li><p>Lark, R. M., Gillingham, V., Langton, D., &amp; Marchant, B. P.
 (2020). Boundary line models for soil nutrient concentrations and wheat
 yield in national-scale datasets. European Journal of Soil Science, 71 ,
-334-351.</p></li>
+334-351. <a href="https://doi.org/10.1111/ejss.12891" class="external-link uri">https://doi.org/10.1111/ejss.12891</a></p></li>
 <li><p>Milne, A. E., Wheeler, H. C., &amp; Lark, R. M. (2006). On
 testing biological data for the presence of a boundary. Annals of
-Applied Biology, 149 , 213-222. doi:<a href="https://doi.org/10.1111/j.1744-7348.2006.00085.x" class="external-link uri">https://doi.org/10.1111/j.1744-7348.2006.00085.x</a></p></li>
+Applied Biology, 149 , 213-222. <a href="https://doi.org/10.1111/j.1744-7348.2006.00085.x" class="external-link uri">https://doi.org/10.1111/j.1744-7348.2006.00085.x</a></p></li>
+<li><p>Miti, C., Milne, A., Giller, K., Sadras, V., &amp; Lark, R.
+(2024). Exploration of data for analysis using boundary line
+methodology. Computers and Electronics in Agriculture, 219. <a href="https://doi.org/10.1016/j.compag.2024.108794" class="external-link uri">https://doi.org/10.1016/j.compag.2024.108794</a></p></li>
+<li><p>Miti, C., Milne, A., Giller, K., &amp; Lark, R. (2024). The
+concepts and quantification of yield gap using boundary lines. a review.
+Field Crops Research, 311. <a href="https://doi.org/10.1016/j.fcr.2024.109365" class="external-link uri">https://doi.org/10.1016/j.fcr.2024.109365</a>.</p></li>
+<li><p>Rousseeuw, P. J., Ruts, I., &amp; Tukey, J. W. (1999). The
+bagplot: A bivariate boxplot. The American Statistician, 53, 382–387. <a href="https://doi.org/10.1080/00031305.1999.10474494" class="external-link uri">https://doi.org/10.1080/00031305.1999.10474494</a></p></li>
 <li><p>Shatar, T. M., &amp; McBratney, A. B. (2004). Boundary-line
 analysis of field-scale yield response to soil properties. Journal of
-Agricultural Science, 142 , 553-560. doi: <a href="https://doi.org/10.1017/S0021859604004642" class="external-link uri">https://doi.org/10.1017/S0021859604004642</a></p></li>
+Agricultural Science, 142 , 553-560. <a href="https://doi:10.1017/S0021859604004642" class="external-link uri">https://doi:10.1017/S0021859604004642</a></p></li>
 <li><p>Schnug, E., Heym, J. M., &amp; Murphy, D. P. L. (1995). Boundary
 line determination technique (bolides). In P. C. Robert, R. H. Rust,
 &amp; W. E. Larson (Eds.), site specific management for agricultural
-systems (p. 899-908). Wiley Online Library. doi: <a href="https://doi.org/10.2134/1995.site-specificmanagement.c66" class="external-link uri">https://doi.org/10.2134/1995.site-specificmanagement.c66</a></p></li>
+systems (p. 899-908). Wiley Online Library. <a href="https://doi.org/10.2134/1995.site-specificmanagement.c66" class="external-link uri">https://doi.org/10.2134/1995.site-specificmanagement.c66</a></p></li>
 <li><p>Webb, R. A. (1972). Use of the boundary line in analysis of
-biological data. Journal of Horticultural Science, 47, 309–319.</p></li>
+biological data. Journal of Horticultural Science, 47, 309–319. <a href="https://doi.org/10.1080/00221589.1972.11514472" class="external-link uri">https://doi.org/10.1080/00221589.1972.11514472</a></p></li>
 </ol>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

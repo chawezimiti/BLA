@@ -97,22 +97,23 @@
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>The censored bivariate normal model (Lark and Milne, 2016) is a
-statistical method of fitting the boundary line to data. It fits the
+statistical method to fit the boundary line to data. It fits the
 boundary line using the maximum likelihood approach on a censored
-bivariate distribution. This removes the subjectivity mostly associated
-with the other boundary line fitting methods ( BOLIDES, Binning and
-quantile regression) of selecting boundary points to which the boundary
-line is fitted. It also gives evidence for presence of boundary in a
-data set. This method has been previously used to fit boundary lines to
-data on nitrous oxide emission as a function of soil moisture (Lark and
-Milne, 2016) and, Wheat yield as a function of Nutrient concentration
-(Lark <em>et al.</em> 2020). An <code>R</code> package,
-<code>BLA</code>, contains exploratory and boundary fitting functions
-that can be used in the process of fitting a boundary line to data using
-censored bivariate normal model. This vignette gives a step by step
-process for fitting the boundary line and subsequent post-hoc analysis.
-In this demonstration, the data set soil will be used and boundary line
-analysis will be carried out on soil P and pH.</p>
+bivariate distribution. This removes the subjectivity associated with
+the other boundary line fitting methods ( BOLIDES, Binning and quantile
+regression) of selecting boundary points to which the boundary line is
+fitted or specifying an arbitrary quantile to model. It also gives
+evidence for the presence of boundary in a data set against a bivariate
+normal null distribution. This method has been previously used to fit
+boundary lines to data on nitrous oxide emission as a function of soil
+moisture (Lark and Milne, 2016) and, wheat yield as a function of
+nutrient concentration (Lark <em>et al.</em> 2020). An <code>R</code>
+package, <code>BLA</code>, contains exploratory and boundary fitting
+functions that can be used in the process of fitting a boundary line to
+data using the censored bivariate normal model. This vignette gives a
+step by step process for fitting the boundary line and subsequent
+post-hoc analysis. In this demonstration, the data set soil will be used
+and boundary line analysis will be carried out on soil P and pH.</p>
 </div>
 <div class="section level2">
 <h2 id="installing-dependent-packages">Installing dependent packages<a class="anchor" aria-label="anchor" href="#installing-dependent-packages"></a>
@@ -157,17 +158,21 @@ most limiting factor will be determined.</p>
 <p>Exploratory analysis is an essential initial step in fitting a
 boundary line to data. This step ensures that the assumptions for the
 censored bivariate normal model are met. Three exploratory procedures
-are performed on the data which include (1) Testing for normality of
-variables, (2) Removal of outliers, and (3) Testing for evidence of
-boundary in the data.</p>
-<p>1. Testing for normality of independent and dependent variable</p>
+are performed on the data which include (1) Assessing the plausibility
+of normality of variables, (2) Removal of outliers, and (3) Testing for
+evidence of boundary in the data.</p>
+<p>1. Assessing normality of independent and dependent variable</p>
 <p>Boundary line model fitting using <code><a href="../reference/cbvn.html">cbvn()</a></code> requires that
-the independent (<code>x</code>) and dependent (<code>y</code>)
-variables are normally distributed. The <code><a href="../reference/summa.html">summa()</a></code> function
-gives indices of the distribution of a variable. A variable is assumed
-to be normally distributed if the skewness index is between -1 and 1.
-The <code><a href="../reference/summaplot.html">summaplot()</a></code> function gives a visual description of the
-distribution.</p>
+the independent (<em><code>x</code></em>) and dependent
+(<em><code>y</code></em>) variables are normally distributed albeit with
+censoring of the variable <em><code>y</code></em>. The
+<code><a href="../reference/summa.html">summa()</a></code> function gives summary statistics of the
+distribution of a variable. The octile skewness is a robust measure of
+skew, and we expect its absolute value to be less than 0.2 for a
+normally distributed variable. We also assess plots of the data, bearing
+in mind that the dependent variable may be subject to censoring of large
+values under our target model. The <code><a href="../reference/summaplot.html">summaplot()</a></code> function
+gives a visual description of the distribution.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">P</span></span>
 <span><span class="va">y</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">yield</span></span>
@@ -228,72 +233,70 @@ contains points outside the bag but are not outliers.</p>
 <span><span class="va">x</span><span class="op">&lt;-</span><span class="va">dat</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> </span>
 <span><span class="va">y</span><span class="op">&lt;-</span><span class="va">dat</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span></code></pre></div>
 <p>3. Testing data for presence of boundary</p>
-<p>It is important to note that not all data are suitable for boundary
-line analysis. Data used in boundary line analysis should exhibit some
-form of boundary on its edges (to satisfy the assumption that this is
-response when other factors are not limiting). If a boundary exists in a
-data set, it is expected that points at the upper edges of the data
-cloud will be close to each other compared to a bivariate normally
-distributed data for which data points at the upper edges are only due
-to random error. A boundary can be assumed in a data set if there is
-evidence of clustering at the upper edges. The
-<code><a href="../reference/expl_boundary.html">expl_boundary()</a></code> function, which is based on the convex
-hull, can be used to access presence of boundary (Milne et al, 2006).
-This function checks probability of the observed clustering if it came
-from a bivariate normal distribution (p-value).</p>
+<p>If a boundary exists in a data set, it is expected that there will be
+some clustering of observations at the upper edges of the data cloud
+compared to a bivariate normally distributed data for which data points
+at the upper edges are sparse because of the small probability density .
+A boundary can be assumed in a data set if there is evidence of
+clustering at the upper edges. The <code><a href="../reference/expl_boundary.html">expl_boundary()</a></code>
+function, which is based on the convex hull, can be used to access
+presence of boundary (Miti <em>et al</em>, 2024). This function checks
+probability of the observed clustering if it came from a bivariate
+normal distribution (p-value).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/expl_boundary.html">expl_boundary</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="co"># may take a few minutes to complete</span></span></code></pre></div>
-<p>From the results, the probability (p-value) of the having points
-close to each other as in our data if it came from a bivariate normally
-distributed data is less than 5%. Therefore, there is evidence of
-bounding effects in the data in the right and left sections of the data.
-Note that, in the plot, the data is split into right and left sections
-to get more information on the clustering nature of points.</p>
+<p>From the results, the probability (<em>p</em>-value) of the having
+points close to each other as in our data if it came from a bivariate
+normally distributed data is less than 5%. Therefore, there is evidence
+of bounding effects in the data in the right and left sections of the
+data. Note that, in the plot, the data is split into right and left
+sections to get more information on the clustering nature of points.</p>
 </div>
 <div class="section level4">
 <h4 id="fitting-the-boundary-line-to-data">Fitting the boundary line to data<a class="anchor" aria-label="anchor" href="#fitting-the-boundary-line-to-data"></a>
 </h4>
-<p>From the exploratory tests, they indicated that the data provides
-evidence of boundary existence, outliers have been identified and
-removed, and the variables <em><code>x</code></em> and
-<em><code>y</code></em> are normally distributed. We therefore, proceed
-to fit a boundary line model to the data set using the censored
-bivariate normal model. The function <em><code><a href="../reference/cbvn.html">cbvn()</a></code></em> fits
-the boundary line to the data. For more information about the arguments
-of this function, check</p>
+<p>The exploratory tests indicated that the data provide evidence of a
+boundary, outliers have been identified and removed, and the variables
+<em><code>x</code></em> and <em><code>y</code></em> are normally
+distributed. We therefore proceed to fit a boundary line model to the
+data set using the censored bivariate normal model. The function
+<code><a href="../reference/cbvn.html">cbvn()</a></code> fits the boundary line to the data. For more
+information about the arguments of this function, check</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">cbvn</span></span></code></pre></div>
-<p>Argument values for the function <em><code><a href="../reference/cbvn.html">cbvn()</a></code></em> need to
-be set . Firstly, create a data-frame containing <em>x</em> and
-<em>y,</em> called <code>vals</code>.</p>
+<p>Argument values for the function <code><a href="../reference/cbvn.html">cbvn()</a></code> need to be set .
+Firstly, create a data-frame containing <em><code>x</code></em> and
+<em><code>y</code></em>, called <code>vals</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="co">#This is an input dataframe containing the variables</span></span></code></pre></div>
-<p>Secondly, the <em><code><a href="../reference/cbvn.html">cbvn()</a></code></em> requires initial starting
-values, <em><code>theta</code></em>, which are parameters of the
-boundary line (the censor) and the bivariate normal distribution.
-Starting values of the boundary line depend on the model that one wishes
-to fit to the data (see options in <em><code><a href="../reference/cbvn.html">?cbvn</a></code></em>) . In
-this case, we shall fit a linear+Plateau model (lp) and hence the
-parameters are the plateau value and the intercept and slope of the
-linear component. The boundary line start values can be obtained using
-the function <em><code><a href="../reference/startValues.html">startValues()</a></code>.</em> For more information
-on the <em><code><a href="../reference/startValues.html">startValues()</a></code></em> function run the code
-<em><code><a href="../reference/startValues.html">?startValues</a></code></em>. With a scatter plot of <em>y</em>
-against <em>x</em> active in the plot window in <code>R</code>, run the
-function <em><code>start.values("lp")</code></em>, then click on the
-plot, the point you expect to be the lowest and the largest response of
-a linear model at the boundary. Note that starting values for other
-models can be determined by changing the model name from “lp” to the
-desired models (see <em><code><a href="../reference/startValues.html">?startValues</a></code></em> help file).</p>
+<p>Secondly, the <code><a href="../reference/cbvn.html">cbvn()</a></code> requires initial starting values,
+<code>theta</code>, which are parameters of the boundary line (the
+censor) and the bivariate normal distribution. Starting values of the
+boundary line depend on the model that one wishes to fit to the data
+(see options in <code><a href="../reference/cbvn.html">?cbvn</a></code>) . In this case, we shall fit a
+linear+plateau model (lp) and hence the parameters are the plateau value
+and the intercept and slope of the linear component. The boundary line
+start values can be obtained using the function
+<code><a href="../reference/startValues.html">startValues()</a></code>. For more information on the
+<code><a href="../reference/startValues.html">startValues()</a></code> function run the code
+<code><a href="../reference/startValues.html">?startValues</a></code>. With a scatter plot of
+<em><code>y</code></em> against <em><code>x</code></em> active in the
+plot window in <code>R</code>, run the function
+<code>start.values("lp")</code>, then click on the plot, the point you
+expect to be the lowest and the largest response of a linear model at
+the boundary. Note that starting values for other models can be
+determined by changing the model name from “lp” to the desired models
+(see <code><a href="../reference/startValues.html">?startValues</a></code> help file).</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"lp"</span><span class="op">)</span> </span></code></pre></div>
 <p>Next, determine the parameters of the bivariate normal distribution
-which include the means of the <em>x</em> and <em>y</em> variables,
-standard deviation of the <em>x</em> and <em>y</em> variables, and the
-correlation of <em>x</em> and <em>y</em>.</p>
+which include the means of the <em><code>x</code></em> and
+<em><code>y</code></em> variables, standard deviation of the
+<em><code>x</code></em> and <em><code>y</code></em> variables, and the
+correlation of <em><code>x</code></em> and <em><code>y</code></em>.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 3.125969</span></span>
@@ -311,20 +314,21 @@ correlation of <em>x</em> and <em>y</em>.</p>
 <span></span>
 <span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>,<span class="fl">3</span>,<span class="fl">9</span>,<span class="fl">0.5</span>,<span class="fl">1.9</span>,<span class="fl">0.05</span><span class="op">)</span> </span></code></pre></div>
 <p>Another important argument is the standard deviation of the
-measurement error, <em><code>sigh</code></em>. This value can be
-obtained from standard deviation of repeated measurements of the sample
-if this data is available. However, in cases when it is not available,
-it can be estimated using different options. One option of estimation is
-to use a variogram if the location data (<em>x y</em> co-ordinate) is
-available. In that case, nugget variance which is the unexplained short
-distance variations can be taken as an estimate of the measurement
-error. If this is not possible, a profiling procedure can be done. This
-is done by fitting a proposed model using a varied number of
-<em><code>sign</code></em> values while keeping the rest of the model
-parameters constant. The log-likelihood values of the model for each
-<em>sign</em> are determined and the value that maximizes the likelihood
-can be selected from the log-likelihood profile. This can be implemented
-using the <em><code><a href="../reference/ble_profile.html">ble_profile()</a></code></em> function. For more
+measurement error, <code>sigh</code>, of the response variable
+<code>y</code>. In some cases this might be estimated from observations
+of analytical duplicates, or experiments to determine measurement error
+for variables such as crop yield (e.g. Kosmowski <em>et al</em>. 2021).
+However, in cases when this is not available, it can be estimated using
+different options. One option of estimation is to use a variogram if the
+location data for samples is available. In that case, nugget variance
+which is the unexplained short distance variations can be taken as an
+estimate of the measurement error. If this is not possible, a profiling
+procedure can be done. This is done by fitting a proposed model using a
+varied number of <code>sigh</code> values while keeping the rest of the
+model parameters constant. The log-likelihood values of the model for
+each <code>sigh</code> are determined and the value that maximizes the
+likelihood can be selected from the log-likelihood profile. This can be
+implemented using the <code><a href="../reference/ble_profile.html">ble_profile()</a></code> function. For more
 information on this function run</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">ble_profile</span></span></code></pre></div>
@@ -336,7 +340,7 @@ and we can check the likelihood profile.</p>
 <span><span class="fu"><a href="../reference/ble_profile.html">ble_profile</a></span><span class="op">(</span><span class="va">vals</span>,<span class="va">theta</span>,<span class="va">sigh</span>,model <span class="op">=</span> <span class="st">"lp"</span><span class="op">)</span> <span class="co"># may take a few minutes to run for large datasets</span></span></code></pre></div>
 <p>From the likelihood profile, the <code>sigh</code> that maximizes the
 likelihood is around 0.65. We can use this for the value of
-<em><code>sigh</code></em>. Now that all the arguments required for
+<code>sigh</code>. Now that all the arguments required for
 <code><a href="../reference/cbvn.html">cbvn()</a></code> function are set, the boundary line can be
 fitted</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -372,13 +376,13 @@ fitted</p>
 corresponding standard error values are obtained. However, there is one
 question that needs to be addressed before we proceed,</p>
 <p>Is the boundary line ideal for this data?</p>
-<p>While fitting the BL model to the data, the
-<em><code><a href="../reference/cbvn.html">cbvn()</a></code></em> also fits a bivariate normal model with no
-boundary and calculates it <code>AIC</code> value. From our output, the
-<code>AIC</code> value of the BL model is lower than that of the
-bivariate normal model. Therefore, the BL model is appropriate. The
-parameters of the boundary line can now be used to predict the boundary
-yield given the value of P.</p>
+<p>While fitting the BL model to the data, the <code><a href="../reference/cbvn.html">cbvn()</a></code> also
+fits a bivariate normal model with no boundary and calculates it
+<code>AIC</code> value. From our output, the <code>AIC</code> value of
+the BL model is lower than that of the bivariate normal model.
+Therefore, the BL model is appropriate. The parameters of the boundary
+line can now be used to predict the boundary yield given the value of
+P.</p>
 <p>The function <code><a href="../reference/predictBL.html">predictBL()</a></code> in the BLA package can be used
 for this. For more information about the function, see</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
@@ -444,26 +448,26 @@ evidence of boundary existence, outliers have been identified and
 removed, and the variables <em><code>x</code></em> and
 <em><code>y</code></em> are normally distributed. We therefore, proceed
 to fit a boundary line model to the data set using the censored
-bivariate normal model. The function <em><code><a href="../reference/cbvn.html">cbvn()</a></code></em> fits
-the boundary line to the data.</p>
-<p>We determine the argument values for the function
-<em><code><a href="../reference/cbvn.html">cbvn()</a></code></em> as before . Firstly, create a data-frame
-containing <em><code>x</code></em> and <em><code>y</code>,</em> called
+bivariate normal model. The function <code><a href="../reference/cbvn.html">cbvn()</a></code> fits the
+boundary line to the data.</p>
+<p>We determine the argument values for the function <code><a href="../reference/cbvn.html">cbvn()</a></code>
+as before . Firstly, create a data-frame containing
+<em><code>x</code></em> and <em><code>y</code>,</em> called
 <code>vals</code>.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="co">#This is an input dataframe containing the variables</span></span></code></pre></div>
-<p>Secondly, the <em><code><a href="../reference/cbvn.html">cbvn()</a></code></em> requires initial starting
-values, <em><code>theta</code></em>, which are parameters of the
-boundary line (the censor) and the bivariate normal distribution. In
-this case, we shall fit a linear+Plateau model (lp) and hence the
-parameters are the plateau value and the intercept and slope of the
-linear component. With a scatter plot of <em><code>y</code></em> against
+<p>Secondly, the <code><a href="../reference/cbvn.html">cbvn()</a></code> requires initial starting values,
+<em><code>theta</code></em>, which are parameters of the boundary line
+(the censor) and the bivariate normal distribution. In this case, we
+shall fit a linear+Plateau model (lp) and hence the parameters are the
+plateau value and the intercept and slope of the linear component. With
+a scatter plot of <em><code>y</code></em> against
 <em><code>x</code></em> active in the plot window in <code>R</code>, run
-the function <em><code>start.values("lp")</code></em>, then click on the
-plot, the point you expect to be the lowest and the largest response of
-a linear model at the boundary. Note that starting values for other
-models can be determined by changing the model name from “lp” to the
-desired models (see <em><code><a href="../reference/startValues.html">?startValues</a></code></em> help file)</p>
+the function <code>start.values("lp")</code>, then click on the plot,
+the point you expect to be the lowest and the largest response of a
+linear model at the boundary. Note that starting values for other models
+can be determined by changing the model name from “lp” to the desired
+models (see <code><a href="../reference/startValues.html">?startValues</a></code> help file)</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span></span>
@@ -545,7 +549,7 @@ pH.</p>
 limiting factor in many yield gap analysis studies. This is according to
 the von Liebig (1840) law of the minimum</p>
 <p><span class="math display">\[
-y=min(f_1(x_1),f_2(x_2),...,f_n(x_n))
+y={\rm min}(f_1(x_1),f_2(x_2),...,f_n(x_n))
 \]</span></p>
 <p>In the BLA package, the function <code><a href="../reference/limfactor.html">limfactor()</a></code> can be used
 to determine the most limiting factor at each point. For more
@@ -591,7 +595,7 @@ yield by the most limiting factor against the actual yield.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomleft"</span>,legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Att yield"</span>, <span class="st">"1:1 line"</span><span class="op">)</span>,</span>
 <span>       lty<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">)</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"red"</span><span class="op">)</span>, lwd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-26-1.png" width="384" style="display: block; margin: auto;"></p>
-<p>The horizontal red line represents the attainable yield for this
+<p>The dashed blue line represents the attainable yield for this
 particular setting. The 1:1 describes the situations in which the actual
 yield is equal to the predicted yield by the most limiting factor. The
 yield gap for each point is equivalent to the vertical distance between
@@ -602,30 +606,36 @@ measurement error.</p>
 <div class="section level3">
 <h3 id="concluding-remarks">Concluding remarks<a class="anchor" aria-label="anchor" href="#concluding-remarks"></a>
 </h3>
-<p>The censored bivariate normal model has been used to carryout a yield
-gap analysis. The advantage of using this method over the other boundary
-line fitting methods is that it is based on statistical principals and
-it removes the subjectivity associated with selection of bin sizes and
-the quantile to consider as boundary as it is done in the binning
-methodology and quantile regression. Furthermore, the uncertainty around
-the boundary line can also be determined.</p>
+<p>The censored bivariate normal model has been used to carry out a
+yield gap analysis. The advantage of using this method over the other
+boundary line fitting methods is that it is based on statistical
+principles and it removes the subjectivity associated with selection of
+bin sizes and the quantile to consider as boundary as it is done in the
+binning methodology and quantile regression. Furthermore, the
+uncertainty around the boundary line can also be determined.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <ol style="list-style-type: decimal">
-<li><p>Milne, A. E., Wheeler, H. C., &amp; Lark, R. M. (2006). On
-testing biological data for the presence of a boundary. Annals of
-Applied Biology, 149 , 213-222.</p></li>
+<li><p>Kosmowski, F., Chamberlin, J., Ayalew, H., Sida, T., Abay, K.,
+&amp; Craufurd, P. (2021). How accurate are yield estimates from crop
+cuts? evidence from small-holder maize farms in ethiopia. Food Policy,
+102 , 102122. <a href="https://doi.org/10.1016/j.foodpol.2021.102122" class="external-link uri">https://doi.org/10.1016/j.foodpol.2021.102122</a></p></li>
 <li><p>Lark, R. M., Gillingham, V., Langton, D., &amp; Marchant, B. P.
 (2020). Boundary line models for soil nutrient concentrations and wheat
 yield in national-scale datasets.European Journal of Soil Science, 71 ,
-334-351.</p></li>
+334-351. <a href="https://doi.org/10.1111/ejss.12891" class="external-link uri">https://doi.org/10.1111/ejss.12891</a></p></li>
 <li><p>Lark, R. M., &amp; Milne, A. E. (2016). Boundary line analysis of
 the effect of water filled pore space on nitrous oxide emission from
-cores of arable soil. European Journal of Soil Science, 67 ,
-148-159.</p></li>
+cores of arable soil. European Journal of Soil Science, 67 , 148-159. <a href="https://doi.org/10.1111/ejss.12318" class="external-link uri">https://doi.org/10.1111/ejss.12318</a></p></li>
+<li><p>Milne, A. E., Wheeler, H. C., &amp; Lark, R. M. (2006). On
+testing biological data for the presence of a boundary. Annals of
+Applied Biology, 149 , 213-222. <a href="https://doi.org/10.1111/j.1744-7348.2006.00085.x" class="external-link uri">https://doi.org/10.1111/j.1744-7348.2006.00085.x</a></p></li>
+<li><p>Miti, C., Milne, A., Giller, K., Sadras, V., &amp; Lark, R.
+(2024). Exploration of data for analysis using boundary line
+methodology. Computers and Electronics in Agriculture, 219. <a href="https://doi.org/10.1016/j.compag.2024.108794" class="external-link uri">https://doi.org/10.1016/j.compag.2024.108794</a></p></li>
 </ol>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
