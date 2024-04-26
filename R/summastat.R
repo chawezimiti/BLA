@@ -5,7 +5,7 @@
 #' @param x A vector of numeric values.
 #' @param sigf The number of significant figures to report (optional).
 #' @param plot If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
-#'   is not part of output (default is \code{FALSE}).
+#'   is not part of output (default is \code{TRUE}).
 #' @param varname The name of the variable (optional), character so in quotes e.g.
 #'   "Clay content". If not used then the variable is called x on plots.
 #' @returns A matrix containing the mean value, median value,
@@ -19,7 +19,7 @@
 #' summastat(x,2)
 #' @export
 #'
-summastat<-function(x,sigf, varname, plot=FALSE){
+summastat<-function(x,sigf, varname, plot=TRUE){
 
   # compute summary statistics of values in x
 
@@ -62,6 +62,7 @@ summastat<-function(x,sigf, varname, plot=FALSE){
                     "Quartile.1", "Quartile.3","Variance","SD","Skewness",
                     "Octile skewness","Kurtosis",
                     "No. outliers")
+  return(outp)
 
 ##########################
   if(plot==TRUE){
@@ -117,8 +118,5 @@ summastat<-function(x,sigf, varname, plot=FALSE){
 
     par(mfrow=c(1,1))
   }
-
-#########################
-  return(outp)
 
 }

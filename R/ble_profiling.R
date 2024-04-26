@@ -145,7 +145,7 @@
 #' @export
 #' @rdname ble_profile
 #' @usage
-#' ble_profile(vals,sigh,theta,model="lp", UpLo="U", optim.method="BFGS",plot=FALSE, ...)
+#' ble_profile(vals,sigh,theta,model="lp", UpLo="U", optim.method="BFGS",plot=TRUE, ...)
 #'
 #' @examples
 #'
@@ -156,7 +156,7 @@
 #' sigh<-c(0.08,0.1,0.11,0.13,0.15,0.2,0.3,0.4,0.5)
 #' ble_profile(vals,sigh=sigh,theta,model="blm")
 #'
-ble_profile<-function(vals,sigh,theta,model="lp", UpLo="U", optim.method="BFGS",plot=FALSE, ...){
+ble_profile<-function(vals,sigh,theta,model="lp", UpLo="U", optim.method="BFGS",plot=TRUE, ...){
 
   cat("Note: This function may take a few minutes to run for large datasets.\n\n")
 

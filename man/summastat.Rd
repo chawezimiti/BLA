@@ -4,7 +4,7 @@
 \alias{summastat}
 \title{Summary statistics}
 \usage{
-summastat(x, sigf, varname, plot = FALSE)
+summastat(x, sigf, varname, plot = TRUE)
 }
 \arguments{
 \item{x}{A vector of numeric values.}
@@ -15,7 +15,7 @@ summastat(x, sigf, varname, plot = FALSE)
 "Clay content". If not used then the variable is called x on plots.}
 
 \item{plot}{If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
-is not part of output (default is \code{FALSE}).}
+is not part of output (default is \code{TRUE}).}
 }
 \value{
 A matrix containing the mean value, median value,

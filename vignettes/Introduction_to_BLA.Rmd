@@ -56,7 +56,7 @@ An exploratory analysis is an important initial step in boundary line analysis. 
 
 ### Normality test
 
-To assess the distribution of the data, the `summa()` function provides different summary statistics. The function `summaplot()` give a graphical representation of the variable distribution. Let us set the variables P and wheat yield in the data set to *`x`* and *`y`* respectively before applying the `summa()` and `summaplot()` functions
+To assess the distribution of the data, the `summastat()` function provides different summary statistics and the graphical representation of the variable distribution. Let us set the variables P and wheat yield in the data set to *`x`* and *`y`* respectively before applying the `summastat()` functions
 
 ```{r}
 x<-soil$P
@@ -65,21 +65,16 @@ y<-soil$yield
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 summastat(x)
+
 summastat(y)
 ```
 
-From the results, wheat yield (*`y`*) variables can be considered to be normally distributed while the soil P (*`x`*) is skewed. For a variable to be assumed to be from a normal distribution, the indices skewness should be between -1 to 1 and Octile skewness between -0.2 to 0.2. A graphical representation of the distribution can be checked using
-
-```{r,fig.align='center', fig.dim=c(4,4), eval=FALSE, echo=FALSE}
-summaplot(x) 
-summaplot(y) 
-```
+From the results, wheat yield (*`y`*) variables can be considered to be normally distributed while the soil P (*`x`*) is skewed. For a variable to be assumed to be from a normal distribution, the indices skewness should be between -1 to 1 and Octile skewness between -0.2 to 0.2. A graphical representation of the distribution is given as well.
 
 The soil P can be log transformed and check the summary statistics and plot
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 summastat(log(x))
-#summaplot(log(x))
 
 x<-log(x) # transforms soil P to log 
 ```
@@ -88,7 +83,7 @@ From the results, variable log of soil P can be assumed to be from a normal dist
 
 ### Outlier detection and removal
 
-Outliers are identified using the bagplot method (Rousseeuw *et al*., 1999. A bag plot is a multivariate equivalent of a box plot. We utilise the `bagplo()` function from the `aplpack` package to produce bagplots.The bagplot has three main components. There are
+Outliers are identified using the bagplot method (Rousseeuw *et al*., 1999. A bag plot is a multivariate equivalent of a box plot. We utilise the `bagplop()` function from the `aplpack` package to produce bagplots.The bagplot has three main components. There are
 
 1.  **depth median** which represent the center of the data cloud. This is equivalent to the median in a univariate box-plot
 
@@ -104,10 +99,10 @@ vals_ur<-matrix(NA,length(x),2) #Create a matrix with x and y as required by the
 vals_ur[,1]<-x 
 vals_ur[,2]<-y
 
-bag<-bagplot(vals_ur, ylim=c(0,20), show.whiskers =F,create.plot = FALSE) # run the bagplot function
-# legend("topright", c("bag","loop","outliers", "d.median"), 
-#         pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),
-#        cex=0.7)
+bag<-bagplot(vals_ur, ylim=c(0,20), show.whiskers =F,create.plot = TRUE) # run the bagplot function
+legend("topright", c("bag","loop","outliers", "d.median"),
+        pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),
+       cex=0.7)
 
 vals<-rbind(bag$pxy.bag,bag$pxy.outer) # to remove outliers, select points in the bag and loop only
 

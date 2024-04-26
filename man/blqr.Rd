@@ -5,7 +5,7 @@
 \title{Boundary line model determination using quantile regression}
 \usage{
 blqr(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead",
-     xmin=min(bound$x),xmax=max(bound$x), plot=FALSE,line_col="red",lwd=1,
+     xmin=min(bound$x),xmax=max(bound$x), plot=TRUE,line_col="red",lwd=1,
      line_smooth=1000,...)
 }
 \arguments{

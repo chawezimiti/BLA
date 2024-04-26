@@ -56,7 +56,7 @@ Exploratory analysis is an essential initial step in fitting a boundary line to 
 
 1\. Assessing normality of independent and dependent variable
 
-Boundary line model fitting using `cbvn()` requires that the independent (*`x`*) and dependent (*`y`*) variables are normally distributed albeit with censoring of the variable *`y`*. The `summa()` function gives summary statistics of the distribution of a variable. The octile skewness is a robust measure of skew, and we expect its absolute value to be less than 0.2 for a normally distributed variable. We also assess plots of the data, bearing in mind that the dependent variable may be subject to censoring of large values under our target model. The `summaplot()` function gives a visual description of the distribution.
+Boundary line model fitting using `cbvn()` requires that the independent (*`x`*) and dependent (*`y`*) variables are normally distributed albeit with censoring of the variable *`y`*. The `summastat()` function gives summary statistics of the distribution of a variable. The octile skewness is a robust measure of skew, and we expect its absolute value to be less than 0.2 for a normally distributed variable. We also assess plots of the data, bearing in mind that the dependent variable may be subject to censoring of large values under our target model.
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 x<-soil$P
@@ -64,16 +64,14 @@ y<-soil$yield
 
 #Distribution of the x variable
 
-summastat(x) # Gives indices for skewness. Normal distribution range of -1 to 1. If not normally distributed,a transformation is required 
-#summaplot(x) # histogram and qqplot for distribution of x
+summastat(x) 
 
 summastat(log(x)) 
-#summaplot(log(x)) 
+
 
 #Distribution of the y variable
 
-summastat(y)# Gives indices for skewness. Normal distribution range of -1 to 1. If not normally distributed,a transformation is required 
-#summaplot(y) # histogram and qqplot for distribution of y
+summastat(y)
 ```
 
 2\. Removal of outliers
@@ -83,9 +81,9 @@ Boundary line analysis is sensitive to outlying values and hence it is required 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 x<-log(x) # since we requred a transformation
 df<-data.frame(x,y) 
-bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = FALSE)
-# legend("topright", c("bag","loop","outliers", "d.median"), 
-#            pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
+bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = TRUE)
+legend("topright", c("bag","loop","outliers", "d.median"),
+           pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
 
 # Combine data points from "bag" and within the loop
 
@@ -204,8 +202,7 @@ y<-soil$yield
 
 #Distribution of the x variable
 
-summastat(x) # Gives indices for skewness. Normal distribution range of -1 to 1. If not normally distributed,a transformation is required 
-#summaplot(x) # histogram and qqplot for distribution of x
+summastat(x) 
 
 ```
 
@@ -214,9 +211,9 @@ summastat(x) # Gives indices for skewness. Normal distribution range of -1 to 1.
 ```{r,fig.align='center', fig.dim=c(4,4)}
  
 df<-data.frame(x,y) 
-bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = FALSE)
-# legend("topleft", c("bag","loop","outliers", "d.median"), 
-#            pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
+bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = TRUE)
+legend("topleft", c("bag","loop","outliers", "d.median"),
+           pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
 
 # Combine data points from "bag" and within the loop
 
@@ -308,7 +305,7 @@ Limiting_factors<-Limiting_factor[[1]]
 
 We can check the proportion of cases in which each of the soil properties was limiting
 
-```{r, eval=FALSE,fig.align='center', fig.dim=c(4,4)}
+```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4)}
 Lim_factors<-Limiting_factors$Lim_factor
 
 barplot(prop.table(table(Lim_factors))*100,
@@ -323,7 +320,7 @@ axis(side = 2, lwd = 1)
 
 As only two factors were evaluated, most of the yield gap cause was unidentified. This is because there many other factors affecting yield which we did not consider in this case. You can also plot the predicted yield by the most limiting factor against the actual yield.
 
-```{r, eval=FALSE,fig.align='center', fig.dim=c(4,4)}
+```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4)}
 
 plot(Limiting_factors$Rs, soil$yield,
      xlab="Predicted yield (ton/ha)",

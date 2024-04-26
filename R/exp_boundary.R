@@ -15,7 +15,7 @@
 #' @param simulations The number of simulations for the null bivariate normally
 #'   distributed data sets used to test the hypothesis (default is 1000).
 #' @param plot If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
-#'   is not part of output (default is \code{FALSE}).
+#'   is not part of output (default is \code{TRUE}).
 #' @param ... Additional graphical parameters as with the \code{par()} function.
 #'
 #' @returns A dataframe with the p-values of obtaining the observed standard deviation
@@ -46,7 +46,7 @@
 #' y<-evapotranspiration$`yield(t/ha)`
 #' expl_boundary(x,y,10,1000)
 #'
-expl_boundary<-function(x,y,shells=10,simulations=1000,plot=FALSE,...){
+expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
 
   cat("Note: This function may take a few minutes to run for large datasets.\n\n")
 

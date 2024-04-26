@@ -172,7 +172,7 @@
 #' @rdname blbin
 #' @usage
 #' blbin(x,y,bins, model="explore", equation=NULL, theta, tau=0.95,
-#'       optim.method="Nelder-Mead", xmin=min(bound$x), xmax=max(bound$x),plot=FALSE,
+#'       optim.method="Nelder-Mead", xmin=min(bound$x), xmax=max(bound$x),plot=TRUE,
 #'       bp_col="red", bp_pch=16, bl_col="red", lwd=1,line_smooth=1000,...)
 #'
 #' @examples
@@ -183,7 +183,7 @@
 #' blbin(x,y, bins=bins ,theta=c(0.5,0.02), model = "blm", xmax = 250)
 #'
 blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.method="Nelder-Mead", xmin=min(bound$x),
-                xmax=max(bound$x),plot=FALSE, bp_col="red", bp_pch=16, bl_col="red",
+                xmax=max(bound$x),plot=TRUE, bp_col="red", bp_pch=16, bl_col="red",
                 lwd=1,line_smooth=1000,...){
 
   BLMod<-model
