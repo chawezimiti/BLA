@@ -187,7 +187,7 @@
 #' cbvn(vals,theta = guess, sigh = 0.4,model= "blm")
 #'
 cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
-               Hessian=FALSE, plot=TRUE, line_smooth=100, lwd=2, l_col="red",...){
+               Hessian=FALSE, plot=FALSE, line_smooth=100, lwd=2, l_col="red",...){
 
   cat("Note: This function may take a few minutes to run for large datasets.\n\n")
 

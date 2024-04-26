@@ -64,13 +64,13 @@ y<-soil$yield
 ```
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
-summa(x)
-summa(y)
+summastat(x)
+summastat(y)
 ```
 
 From the results, wheat yield (*`y`*) variables can be considered to be normally distributed while the soil P (*`x`*) is skewed. For a variable to be assumed to be from a normal distribution, the indices skewness should be between -1 to 1 and Octile skewness between -0.2 to 0.2. A graphical representation of the distribution can be checked using
 
-```{r,fig.align='center', fig.dim=c(4,4)}
+```{r,fig.align='center', fig.dim=c(4,4), eval=FALSE, echo=FALSE}
 summaplot(x) 
 summaplot(y) 
 ```
@@ -78,8 +78,8 @@ summaplot(y)
 The soil P can be log transformed and check the summary statistics and plot
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
-summa(log(x))
-summaplot(log(x))
+summastat(log(x))
+#summaplot(log(x))
 
 x<-log(x) # transforms soil P to log 
 ```
@@ -104,10 +104,10 @@ vals_ur<-matrix(NA,length(x),2) #Create a matrix with x and y as required by the
 vals_ur[,1]<-x 
 vals_ur[,2]<-y
 
-bag<-bagplot(vals_ur, ylim=c(0,20), show.whiskers =F) # run the bagplot function
-legend("topright", c("bag","loop","outliers", "d.median"), 
-        pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),
-       cex=0.7)
+bag<-bagplot(vals_ur, ylim=c(0,20), show.whiskers =F,create.plot = FALSE) # run the bagplot function
+# legend("topright", c("bag","loop","outliers", "d.median"), 
+#         pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),
+#        cex=0.7)
 
 vals<-rbind(bag$pxy.bag,bag$pxy.outer) # to remove outliers, select points in the bag and loop only
 

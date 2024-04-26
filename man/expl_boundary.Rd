@@ -4,7 +4,7 @@
 \alias{expl_boundary}
 \title{Testing evidence of boundary existence in dataset}
 \usage{
-expl_boundary(x, y, shells = 10, simulations = 1000, ...)
+expl_boundary(x, y, shells = 10, simulations = 1000, plot = FALSE, ...)
 }
 \arguments{
 \item{x}{A numeric vector of values for the independent variable.}
@@ -16,6 +16,9 @@ expl_boundary(x, y, shells = 10, simulations = 1000, ...)
 
 \item{simulations}{The number of simulations for the null bivariate normally
 distributed data sets used to test the hypothesis (default is 1000).}
+
+\item{plot}{If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
+is not part of output (default is \code{FALSE}).}
 
 \item{...}{Additional graphical parameters as with the \code{par()} function.}
 }

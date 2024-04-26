@@ -169,7 +169,7 @@
 #'
 blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead",
                xmin=min(bound$x),xmax=max(bound$x),
-               plot=T,line_col="red",lwd=1,line_smooth=1000,...){
+               plot=FALSE,line_col="red",lwd=1,line_smooth=1000,...){
 
   BLMod<-model
   if(plot==TRUE){plot(x,y,...)}

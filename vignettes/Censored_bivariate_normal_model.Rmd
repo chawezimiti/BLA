@@ -64,16 +64,16 @@ y<-soil$yield
 
 #Distribution of the x variable
 
-summa(x) # Gives indices for skewness. Normal distribution range of -1 to 1. If not normally distributed,a transformation is required 
-summaplot(x) # histogram and qqplot for distribution of x
+summastat(x) # Gives indices for skewness. Normal distribution range of -1 to 1. If not normally distributed,a transformation is required 
+#summaplot(x) # histogram and qqplot for distribution of x
 
-summa(log(x)) 
-summaplot(log(x)) 
+summastat(log(x)) 
+#summaplot(log(x)) 
 
 #Distribution of the y variable
 
-summa(y)# Gives indices for skewness. Normal distribution range of -1 to 1. If not normally distributed,a transformation is required 
-summaplot(y) # histogram and qqplot for distribution of y
+summastat(y)# Gives indices for skewness. Normal distribution range of -1 to 1. If not normally distributed,a transformation is required 
+#summaplot(y) # histogram and qqplot for distribution of y
 ```
 
 2\. Removal of outliers
@@ -83,9 +83,9 @@ Boundary line analysis is sensitive to outlying values and hence it is required 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 x<-log(x) # since we requred a transformation
 df<-data.frame(x,y) 
-bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20))
-legend("topright", c("bag","loop","outliers", "d.median"), 
-           pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
+bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = FALSE)
+# legend("topright", c("bag","loop","outliers", "d.median"), 
+#            pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
 
 # Combine data points from "bag" and within the loop
 
@@ -204,8 +204,8 @@ y<-soil$yield
 
 #Distribution of the x variable
 
-summa(x) # Gives indices for skewness. Normal distribution range of -1 to 1. If not normally distributed,a transformation is required 
-summaplot(x) # histogram and qqplot for distribution of x
+summastat(x) # Gives indices for skewness. Normal distribution range of -1 to 1. If not normally distributed,a transformation is required 
+#summaplot(x) # histogram and qqplot for distribution of x
 
 ```
 
@@ -214,9 +214,9 @@ summaplot(x) # histogram and qqplot for distribution of x
 ```{r,fig.align='center', fig.dim=c(4,4)}
  
 df<-data.frame(x,y) 
-bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20))
-legend("topleft", c("bag","loop","outliers", "d.median"), 
-           pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
+bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = FALSE)
+# legend("topleft", c("bag","loop","outliers", "d.median"), 
+#            pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
 
 # Combine data points from "bag" and within the loop
 
@@ -308,7 +308,7 @@ Limiting_factors<-Limiting_factor[[1]]
 
 We can check the proportion of cases in which each of the soil properties was limiting
 
-```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4)}
+```{r, eval=FALSE,fig.align='center', fig.dim=c(4,4)}
 Lim_factors<-Limiting_factors$Lim_factor
 
 barplot(prop.table(table(Lim_factors))*100,
@@ -323,7 +323,7 @@ axis(side = 2, lwd = 1)
 
 As only two factors were evaluated, most of the yield gap cause was unidentified. This is because there many other factors affecting yield which we did not consider in this case. You can also plot the predicted yield by the most limiting factor against the actual yield.
 
-```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4)}
+```{r, eval=FALSE,fig.align='center', fig.dim=c(4,4)}
 
 plot(Limiting_factors$Rs, soil$yield,
      xlab="Predicted yield (ton/ha)",
@@ -346,13 +346,12 @@ The censored bivariate normal model has been used to carry out a yield gap analy
 
 # References
 
-1. Kosmowski, F., Chamberlin, J., Ayalew, H., Sida, T., Abay, K., & Craufurd, P. (2021). How accurate are yield estimates from crop cuts? evidence from small-holder maize farms in ethiopia. Food Policy, 102 , 102122. https://doi.org/10.1016/j.foodpol.2021.102122
+1.  Kosmowski, F., Chamberlin, J., Ayalew, H., Sida, T., Abay, K., & Craufurd, P. (2021). How accurate are yield estimates from crop cuts? evidence from small-holder maize farms in ethiopia. Food Policy, 102 , 102122. <https://doi.org/10.1016/j.foodpol.2021.102122>
 
-2. Lark, R. M., Gillingham, V., Langton, D., & Marchant, B. P. (2020). Boundary line models for soil nutrient concentrations and wheat yield in national-scale datasets.European Journal of Soil Science, 71 , 334-351. https://doi.org/10.1111/ejss.12891
+2.  Lark, R. M., Gillingham, V., Langton, D., & Marchant, B. P. (2020). Boundary line models for soil nutrient concentrations and wheat yield in national-scale datasets.European Journal of Soil Science, 71 , 334-351. <https://doi.org/10.1111/ejss.12891>
 
-3. Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the effect of water filled pore space on nitrous oxide emission from cores of arable soil. European Journal of Soil Science, 67 , 148-159. https://doi.org/10.1111/ejss.12318
+3.  Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the effect of water filled pore space on nitrous oxide emission from cores of arable soil. European Journal of Soil Science, 67 , 148-159. <https://doi.org/10.1111/ejss.12318>
 
-4. Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing biological data for the presence of a boundary. Annals of Applied Biology, 149 , 213-222. https://doi.org/10.1111/j.1744-7348.2006.00085.x
+4.  Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing biological data for the presence of a boundary. Annals of Applied Biology, 149 , 213-222. <https://doi.org/10.1111/j.1744-7348.2006.00085.x>
 
-5. Miti, C., Milne, A., Giller, K., Sadras, V., & Lark, R. (2024). Exploration of data for analysis using boundary line methodology. Computers and Electronics in Agriculture, 219. https://doi.org/10.1016/j.compag.2024.108794
-
+5.  Miti, C., Milne, A., Giller, K., Sadras, V., & Lark, R. (2024). Exploration of data for analysis using boundary line methodology. Computers and Electronics in Agriculture, 219. <https://doi.org/10.1016/j.compag.2024.108794>

@@ -178,7 +178,7 @@
 #'
 #'
 BOLIDES<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",
-                  xmin=min(bound$x), xmax=max(bound$x), plot=TRUE,bp_col="red", bp_pch=16,
+                  xmin=min(bound$x), xmax=max(bound$x), plot=FALSE,bp_col="red", bp_pch=16,
                   bl_col="red", lwd=1,line_smooth=1000,...){
 
   BLMod<-model
@@ -293,8 +293,9 @@ BOLIDES<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
   ###############exploring data###########################
   if(model=="explore"){
-    plot(x,y,...)
-    points(newdata6$x,newdata6$y, col=bp_col, pch=bp_pch)
+    if(plot==TRUE){
+      plot(x,y,...)
+      points(newdata6$x,newdata6$y, col=bp_col, pch=bp_pch)}
     return(summary(newdata6))
   }
   ########## Fitting two parameter Linear model ##########################

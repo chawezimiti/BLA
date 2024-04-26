@@ -183,7 +183,7 @@
 #' blbin(x,y, bins=bins ,theta=c(0.5,0.02), model = "blm", xmax = 250)
 #'
 blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.method="Nelder-Mead", xmin=min(bound$x),
-                xmax=max(bound$x),plot=TRUE, bp_col="red", bp_pch=16, bl_col="red",
+                xmax=max(bound$x),plot=FALSE, bp_col="red", bp_pch=16, bl_col="red",
                 lwd=1,line_smooth=1000,...){
 
   BLMod<-model
@@ -249,8 +249,9 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
 
   ###############exploring data###########################
   if(model=="explore"){
-    plot(x,y,...)
-    points(dataset$x,dataset$y, col=bp_col, pch=bp_pch)
+    if(plot==TRUE){
+      plot(x,y,...)
+      points(dataset$x,dataset$y, col=bp_col, pch=bp_pch)}
     return(summary(dataset))
   }
   ########## Fitting two parameter linear model ##########################

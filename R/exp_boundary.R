@@ -14,6 +14,8 @@
 #'   (default is 10).
 #' @param simulations The number of simulations for the null bivariate normally
 #'   distributed data sets used to test the hypothesis (default is 1000).
+#' @param plot If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
+#'   is not part of output (default is \code{FALSE}).
 #' @param ... Additional graphical parameters as with the \code{par()} function.
 #'
 #' @returns A dataframe with the p-values of obtaining the observed standard deviation
@@ -44,7 +46,7 @@
 #' y<-evapotranspiration$`yield(t/ha)`
 #' expl_boundary(x,y,10,1000)
 #'
-expl_boundary<-function(x,y,shells=10,simulations=1000,...){
+expl_boundary<-function(x,y,shells=10,simulations=1000,plot=FALSE,...){
 
   cat("Note: This function may take a few minutes to run for large datasets.\n\n")
 
@@ -61,7 +63,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,...){
     return(op)
   }
 
- #############Removing NA'S ######
+  #############Removing NA'S ######
 
   data<- data.frame(x=x,y=y)
   test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE)
@@ -74,16 +76,18 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,...){
   x<-data1$x
   y<-data1$y
   dat<-cbind(x,y)
-################################
-#setting the output area
-plot_layout<-rbind(c(1,1,2),c(1,1,3))
-layout(plot_layout)
-#############################
+  ################################
+  #setting the output area
+  if(plot==TRUE){
+    plot_layout<-rbind(c(1,1,2),c(1,1,3))
+    layout(plot_layout)
+    plot(dat,...)}
+  #############################
   peels<-list()
   left<-list()
   right<-list()
   #dat<-cbind(x,y)
-  plot(dat,...)
+  #plot(dat,...)
   n<-length(dat[,1]) #: sample size
   Sigma<-cov(dat)
 
@@ -129,8 +133,9 @@ layout(plot_layout)
     df2 <- do.call("rbind", right)
   }
 
-  points(df1$x,df1$y,col="red", pch=16)
-  points(df2$x,df2$y,col="blue", pch=16)
+  if(plot==TRUE){
+    points(df1$x,df1$y,col="red", pch=16)
+    points(df2$x,df2$y,col="blue", pch=16)}
 
   ## calculates the enclidean distance of vertices
   ED1_sd<-sd(sqrt((mean(x)-df1[,1])^2+(mean(y)-df1[,2])^2))
@@ -235,15 +240,16 @@ layout(plot_layout)
 
   #par(mfrow=c(1,2))
 
-  hist(ED_all_sd_rise,freq = FALSE, xlab="sd",main = "Left")
-  lines(density(ED_all_sd_rise), lwd = 1, col = "red")
-  abline(v=ED1_sd, col="red",lty=2)
+  if(plot==TRUE){
+    hist(ED_all_sd_rise,freq = FALSE, xlab="sd",main = "Left")
+    lines(density(ED_all_sd_rise), lwd = 1, col = "red")
+    abline(v=ED1_sd, col="red",lty=2)
 
-  hist(ED_all_sd_fall,freq = FALSE,xlab="sd",main = "Right")
-  lines(density(ED_all_sd_fall), lwd = 1, col = "red")
-  abline(v=ED2_sd, col="red",lty=2)
+    hist(ED_all_sd_fall,freq = FALSE,xlab="sd",main = "Right")
+    lines(density(ED_all_sd_fall), lwd = 1, col = "red")
+    abline(v=ED2_sd, col="red",lty=2)
 
-  par(mfrow=c(1,1))
+    par(mfrow=c(1,1))}
 
   data.frame(Index,Section,value)
 }

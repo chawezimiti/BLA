@@ -58,7 +58,7 @@ y<-vals[,2]
 theta =c(-12.99,2,13 ) # initial start values for optimization
 
 model<-BOLIDES(x,y, theta = theta,model = "lp",xlab=expression("pH"), 
-        ylab=expression("Yield/ t ha"^-1), pch=16,
+        ylab=expression("Yield/ t ha"^-1), pch=16, plot=TRUE,
        col="grey40", cex=0.8)
 
 model
