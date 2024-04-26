@@ -64,7 +64,7 @@ summastat<-function(x,sigf, varname, plot=TRUE){
                     "No. outliers")
   return(outp)
 
-##########################
+################plotting
   if(plot==TRUE){
     x<-na.drop(x)
     if(missing(varname)){varname<-"x"}
