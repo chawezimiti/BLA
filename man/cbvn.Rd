@@ -5,7 +5,7 @@
 \title{Fitting boundary line using censored bivariate normal model}
 \usage{
 cbvn(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",Hessian=FALSE,
-     plot=TRUE, line_smooth=100, lwd=2, l_col="red",...)
+     plot=FALSE, line_smooth=100, lwd=2, l_col="red",...)
 }
 \arguments{
 \item{vals}{A dataframe with two numeric columns, independent (\code{x}) and

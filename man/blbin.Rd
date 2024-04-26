@@ -5,7 +5,7 @@
 \title{Binning method for determining the boundary line model}
 \usage{
 blbin(x,y,bins, model="explore", equation=NULL, theta, tau=0.95,
-      optim.method="Nelder-Mead", xmin=min(bound$x), xmax=max(bound$x),plot=TRUE,
+      optim.method="Nelder-Mead", xmin=min(bound$x), xmax=max(bound$x),plot=FALSE,
       bp_col="red", bp_pch=16, bl_col="red", lwd=1,line_smooth=1000,...)
 }
 \arguments{

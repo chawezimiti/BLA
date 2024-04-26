@@ -4,7 +4,7 @@
 \alias{ble_profile}
 \title{Likelihood profile for various measurement error values}
 \usage{
-ble_profile(vals,sigh,theta,model="lp", UpLo="U", optim.method="BFGS",plot=TRUE, ...)
+ble_profile(vals,sigh,theta,model="lp", UpLo="U", optim.method="BFGS",plot=FALSE, ...)
 }
 \arguments{
 \item{vals}{A dataframe with two numeric columns, independent (\code{x}) and

@@ -145,7 +145,7 @@
 #' @export
 #' @rdname ble_profile
 #' @usage
-#' ble_profile(vals,sigh,theta,model="lp", UpLo="U", optim.method="BFGS",plot=TRUE, ...)
+#' ble_profile(vals,sigh,theta,model="lp", UpLo="U", optim.method="BFGS",plot=FALSE, ...)
 #'
 #' @examples
 #'
