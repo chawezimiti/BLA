@@ -96,7 +96,6 @@ to be predicted.</p></dd>
 <span class="r-in"><span><span class="va">x</span><span class="op">&lt;-</span><span class="va">evapotranspiration</span><span class="op">$</span><span class="va">`ET(mm)`</span></span></span>
 <span class="r-in"><span><span class="va">y</span><span class="op">&lt;-</span><span class="va">evapotranspiration</span><span class="op">$</span><span class="va">`yield(t/ha)`</span></span></span>
 <span class="r-in"><span><span class="va">z</span><span class="op">&lt;-</span><span class="fu"><a href="BOLIDES.html">BOLIDES</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, theta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.02</span><span class="op">)</span>, model<span class="op">=</span> <span class="st">"blm"</span>, xmax <span class="op">=</span> <span class="fl">350</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="predictBL-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">predictBL</span><span class="op">(</span><span class="va">z</span>,<span class="va">x</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [1]  8.392391  9.833827 10.515234  9.021382  8.025480  9.021382  9.466916</span>
