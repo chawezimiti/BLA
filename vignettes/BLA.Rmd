@@ -134,20 +134,20 @@ The exploratory tests indicated that the data provides evidence of an upper boun
 
 ### BOLIDES algorithm
 
-This method fit the boundary line following the boundary line determination technique proposed by Schnug *et al.* (1995). To fit the boundary line using the BOLIDES algorithm , the `BOLIDES()` function can be used. To check the required arguments for the function, the help page can be launched.
+This method fit the boundary line following the boundary line determination technique proposed by Schnug *et al.* (1995). To fit the boundary line using the BOLIDES algorithm , the `bolides()` function can be used. To check the required arguments for the function, the help page can be launched.
 
 ```{r, eval=FALSE}
-?BOLIDES
+?bolides
 ```
 
 The arguments *`x`* and *`y`* are the independent and dependent variable respectively and `theta` is a vector of starting values . The `model` argument is used to specify the model of the boundary line e.g. "blm" for the linear model. The `xmax` is an argument that describes the maximum value of the independent variable beyond which the relation of *`x`* and *`y`* is no longer theoretically feasible. Other arguments relate to the plot parameters as in the `plot()` function.
 
 All boundary fitting methods require initial starting values for the parameters of a proposed model. The initial starting values are optimized to find the parameters of the proposed model as in the `optim()` function in base `R`.
 
-To get the theta starting values, the `BOLIDES()` function is run with the argument `model="explore"`. This allows us to view the selected boundary points using the boundary line determination technique.
+To get the theta starting values, the `bolides()` function is run with the argument `model="explore"`. This allows us to view the selected boundary points using the boundary line determination technique.
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
-BOLIDES(x,y,model = "explore", pch=16, col="grey")
+bolides(x,y,model = "explore", pch=16, col="grey")
 ```
 
 From the plot, it can be seen that a "trapezium" model will be more appropriate for this data set. The function `startValues()` can be used to determine initial start `theta` values. For more information on `startValues()` function see `?startValues()`.
@@ -169,7 +169,7 @@ The proposed start values will be produced. Note that this can be done for other
 
 theta<-c(4,3,14,104,-22) # start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. 
 
-model1<-BOLIDES(x,y, theta = theta,model = "trapezium",
+model1<-bolides(x,y, theta = theta,model = "trapezium",
                 xlab=expression("Phosphorus/ln(mg L"^-1*")"), 
                 ylab=expression("Yield/ t ha"^-1), pch=16, 
                 col="grey", bp_col="grey")
@@ -274,12 +274,12 @@ To fit the boundary line using the Censored bivariate normal model method, see t
 
 ### Using your own defined model
 
-The illustrated methods for fitting the boundary line have some in-built models. These include the linear, linear plateau, mitscherlich, schmidt, logistic, logistic model proposed by Fermont *et al*. (2009), the inverse logistic, double logistic, quadratic and the trapezium models. However, there are some cases where one wants to fit another model which is not part of the built in models. The following step will illustrate how to fit a custom model. Though this will be illusterated using the `BOLIDES()` function, it also applies for the `blbin()` and `blqr()` functions.
+The illustrated methods for fitting the boundary line have some in-built models. These include the linear, linear plateau, mitscherlich, schmidt, logistic, logistic model proposed by Fermont *et al*. (2009), the inverse logistic, double logistic, quadratic and the trapezium models. However, there are some cases where one wants to fit another model which is not part of the built in models. The following step will illustrate how to fit a custom model. Though this will be illusterated using the `bolides()` function, it also applies for the `blbin()` and `blqr()` functions.
 
-Assuming that the initial data exploratory step have been done, the first step is to check the structure of the boundary points using the argument `model="explore"` in the `BOLIDES()` function.
+Assuming that the initial data exploratory step have been done, the first step is to check the structure of the boundary points using the argument `model="explore"` in the `bolides()` function.
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
-BOLIDES(x,y,model="explore", pch=16, col="grey")
+bolides(x,y,model="explore", pch=16, col="grey")
 ```
 
 Lets say you want to fit a model
@@ -298,12 +298,12 @@ custom_function<-function(x,a,b,c){
 
 The next step is to suggest the initial start `theta` values. these should be sensible values else the function will not converge. These should be arranges in alphabetical order as `theta=c(a,b,c)`. Replace a, b and c with numeric values of your choice.
 
-The arguments of `BOLIDES()` function can now be added. In this case, the argument model while be set to "other". The arguments equation is now set to your custom function (`equation=custom_function`)
+The arguments of `bolides()` function can now be added. In this case, the argument model while be set to "other". The arguments equation is now set to your custom function (`equation=custom_function`)
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 theta<-c(13.5,3,3.3)  
 
-model4<-BOLIDES(x,y, theta = theta,model = "other",
+model4<-bolides(x,y, theta = theta,model = "other",
                 equation=custom_function,
                 xlab=expression("Phosphorus/mg L"^-1), 
                 ylab=expression("Phosphorus/ln(mg L"^-1*")"), 
@@ -316,7 +316,7 @@ The parameters of the models are shown in the results. A prediction of the bound
 
 ## Closing remarks
 
-The boundary line fitting methods illustrated here all use the optimization function to determine the parameters of the proposed models. To remove the risk of local optimum parameters, it is advised that the models are ran on several starting values and the results with the smallest error can be selected. Each method produces the error value in the output. It is residue mean square (RMS) for `blbin()` and `BOLIDES()` while `blqr()` it is the residue sum squares (RSS). For the `cbvn()`, use the likelihood value.
+The boundary line fitting methods illustrated here all use the optimization function to determine the parameters of the proposed models. To remove the risk of local optimum parameters, it is advised that the models are ran on several starting values and the results with the smallest error can be selected. Each method produces the error value in the output. It is residue mean square (RMS) for `blbin()` and `bolides()` while `blqr()` it is the residue sum squares (RSS). For the `cbvn()`, use the likelihood value.
 
 # References
 

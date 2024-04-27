@@ -133,7 +133,7 @@
 #'  four parameter model and so on.
 #'  }
 #'
-#' The function \code{BOLIDES()} utilities the optimization procedure of the
+#' The function \code{bolides()} utilities the optimization procedure of the
 #' \code{optim()} function to determine the model parameters. There is a tendency
 #' for optimization algorithms to settle at a local optimum. To remove the risk of
 #' settling for local optimum parameters, it is advised that the function is run using
@@ -166,7 +166,7 @@
 #' @export
 #' @rdname BOLIDES
 #' @usage
-#' BOLIDES(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",
+#' bolides(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",
 #'         xmin=min(bound$x), xmax=max(bound$x), plot=TRUE,bp_col="red", bp_pch=16,
 #'         bl_col="red" ,lwd=1,line_smooth=1000,...)
 #' @examples
@@ -174,10 +174,10 @@
 #' x<-evapotranspiration$`ET(mm)`
 #' y<-evapotranspiration$`yield(t/ha)`
 #'
-#' BOLIDES(x,y, theta = c(0.5,0.02), model= "blm", xmax = 350)
+#' bolides(x,y, theta = c(0.5,0.02), model= "blm", xmax = 350)
 #'
 #'
-BOLIDES<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",
+bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",
                   xmin=min(bound$x), xmax=max(bound$x), plot=TRUE,bp_col="red", bp_pch=16,
                   bl_col="red", lwd=1,line_smooth=1000,...){
 

@@ -8,7 +8,7 @@ predictBL(object, x)
 }
 \arguments{
 \item{object}{An output in form of a list from the boundary line fitting using
-the \code{blqr()}, \code{blbin()}, \code{BOLIDES()} or \code{cbvn()} functions.}
+the \code{blqr()}, \code{blbin()}, \code{bolides()} or \code{cbvn()} functions.}
 
 \item{x}{A numeric vector of values for the factor with which response is
 to be predicted.}
@@ -24,7 +24,7 @@ This function predicts the most efficient response at a level of factor,
 
 x<-evapotranspiration$`ET(mm)`
 y<-evapotranspiration$`yield(t/ha)`
-z<-BOLIDES(x,y, theta = c(0.5,0.02), model= "blm", xmax = 350)
+z<-bolides(x,y, theta = c(0.5,0.02), model= "blm", xmax = 350)
 
 predictBL(z,x)
 

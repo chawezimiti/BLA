@@ -44,8 +44,8 @@ factors occur but are not controlled experimentally. In the example of
 crop yield and pH, one can determine the largest expected yield for a
 given pH value, also called the boundary pH value. There are various
 methods to fit the boundary model in the `BLA` package, encoded in the
-functions `blbin()`, `BOLIDES()`, `blqr()` and `cbvn()`. The example
-below uses the `BOLIDES()` function:
+functions `blbin()`, `bolides()`, `blqr()` and `cbvn()`. The example
+below uses the `bolides()` function:
 
 ``` r
 library(BLA)
@@ -67,7 +67,7 @@ x<-vals[,1]
 y<-vals[,2]
 theta =c(-12.99,2,13 ) # initial start values for optimization
 
-model<-BOLIDES(x,y, theta = theta,model = "lp",xlab=expression("pH"), 
+model<-bolides(x,y, theta = theta,model = "lp",xlab=expression("pH"), 
         ylab=expression("Yield/ t ha"^-1), pch=16, plot=TRUE,
        col="grey40", cex=0.8)
 ```

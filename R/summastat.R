@@ -62,7 +62,7 @@ summastat<-function(x,sigf, varname, plot=TRUE){
                     "Quartile.1", "Quartile.3","Variance","SD","Skewness",
                     "Octile skewness","Kurtosis",
                     "No. outliers")
-  return(outp)
+
 
 ################plotting
   if(plot==TRUE){
@@ -119,4 +119,5 @@ summastat<-function(x,sigf, varname, plot=TRUE){
     par(mfrow=c(1,1))
   }
 
+  return(outp)
 }
