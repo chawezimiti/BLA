@@ -13,9 +13,11 @@ blbin(x,y,bins, model="explore", equation=NULL, theta, tau=0.95,
 
 \item{y}{A numeric vector of values for the response variable.}
 
-\item{bins}{A numeric vector of length 3 that determines the size of sections.
+\item{bins}{A numeric vector of length 3 or 4 that determines the size of sections.
 The first and second values give the range of the data to be binned while the
-third value give the width of the bins.}
+third and fourth values give the width of the bins and the step size
+respectively. If only three values are provided, the step size is assumed to be
+equal to bin width.}
 
 \item{model}{Selects the functional form of the boundary line. It includes
 \code{"explore"} as default, \code{"blm"} for linear model, \code{"lp"} for

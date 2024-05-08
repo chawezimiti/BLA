@@ -10,9 +10,11 @@
 #'
 #' @param x A numeric vector of values for the independent variable.
 #' @param y A numeric vector of values for the response variable.
-#' @param bins A numeric vector of length 3 that determines the size of sections.
+#' @param bins A numeric vector of length 3 or 4 that determines the size of sections.
 #'   The first and second values give the range of the data to be binned while the
-#'   third value give the width of the bins.
+#'   third and fourth values give the width of the bins and the step size
+#'   respectively. If only three values are provided, the step size is assumed to be
+#'   equal to bin width.
 #' @param model Selects the functional form of the boundary line. It includes
 #'   \code{"explore"} as default, \code{"blm"} for linear model, \code{"lp"} for
 #'   linear plateau model, \code{"mit"} for the Mitscherlich model, \code{"schmidt"}
@@ -184,46 +186,93 @@
 #'
 blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.method="Nelder-Mead", xmin=min(bound$x),
                 xmax=max(bound$x),plot=TRUE, bp_col="red", bp_pch=16, bl_col="red",
-                lwd=1,line_smooth=1000,...){
+                lwd=1,line_smooth=1000, ...){
 
   BLMod<-model
 
-  ########### Data preparation for BINNING##################
+########### Data preparation for BINNING##################
 
 #############################Removes NA's
   data<- data.frame(x=x,y=y)
   test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE)
 
   if(length(test)>0){
-    df<-data[-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE),]}else{
+      df<-data[-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE),]}else{
       df<-data
     }
-#########################
 
-  df$groups <- cut(df$x, breaks=seq(bins[1],bins[2],bins[3]))
+#### Types of binning
+  if(length(bins) < 3) stop("The bins should be atleast length 3")
+  if(length(bins) > 4) stop("The bins length should not be more than 4")
 
-  data<- df[order(df$groups),]
+  if(length(bins)==3){
 
-  t<-tau
-  quant<-function(x) {
-    quantile(x,t)
+    df<- df[order(df$x),]
+
+    startpoint <- bins[1]  # Size of each window
+    endpoint<-bins[2]
+    bin_size <- bins[3]  # Step size for sliding the window
+    step_size <- bins[3] # Step size for sliding the window
+
+    # Initialize vectors to store results
+    bound_y <- vector("numeric")
+    avg_x <- vector("numeric")
+
+    # Calculate max_y and avg_x for each window
+    while (startpoint <= endpoint) {
+
+      df1<-df[which(df$x > startpoint & df$x < startpoint+bin_size),]
+
+      bound_y <- c(bound_y, as.numeric(quantile(df1$y, tau)))
+      avg_x <- c(avg_x, mean(df1$x))
+      startpoint <- startpoint + step_size
+    }
+
+    dataset<-data.frame(x=avg_x,y=bound_y)
+
+    NANs<-c(which(is.nan( dataset$x)), which(is.nan( dataset$y))) # removing NaNs (non numbers)
+
+    if(length(NANs)>0){
+      dataset<- dataset[-NANs, ]
+    }else{
+      dataset <- dataset
+    }
   }
 
+  if(length(bins)==4){
 
-  y0<-tapply(data$y,data$groups,quant)
+   df<- df[order(df$x),]
 
-  mid_x<-numeric()
-  bin=seq(bins[1],bins[2],bins[3])# I changed here
+   startpoint <- bins[1]  # Size of each window
+   endpoint<-bins[2]
+   bin_size <- bins[3]  # Step size for sliding the window
+   step_size <- bins[4] # Step size for sliding the window
 
-  for(i in 1:(length(bin)-1)){
-    mid_x[i]<-mean(c(bin[i],bin[i+1]))
-  }
+   # Initialize vectors to store results
+   bound_y <- vector("numeric")
+   avg_x <- vector("numeric")
 
-  dataset<-data.frame(x=mid_x,y=y0, row.names = NULL)
+   # Calculate max_y and avg_x for each window
+   while (startpoint <= endpoint) {
 
-  ##############Sorting NAs in bins
+     df1<-df[which(df$x > startpoint & df$x < startpoint+bin_size),]
 
-  dataset<-na.omit(dataset)
+     bound_y <- c(bound_y, as.numeric(quantile(df1$y, tau)))
+     avg_x <- c(avg_x, mean(df1$x))
+     startpoint <- startpoint + step_size
+   }
+
+   dataset<-data.frame(x=avg_x,y=bound_y)
+
+   NANs<-c(which(is.nan( dataset$x)), which(is.nan( dataset$y))) # removing NaNs (non numbers)
+
+   if(length(NANs)>0){
+     dataset<- dataset[-NANs, ]
+   }else{
+     dataset <- dataset
+   }
+
+ }
   ################################
 
   if(plot==TRUE){
@@ -243,6 +292,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
   ifelse(U==max(bound2$x), newdata5<-bound2, newdata5<-bound2[-which(bound2$x>U),])
 
   ########Checking if boundary points have NA values
+
   test2<-which(is.na(newdata5$y)==TRUE)
 
   if(length(test2)>0) stop("Some bins do not contain response values. Make sure all bins contain data points")

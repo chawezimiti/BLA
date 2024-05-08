@@ -224,8 +224,8 @@ theta<-c(4.75, 3.23, 13.3, 24.87,-2.95 )
 
 model2<-blbin(x,y, bins,theta = theta,model = "trapezium", 
               tau=0.99, 
-              xlab=expression("Phosphorus/ mg L"^-1), 
-              expression("Phosphorus/ln(mg L"^-1*")"), 
+              ylab=expression("t ha"^-1), 
+              xlab=expression("Phosphorus/ln(mg L"^-1*")"), 
               pch=16, col="grey", bp_col="grey")
 
 model2
