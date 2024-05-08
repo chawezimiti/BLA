@@ -4,7 +4,7 @@
 \alias{cbvn}
 \title{Fitting boundary line using censored bivariate normal model}
 \usage{
-cbvn(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",Hessian=FALSE,
+cbvn(vals,model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",Hessian=FALSE,
      plot=TRUE, line_smooth=100, lwd=2, l_col="red",...)
 }
 \arguments{
@@ -13,11 +13,14 @@ dependent (\code{y}) variables respectively.}
 
 \item{model}{Selects the functional form of the boundary line. It includes
 \code{"blm"} for linear model, \code{"lp"} for linear plateau model, \code{"mit"}
-for the Mitscherlich model, \code{"schmidt"} for the Schmidt model, \code{"BL_logistic"}
-for logistic model, \code{"BL_logisticfm"} for logistic model proposed by
-Fermont et al (2009), \code{"BL_inv-logistic"} for the inverse logistic model,
-\code{"BL_double-logistic"} for the double logistic model, \code{"qd"} for
+for the Mitscherlich model, \code{"schmidt"} for the Schmidt model, \code{"logistic"}
+for logistic model, \code{"logisticfm"} for logistic model proposed by
+Fermont et al (2009), \code{"inv-logistic"} for the inverse logistic model,
+\code{"double-logistic"} for the double logistic model, \code{"qd"} for
 quadratic model and the \code{"trapezium"} for the trapezium model.}
+
+\item{equation}{A custom model function writen in the form of an R function. Applies
+only when argument \code{model="other"}, else it is \code{NULL}.}
 
 \item{theta}{A numeric vector of initial starting values for optimization
   in fitting the boundary model. Its length and arrangement depend on the
@@ -34,12 +37,12 @@ quadratic model and the \code{"trapezium"} for the trapezium model.}
   intercept, shape parameter, the maximum or plateau response, mean of \code{x},
   mean of \code{y}, standard deviation of \code{x}, standard deviation of \code{y}
   and the correlation of \code{x} and \code{y}.
-  \item For the \code{"BL_logistic"}, BL_inv_logistic and "BL_logisticfm" models,
+  \item For the \code{"logistic"}, inv-logistic and "logisticfm" models,
   it is a vector of length 8 arranged as scaling parameter, shape parameter,
   the maximum or plateau value, mean of \code{x}, mean of \code{y},
   standard deviation of \code{x}, standard deviation of \code{y} and the
   correlation of \code{x} and \code{y}.
-  \item For the \code{"BL_double_logistic"} model,it is a vector of length 11
+  \item For the \code{"double-logistic"} model,it is a vector of length 11
   arranged as scaling parameter, shape parameter, maximum response, maximum response,
   scaling parameter two, shape parameter two, mean of \code{x}, mean of \code{y},
   standard deviation of \code{x}, standard deviation of \code{y} and the correlation
@@ -111,19 +114,19 @@ forms are as follows: \enumerate{
  where \eqn{\beta_1} is the intercept , \eqn{\beta_2} is the slope  and \eqn{\beta_0}
  is the maximum response.
 
- \item The logistic (\code{"BL_logistic"}) and inverse logistic (\code{"BL_inv-logistic"})
+ \item The logistic (\code{"logistic"}) and inverse logistic (\code{"inv-logistic"})
  models
  \deqn{ y= \frac{\beta_0}{1+e^{\beta_2(\beta_1-x)}}}
  \deqn{ y= \beta_0 - \frac{\beta_0}{1+e^{\beta_2(\beta_1-x)}}}
  where \eqn{\beta_1} is a scaling parameter , \eqn{\beta_2} is a shape parameter
  and \eqn{\beta_0} is the maximum response.
 
- \item Logistic model (\code{"BL_logisticfm"})  (Fermont et al. 2009)
+ \item Logistic model (\code{"logisticfm"})  (Fermont et al. 2009)
  \deqn{ y= \frac{\beta_0}{1+(\beta_1 \times e^{-\beta_2x})}}
   where \eqn{\beta_1} is a scaling parameter, \eqn{\beta_2} is a shape
   parameter and \eqn{\beta_0} is the maximum response.
 
- \item Double logistic model (\code{"BL_double-logistic"})
+ \item Double logistic model (\code{"double-logistic"})
  \deqn{ y= \frac{\beta_{0,1}}{1+e^{\beta_2(\beta_1-x)}} -
  \frac{\beta_{0,2}}{1+e^{\beta_4(\beta_3-x)}}}
  where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is a shape parameter one,
