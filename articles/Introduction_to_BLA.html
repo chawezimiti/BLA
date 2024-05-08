@@ -480,12 +480,12 @@ in the previous section</p>
 <span><span class="fu"><a href="../reference/blbin.html">blbin</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, <span class="va">bins</span>,model <span class="op">=</span> <span class="st">"explore"</span>, tau<span class="op">=</span><span class="fl">0.99</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Introduction_to_BLA_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;        x               y        </span></span>
-<span><span class="co">#&gt;  Min.   :1.766   Min.   :10.71  </span></span>
-<span><span class="co">#&gt;  1st Qu.:2.471   1st Qu.:11.98  </span></span>
-<span><span class="co">#&gt;  Median :3.175   Median :12.83  </span></span>
+<span><span class="co">#&gt;  Min.   :1.792   Min.   :10.71  </span></span>
+<span><span class="co">#&gt;  1st Qu.:2.487   1st Qu.:11.98  </span></span>
+<span><span class="co">#&gt;  Median :3.162   Median :12.83  </span></span>
 <span><span class="co">#&gt;  Mean   :3.175   Mean   :12.55  </span></span>
-<span><span class="co">#&gt;  3rd Qu.:3.879   3rd Qu.:13.34  </span></span>
-<span><span class="co">#&gt;  Max.   :4.583   Max.   :13.37</span></span></code></pre>
+<span><span class="co">#&gt;  3rd Qu.:3.862   3rd Qu.:13.34  </span></span>
+<span><span class="co">#&gt;  Max.   :4.591   Max.   :13.37</span></span></code></pre>
 <p>From the plot, it can be seen that a “trapezium” model will be more
 appropriate for this data set.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
@@ -498,8 +498,8 @@ function can now be run.</p>
 <span></span>
 <span><span class="va">model2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/blbin.html">blbin</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, <span class="va">bins</span>,theta <span class="op">=</span> <span class="va">theta</span>,model <span class="op">=</span> <span class="st">"trapezium"</span>, </span>
 <span>              tau<span class="op">=</span><span class="fl">0.99</span>, </span>
-<span>              xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, </span>
-<span>              <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
+<span>              ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, </span>
+<span>              xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
 <span>              pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span>, bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Introduction_to_BLA_files/figure-html/unnamed-chunk-19-1.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
@@ -513,14 +513,14 @@ function can now be run.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;     Estimate</span></span>
-<span><span class="co">#&gt; β₁  4.743275</span></span>
-<span><span class="co">#&gt; β₂  3.381090</span></span>
-<span><span class="co">#&gt; β₀ 13.342009</span></span>
-<span><span class="co">#&gt; β₃ 22.163096</span></span>
-<span><span class="co">#&gt; β₄ -2.320116</span></span>
+<span><span class="co">#&gt; β₁  4.595981</span></span>
+<span><span class="co">#&gt; β₂  3.409921</span></span>
+<span><span class="co">#&gt; β₀ 13.342115</span></span>
+<span><span class="co">#&gt; β₃ 21.883246</span></span>
+<span><span class="co">#&gt; β₄ -2.262389</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $RMS</span></span>
-<span><span class="co">#&gt; [1] 0.01383437</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.01027899</span></span></code></pre></div>
 <p>The results show that the optimized parameters and plot. There is no
 uncertainty in the parameters because this is a heuristic method. These
 parameters can then be used to determine boundary line response for any
@@ -670,7 +670,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; function(x,a,b,c){</span></span>
 <span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55994e1965b8&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x558689252430&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
