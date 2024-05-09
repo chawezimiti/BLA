@@ -26,12 +26,12 @@
 #'   intercept, shape parameter, the maximum or plateau response, mean of \code{x},
 #'   mean of \code{y}, standard deviation of \code{x}, standard deviation of \code{y}
 #'   and the correlation of \code{x} and \code{y}.
-#'   \item For the \code{"BL_logistic"}, BL_inv_logistic and "BL_logisticfm" models,
+#'   \item For the \code{"logistic"}, inv-logistic and "logisticfm" models,
 #'   it is a vector of length 8 arranged as scaling parameter, shape parameter,
 #'   the maximum or plateau value, mean of \code{x}, mean of \code{y},
 #'   standard deviation of \code{x}, standard deviation of \code{y} and the
 #'   correlation of \code{x} and \code{y}.
-#'   \item For the \code{"BL_double_logistic"} model,it is a vector of length 11
+#'   \item For the \code{"double-logistic"} model,it is a vector of length 11
 #'   arranged as scaling parameter, shape parameter, maximum response, maximum response,
 #'   scaling parameter two, shape parameter two, mean of \code{x}, mean of \code{y},
 #'   standard deviation of \code{x}, standard deviation of \code{y} and the correlation
@@ -55,11 +55,13 @@
 #'   "L" fits the lower boundary.
 #' @param model Selects the functional form of the boundary line. It includes
 #'   \code{"blm"} for linear model, \code{"lp"} for linear plateau model, \code{"mit"}
-#'   for the Mitscherlich model, \code{"schmidt"} for the Schmidt model, \code{"BL_logistic"}
-#'   for logistic model, \code{"BL_logisticfm"} for logistic model proposed by
-#'   Fermont et al (2009), \code{"BL_inv-logistic"} for the inverse logistic model,
-#'   \code{"BL_double-logistic"} for the double logistic model, \code{"qd"} for
+#'   for the Mitscherlich model, \code{"schmidt"} for the Schmidt model, \code{"logistic"}
+#'   for logistic model, \code{"logisticfm"} for logistic model proposed by
+#'   Fermont et al (2009), \code{"inv-logistic"} for the inverse logistic model,
+#'   \code{"double-logistic"} for the double logistic model, \code{"qd"} for
 #'   quadratic model and the \code{"trapezium"} for the trapezium model.
+#' @param equation A custom model function writen in the form of an R function. Applies
+#'   only when argument \code{model="other"}, else it is \code{NULL}.
 #' @param optim.method Describes the method used to optimize the model as in the
 #'   \code{optim()} function. The methods include \code{"Nelder-Mead"}, \code{"BFGS"},
 #'   \code{"CG"}, \code{"L-BFGS-B"}, \code{"SANN"} and \code{"Brent"}.
@@ -89,19 +91,19 @@
 #'  where \eqn{\beta_1} is the intercept , \eqn{\beta_2} is the slope  and \eqn{\beta_0}
 #'  is the maximum response.
 #'
-#'  \item The logistic (\code{"BL_logistic"}) and inverse logistic (\code{"BL_inv-logistic"})
+#'  \item The logistic (\code{"logistic"}) and inverse logistic (\code{"inv-logistic"})
 #'  models
 #'  \deqn{ y= \frac{\beta_0}{1+e^{\beta_2(\beta_1-x)}}}
 #'  \deqn{ y= \beta_0 - \frac{\beta_0}{1+e^{\beta_2(\beta_1-x)}}}
 #'  where \eqn{\beta_1} is a scaling parameter , \eqn{\beta_2} is a shape parameter
 #'  and \eqn{\beta_0} is the maximum response.
 #'
-#'  \item Logistic model (\code{"BL_logisticfm"})  (Fermont et al. 2009)
+#'  \item Logistic model (\code{"logisticfm"})  (Fermont et al. 2009)
 #'  \deqn{ y= \frac{\beta_0}{1+(\beta_1 \times e^{-\beta_2x})}}
 #'   where \eqn{\beta_1} is a scaling parameter, \eqn{\beta_2} is a shape
 #'   parameter and \eqn{\beta_0} is the maximum response.
 #'
-#'  \item Double logistic model (\code{"BL_double-logistic"})
+#'  \item Double logistic model (\code{"double-logistic"})
 #'  \deqn{ y= \frac{\beta_{0,1}}{1+e^{\beta_2(\beta_1-x)}} -
 #'  \frac{\beta_{0,2}}{1+e^{\beta_4(\beta_3-x)}}}
 #'  where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is a shape parameter one,
@@ -175,8 +177,8 @@
 #'
 #' @rdname cbvn
 #' @usage
-#' cbvn(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",Hessian=FALSE,
-#'      plot=TRUE, line_smooth=100, lwd=2, l_col="red",...)
+#' cbvn(vals,model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",
+#'       Hessian=FALSE, plot=TRUE, line_smooth=100, lwd=2, l_col="red",...)
 #'
 #' @examples
 #' x<-evapotranspiration$`ET(mm)`
@@ -186,13 +188,15 @@
 #'
 #' cbvn(vals,theta = guess, sigh = 0.4,model= "blm")
 #'
-cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
+cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",
                Hessian=FALSE, plot=TRUE, line_smooth=100, lwd=2, l_col="red",...){
 
   cat("Note: This function may take a few minutes to run for large datasets.\n\n")
 
   data<-data.frame(x=vals[,1],y=vals[,2])
-  ###Removing NA's
+
+  ###Removing NA's ####################
+
   test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE)
 
   if(length(test)>0){
@@ -202,20 +206,86 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
   ########################################
 
   sigh<-sigh #measurement error
+  UpLo<-UpLo # set UpLo to "U" when fitting an upper boundary and "L" for a lower.
+  #BLModxx<-model
 
-  # set UpLo to "U" when fitting an upper boundary and "L" for a lower.
-  UpLo=UpLo
-  BLMod<-model
 
-  #  Estimates are found by minimizing the negative log likelihood.  The first estimate
-  #  starting from guess appears as mlest$par.  scale is recomputed from this, and
-  #  a second run is started from this first solution
-  if(model=="lp"|model=="mit"|model=="BL_logistic"|model=="BL_inv_logistic"|model=="schmidt"|model=="qd"){
+  if(model=="lp"|model=="mit"|model=="logistic"|model=="inv-logistic"|model=="schmidt"|model=="qd"|model=="logisticfm"){
 
     v<-length(theta)
     if(v>8) stop("theta has more than eight values")
     if(v<8) stop("theta has less than eight values")
-    ######################SUPPORT FUNCTIONS#########################
+
+    #########################################################################
+    if(model=="lp"){
+      lp<-function(x,beta0,beta1,beta2){
+        return(min(beta0,beta1+beta2*x))
+      }
+
+      BLMod<-lp
+    }
+
+
+    if(model=="mit"){
+      mit<-function(x,beta0,beta1,beta2){
+        return(beta1+beta0*(1-exp(-x/beta2)))
+      }
+
+      BLMod<-mit
+    }
+
+    if(model=="logistic"){
+      logistic<-function(x,beta0,beta1,beta2){
+        return(beta0/(1+exp(beta2*(beta1-x))))
+      }
+
+      BLMod<-logistic
+    }
+
+
+    if(model=="inv-logistic"){
+      inv_logistic<-function(x,beta0,beta1,beta2){
+        return(beta0-(beta0/(1+exp(beta2*(beta1-x)))))
+      }
+
+      BLMod<-inv_logistic
+    }
+
+    if(model=="logisticfm"){
+      logisticfm<-function(x,beta0,beta1,beta2){
+        return(beta0/(1+beta1*exp(-x*beta2)))
+      }
+
+      BLMod<-logisticfm
+    }
+
+    if(model=="schmidt"){
+      schmidt<-function(x,beta0,beta1,beta2){
+        return(beta0-beta2*(x-beta1)*(x-beta1))
+      }
+
+      BLMod<-schmidt
+    }
+
+    if(model=="qd"){
+      qd<-function(x,beta0,beta1,beta2){
+        return(beta1+beta2*x+beta0*x*x)
+      }
+
+      BLMod<-qd
+    }
+
+
+    drawBL<-function(x,beta0,beta1,beta2,BLMod){
+
+      #BLGen<-match.fun(BLMod)
+      y<-sapply(x,BLMod,beta0=beta0,beta1=beta1,beta2=beta2)
+      return(y)
+    }
+
+
+
+    ###################### LIKELIHOOD FUNCTIONS#########################
     ################################################################
     nll_mef<-function(pars,uplo,BLMod){
       #########################################################################
@@ -256,8 +326,8 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
     }
 
     ###########################################################################
+
     par_nll_mef<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-      ###########################################################################
 
       eps=1e-4
 
@@ -274,9 +344,7 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
     }
     #########################################################################
 
-    #########################################################################
     jdensup<-function(X,BLMod,beta0,beta1,beta2,sigh,mux,muy,sdx,sdy,rcorr){
-      #########################################################################
 
       # joint density of observed values x and y given beta0,beta1,beta2 as bl
       # parameters (plateau, intercept and slope of bounded linear model).
@@ -287,7 +355,7 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       x<-X[1]
       y<-X[2]
 
-      BLGen<-match.fun(BLMod)
+      #BLGen<-match.fun(BLMod)
 
       rho<-tanh(rcorr)
       cov<-rho*sdx*sdy
@@ -298,68 +366,16 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       muyc<-muy+((x-mux)*bet)
       sdyc<-sdy*sqrt(1-(rho*rho))
 
-      c<-BLGen(x,beta0,beta1,beta2)
+      c<-BLMod(x,beta0,beta1,beta2)
 
       fy_x<-coffcturb(y,muyc,sdyc,-Inf,c,sigh)
 
       fxy<-fy_x*fx
       return(log(fxy))
     }
-    #########################################################################
 
     #########################################################################
-    lp<-function(x,beta0,beta1,beta2){
-      #########################################################################
-      return(min(beta0,beta1+beta2*x))
-    }
-    #########################################################################
 
-    #########################################################################
-    mit<-function(x,beta0,beta1,beta2){
-      #########################################################################
-      return(beta1+beta0*(1-exp(-x/beta2)))
-    }
-    #########################################################################
-    BL_logistic<-function(x,beta0,beta1,beta2){
-      #########################################################################
-      return(beta0/(1+exp(beta2*(beta1-x))))
-    }
-    #########################################################################
-    BL_inv_logistic<-function(x,beta0,beta1,beta2){
-      #########################################################################
-      return(beta0-(beta0/(1+exp(beta2*(beta1-x)))))
-    }
-    #########################################################################
-    BL_logisticfm<-function(x,beta0,beta1,beta2){
-      #########################################################################
-      return(beta0/(1+beta1*exp(-x*beta2)))
-    }
-    #########################################################################
-    blm<-function(x,beta0,beta1){
-      #########################################################################
-      return(beta0+beta1*x)
-    }
-    ###################################################################
-    schmidt<-function(x,beta0,beta1,beta2){
-      #########################################################################
-      return(beta0-beta2*(x-beta1)*(x-beta1))
-    }
-    ###################################################################
-    qd<-function(x,beta0,beta1,beta2){
-      #########################################################################
-      return(beta1+beta2*x+beta0*x*x)
-    }
-    #########################################################################
-    drawBL<-function(x,beta0,beta1,beta2,BLMod){
-      #########################################################################
-      BLGen<-match.fun(BLMod)
-      y<-sapply(x,BLGen,beta0=beta0,beta1=beta1,beta2=beta2)
-      return(y)
-    }
-    #########################################################################
-
-
-    #########################################################################
     coffcturb<-function(x,mu,sig,a,c,sigh){
       #########################################################################
       #
@@ -474,12 +490,10 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       fxy<-fy_x*fx
       return(log(fxy))
     }
-    ############################
 
     ####################END OF SUPPORT FUNCTIONS###################
-    ###############################################################
 
-    ############OPTIMISING THE MODEL###############################
+    ############ OPTIMISING THE MODEL###############################
 
     mlest<-suppressWarnings(optim(theta,nll_mef,uplo=UpLo,BLMod=BLMod,
                                   method=optim.method,
@@ -569,7 +583,7 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
     if(model=="schmidt"){Equation<-noquote("y = \u03B2\u2080 - \u03B2\u2081 (1-\u03B2\u2082)\u00B2)")}
     if(model=="qd"){Equation<-noquote("y = \u03B2\u2081+\u03B2\u2082x+\u03B2\u2083x\u00B2")}
 
-    result<-list(Model=BLMod,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
     class(result)<-"cm"
     return(result)
 
@@ -577,11 +591,28 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
   }
 
   ################### LINEAR MODEL ########################################################################################
+
   if(model=="blm"){
 
     v<-length(theta)
     if(v>7) stop("theta has more than seven values")
     if(v<7) stop("theta has less than seven values")
+
+    ## The linear model defined ##
+
+    blm<-function(x,beta0,beta1){
+      return(beta0+beta1*x)
+    }
+
+    BLMod <- blm
+
+
+    drawBL2<-function(x,beta0,beta1,BLMod){
+      y<-sapply(x,BLMod,beta0=beta0,beta1=beta1)
+      return(y)
+    }
+
+
     #############Support functions for linear model##########################
     #########################################################################
     nll_mef2<-function(pars,uplo,BLMod){
@@ -645,7 +676,7 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       x<-X[1]
       y<-X[2]
 
-      BLGen2<-match.fun(BLMod)
+      #BLGen2<-match.fun(BLMod)
 
       rho<-tanh(rcorr)
       cov<-rho*sdx*sdy
@@ -656,28 +687,12 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       muyc<-muy+((x-mux)*bet)
       sdyc<-sdy*sqrt(1-(rho*rho))
 
-      c<-BLGen2(x,beta0,beta1)
+      c<-BLMod(x,beta0,beta1)
 
       fy_x<-coffcturb(y,muyc,sdyc,-Inf,c,sigh)
 
       fxy<-fy_x*fx
       return(log(fxy))
-    }
-    #########################################################################
-
-    #########################################################################
-    blm<-function(x,beta0,beta1){
-      #########################################################################
-      return(beta0+beta1*x)
-    }
-    #########################################################################
-
-    #########################################################################
-    drawBL2<-function(x,beta0,beta1,BLMod){
-      #########################################################################
-      BLGen2<-match.fun(BLMod)
-      y<-sapply(x,BLGen2,beta0=beta0,beta1=beta1)
-      return(y)
     }
 
     #########################################################################
@@ -737,11 +752,9 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
     }
 
     ######################END OF SUPPORT FUNCTIONS##########################
-    ########################################################################
 
 
-    ####OPTIMISING THE LINEAR MODEL########################
-    #######################################################
+    #### OPTIMISING THE LINEAR MODEL ########################
 
     mlest<-suppressWarnings(optim(theta,nll_mef2,uplo=UpLo,BLMod=BLMod,
                                   method=optim.method,
@@ -807,20 +820,36 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
 
   if(model=="blm"){ Equation<-noquote("y = \u03B2\u2081 + \u03B2\u2082x")}
 
-  result<-list(Model=BLMod,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+  result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
   class(result)<-"cm"
   return(result)
   }
 
-  #############################################################################################################################
-  ######################### For trapezium model ###############################################################################
+
+  ######################### TRAPEZIUM MODEL ###############################################################################
 
   if(model=="trapezium"){
 
     v<-length(theta)
     if(v>10) stop("theta has more than ten values")
     if(v<10) stop("theta has less than tenvalues")
-    ######################SUPPORT FUNCTIONS#########################
+
+    ### Define the trapezium function
+    #########################################################################
+
+    trapezium<-function(x,beta0,beta1,beta2,beta3,beta4){
+      return(min(beta0,beta1+beta2*x,beta3+beta4*x))
+    }
+
+    BLMod <- trapezium
+
+    drawBL3<-function(x,beta0,beta1,beta2,beta3,beta4,BLMod){
+      y<-sapply(x,BLMod,beta0=beta0,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4)
+      return(y)
+    }
+
+
+    ######################LIKELIHOOD FUNCTIONS#########################
     ################################################################
     nll_mef3<-function(pars,uplo,BLMod){
       #########################################################################
@@ -894,7 +923,7 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       x<-X[1]
       y<-X[2]
 
-      BLGen3<-match.fun(BLMod)
+      #BLGen3<-match.fun(BLMod)
 
       rho<-tanh(rcorr)
       cov<-rho*sdx*sdy
@@ -905,31 +934,13 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       muyc<-muy+((x-mux)*bet)
       sdyc<-sdy*sqrt(1-(rho*rho))
 
-      c<-BLGen3(x,beta0,beta1,beta2,beta3,beta4)
+      c<-BLMod(x,beta0,beta1,beta2,beta3,beta4)
 
       fy_x<-coffcturb3(y,muyc,sdyc,-Inf,c,sigh)
 
       fxy<-fy_x*fx
       return(log(fxy))
     }
-    #########################################################################
-
-    #########################################################################
-    trapezium<-function(x,beta0,beta1,beta2,beta3,beta4){
-      #########################################################################
-      return(min(beta0,beta1+beta2*x,beta3+beta4*x))
-    }
-    #########################################################################
-    #########################################################################
-
-    drawBL3<-function(x,beta0,beta1,beta2,beta3,beta4,BLMod){
-      #########################################################################
-      BLGen3<-match.fun(BLMod)
-      y<-sapply(x,BLGen3,beta0=beta0,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4)
-      return(y)
-    }
-    #########################################################################
-
 
     #########################################################################
     coffcturb3<-function(x,mu,sig,a,c,sigh){
@@ -1134,40 +1145,39 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
 
     if(model=="trapezium"){ Equation<-noquote("y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080, \u03B2\u2083 + \u03B2\u2084x)")}
 
-    result<-list(Model=BLMod,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
     class(result)<-"cm"
     return(result)
 
 
   }
 
-  #########################################################################################
-  ##################  Double logistic model ########
+  ##################  DOUBLE LOGISTIC MODEL ##############################################################################
 
-  if(model=="BL_double_logistic"){
+  if(model=="double-logistic"){
 
     v<-length(theta)
     if(v>11) stop("theta has more than eleven values")
     if(v<11) stop("theta has less than eleven values")
-    ######################SUPPORT FUNCTIONS#########################
-    ################################################################
+
+
+    ###### Define the double logistic function ###########################
+
+    double_logistic<-function(x,beta01,beta02,beta1,beta2,beta3,beta4){
+      return((beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x)))))
+    }
+
+    BLMod <- double_logistic
+
+    drawBL4<-function(x,beta01,beta02,beta1,beta2,beta3,beta4,BLMod){
+      #BLGen4<-match.fun(BLMod)
+      y<-sapply(x,BLMod,beta01=beta01,beta02=beta02,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4)
+      return(y)
+    }
+
+    ######################LIKELIHOOD FUNCTIONS #########################
+
     nll_mef4<-function(pars,uplo,BLMod){
-      #########################################################################
-      # Returns nll for 3-paramter BL model, parameters in pars,uplo specifies
-      # upper or lower boundary.
-      #
-      # Measurement error fixed (sigh at top level)
-      # Data in vals (n x 2 matrix) at top level.
-      #
-      # BLMod is set to determine the parametric form of the BL model
-      #
-      # BL_bs:  broken stick.  beta0 is maximum, beta1 is intercept,
-      #	  beta2 is slope.
-      #
-      # BL_mit: Mitscherlich.  beta0 is intercept, beta1 is shape parameter,
-      #	  beta2 is max response - beta0
-      #
-      # Three parameters as currently set up.
 
       beta1<-pars[1]
       beta2<-pars[2]
@@ -1195,8 +1205,8 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
     }
 
     ###########################################################################
+
     par_nll_mef4<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-      ###########################################################################
 
       eps=1e-4
 
@@ -1226,7 +1236,7 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       x<-X[1]
       y<-X[2]
 
-      BLGen4<-match.fun(BLMod)
+      #BLGen4<-match.fun(BLMod)
 
       rho<-tanh(rcorr)
       cov<-rho*sdx*sdy
@@ -1237,7 +1247,7 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       muyc<-muy+((x-mux)*bet)
       sdyc<-sdy*sqrt(1-(rho*rho))
 
-      c<-BLGen4(x,beta01,beta02,beta1,beta2,beta3,beta4)
+      c<-BLMod(x,beta01,beta02,beta1,beta2,beta3,beta4)
 
       fy_x<-coffcturb4(y,muyc,sdyc,-Inf,c,sigh)
 
@@ -1246,28 +1256,8 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
     }
     #########################################################################
 
-    #########################################################################
-    BL_double_logistic<-function(x,beta01,beta02,beta1,beta2,beta3,beta4){
-      #########################################################################
-
-      return((beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x)))))
-    }
-    #########################################################################
-    #########################################################################
-
-    drawBL4<-function(x,beta01,beta02,beta1,beta2,beta3,beta4,BLMod){
-      #########################################################################
-      BLGen4<-match.fun(BLMod)
-      y<-sapply(x,BLGen4,beta01=beta01,beta02=beta02,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4)
-      return(y)
-    }
-    #########################################################################
-
-
-    #########################################################################
     coffcturb4<-function(x,mu,sig,a,c,sigh){
-      #########################################################################
-      #
+
       # a is right censor, c is left censor.  Set either to Inf/-Inf
       #
       # Notation as in Turban webpage, except k is substituted for c
@@ -1293,10 +1283,7 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       return(f)
     }
     #########################################################################
-    ###################################################################
 
-
-    #########################################################################
     nllmvn4<-function(pars){
       #########################################################################
       # all data in ur
@@ -1322,8 +1309,6 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
 
     ########################################################################
 
-
-    #########################################################################
     nll_mef_maxyield4<-function(pars){
       #########################################################################
       #
@@ -1379,7 +1364,6 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
       fxy<-fy_x*fx
       return(log(fxy))
     }
-    ############################
 
     ####################END OF SUPPORT FUNCTIONS###################
     ###############################################################
@@ -1396,19 +1380,14 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
                                    method=optim.method,
                                    control = list(parscale = scale),
                                    hessian="T"))
-
     # there will be warning messages on running this as the optimizer will drift
     # into areas where density is very small.
 
     # compute the Akaike Information Criterion for the fitted model
-    # This is 2* number of parameters + 2*(negative log likelihood)
-    # number of parameters is 8
 
     AICbl<-(2*8)+(2*mlest2$value)
 
-    # extract parameters of the boundary line
-
-
+    # Extract parameters of the boundary line
     beta1<-mlest2$par[1]
     beta2<-mlest2$par[2]
     beta01<-mlest2$par[3]
@@ -1416,16 +1395,14 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
     beta3<-mlest2$par[5]
     beta4<-mlest2$par[6]
 
-    ##Plotting the data
+    # Plotting the data
 
     if(plot==TRUE){ plot(vals,...)
-      # set up values of the predictor variable to draw the boundary line
-      #xdraw<-seq(1.5,4.5,0.01)
-      x<-vals[,1]
-      y<-vals[,2]
-      xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
-      ydraw<-drawBL4((xdraw),beta01,beta02,beta1,beta2,beta3,beta4,BLMod)
-      lines(xdraw,ydraw,col=l_col,lwd=lwd)
+        x<-vals[,1]
+        y<-vals[,2]
+        xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
+        ydraw<-drawBL4((xdraw),beta01,beta02,beta1,beta2,beta3,beta4,BLMod)
+        lines(xdraw,ydraw,col=l_col,lwd=lwd)
     }
 
     # Now compute the standard error of the boundary line model parameters then
@@ -1471,11 +1448,745 @@ cbvn<-function(vals,model="lp",theta, sigh, UpLo="U", optim.method="BFGS",
     if(model=="BL_double_logistic"){
       Equation<-noquote("y = {\u03B2\u20801/1+[exp(\u03B2\u2082*(\u03B2\u2081-x))]} - {\u03B2\u20801/1+[exp(\u03B2\u2084*(\u03B2\u2083-x))]} ")}
 
-    result<-list(Model=BLMod,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
     class(result)<-"cm"
     return(result)
 
 
   }
-  ####
+
+  ######### CUSTOM MODELS ####################
+
+  if(model=="other"){
+
+      v<-length(theta)
+      if(v>10) stop("Not set up for models with more than 5 parametrs. The argument theta should contain less than 10 values")
+      Equation<-equation # to print equation in output
+      theta<-unname(theta) # removes names from theta
+
+
+      if(v==8){
+
+        BLMod <- equation
+
+        drawBL5 <- function(x,a,b,c,BLMod){
+          y<-sapply(x,BLMod,a=a,b=b,c=c)
+          return(y)
+        }
+
+        ###################### LIKELIHOOD FUNCTIONS#########################
+
+        nll_mef5<-function(pars,uplo,BLMod){
+
+          a<-pars[1]
+          b<-pars[2]
+          c<-pars[3]
+          mux<-pars[4]
+          muy<-pars[5]
+          sdx<-pars[6]
+          sdy<-pars[7]
+          rcorr<-pars[8]
+
+          if(uplo=="U"){
+            nliks<-apply(vals,1,jdensup5,BLMod=BLMod,
+                         a=a,b=b,c=c,sigh=sigh,mux=mux,muy=muy,
+                         sdx=sdx,sdy=sdy,rcorr=rcorr)
+            nll<--sum(nliks)
+          }else{
+            print("Error, not set up for lower boundary")
+            stop
+          }
+          return(nll)
+        }
+
+        ###########################################################################
+
+        par_nll_mef5<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+
+          eps=1e-4
+
+          nr<-length(x)
+          part<-vector("numeric",nr)
+
+          for (i in 1:nr){
+            del<-rep(0,nr)
+            del[i]<-eps
+            part[i]<-(nll_mef5((x+del),UpLo,BLMod)-nll_mef5((x),UpLo,BLMod))/eps
+          }
+
+          return(part)
+        }
+        #########################################################################
+
+        jdensup5<-function(X,BLMod,a,b,c,sigh,mux,muy,sdx,sdy,rcorr){
+
+          # joint density of observed values x and y given beta0,beta1,beta2 as bl
+          # parameters (plateau, intercept and slope of bounded linear model).
+          # sigh ss measurement error
+          # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
+          # NB parameterization of rcorr to keep in [-1,1]
+
+          x<-X[1]
+          y<-X[2]
+
+          rho<-tanh(rcorr)
+          cov<-rho*sdx*sdy
+          bet<-cov/(sdx*sdx)
+
+          fx<-dnorm(x,mux,sdx)
+
+          muyc<-muy+((x-mux)*bet)
+          sdyc<-sdy*sqrt(1-(rho*rho))
+
+          C<-BLMod(x,a,b,c)
+
+          fy_x<-coffcturb5(y,muyc,sdyc,-Inf,C,sigh)
+
+          fxy<-fy_x*fx
+          return(log(fxy))
+        }
+
+        #########################################################################
+
+        coffcturb5<-function(x,mu,sig,A,C,sigh){
+          #########################################################################
+          #
+          # a is right censor, c is left censor.  Set either to Inf/-Inf
+          #
+          # Notation as in Turban webpage, except k is substituted for c
+
+
+          k<-((mu-C)/sig)
+          D<-((mu-A)/sig)
+          alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
+          beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
+          gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(D)-pnorm(k)))
+
+          com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
+          com2<-gamma*exp(com1)
+          f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
+
+          #rescale for censored
+          f<-f*pnorm(C,mu,sig)
+
+          #add contribution at x from mass at c
+
+          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))
+
+          return(f)
+        }
+        #########################################################################
+
+        nllmvn5<-function(pars){
+
+          mux<-pars[1]
+          muy<-pars[2]
+          sdx<-pars[3]
+          sdy<-pars[4]
+          rcorr<-pars[5]
+
+          rho<-tanh(rcorr)
+          cov<-rho*sdx*sdy
+
+          Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
+          nllmvn<-0
+
+          lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
+          nllmvn<--sum(lliks)
+
+          return(nllmvn)
+        }
+
+
+        ####################END OF SUPPORT FUNCTIONS###################
+
+        ############ OPTIMISING THE MODEL###############################
+
+        mlest<-suppressWarnings(optim(theta,nll_mef5,uplo=UpLo,BLMod=BLMod,
+                                      method=optim.method,
+                                      hessian="T"))
+
+        scale<-suppressWarnings(1/abs(par_nll_mef5(mlest$par,UpLo,BLMod)))
+
+        mlest2<-suppressWarnings(optim(mlest$par,nll_mef5,uplo=UpLo,BLMod=BLMod,
+                                       method=optim.method,
+                                       control = list(parscale = scale),
+                                       hessian="T"))
+
+        # compute the Akaike Information Criterion for the fitted model
+
+
+        AICbl<-(2*8)+(2*mlest2$value)
+
+        # Extract parameters of the boundary line
+
+
+        a<-mlest2$par[1]
+        b<-mlest2$par[2]
+        c<-mlest2$par[3]
+
+
+        ## Plotting the data
+
+        if(plot==TRUE){ plot(vals,...)
+            x<-vals[,1]
+            y<-vals[,2]
+            xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
+            ydraw<-drawBL5((xdraw),a,b,c,BLMod)
+            lines(xdraw,ydraw,col=l_col,lwd=lwd)
+        }
+
+        # Now compute the standard error of the boundary line model parameters then
+        # write these out with the estimates
+
+        hesmat<-mlest2$hessian
+
+        estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
+        estimates[,1]<-mlest2$par
+        estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
+
+        rownames(estimates)<-c("a","b","c","mux","muy","sdx","sdy","rcorr")
+
+        #  Now fit the null model, an unbounded multivariate normal, and compute its
+        # Akaike information criterion.
+
+        theta2<-c(theta[c(4,5,6,7)],0)
+
+        mvnmlest<-suppressWarnings(optim( theta2,nllmvn5, method=optim.method))
+
+        AImvn<-(2*5)+(2*mvnmlest$value) #
+
+        # Print the AIC values
+
+        AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
+        AikakeIC[,1]<-c(AImvn,AICbl)
+        rownames(AikakeIC)<-c("mvn","BL")
+
+
+        result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+        class(result)<-"cm"
+        return(result)
+
+      }
+
+      if(v==9){
+
+        BLMod <- equation
+
+        drawBL6 <- function(x,a,b,c,d,BLMod){
+          y<-sapply(x,BLMod,a=a,b=b,c=c,d=d)
+          return(y)
+        }
+
+        ###################### LIKELIHOOD FUNCTIONS#########################
+
+        nll_mef6<-function(pars,uplo,BLMod){
+
+          a<-pars[1]
+          b<-pars[2]
+          c<-pars[3]
+          d<-pars[4]
+          mux<-pars[5]
+          muy<-pars[6]
+          sdx<-pars[7]
+          sdy<-pars[8]
+          rcorr<-pars[9]
+
+          if(uplo=="U"){
+            nliks<-apply(vals,1,jdensup6,BLMod=BLMod,
+                         a=a,b=b,c=c,d=d,sigh=sigh,mux=mux,muy=muy,
+                         sdx=sdx,sdy=sdy,rcorr=rcorr)
+            nll<--sum(nliks)
+          }else{
+            print("Error, not set up for lower boundary")
+            stop
+          }
+          return(nll)
+        }
+
+        ###########################################################################
+
+        par_nll_mef6<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+
+          eps=1e-4
+
+          nr<-length(x)
+          part<-vector("numeric",nr)
+
+          for (i in 1:nr){
+            del<-rep(0,nr)
+            del[i]<-eps
+            part[i]<-(nll_mef6((x+del),UpLo,BLMod)-nll_mef6((x),UpLo,BLMod))/eps
+          }
+
+          return(part)
+        }
+        #########################################################################
+
+        jdensup6<-function(X,BLMod,a,b,c,d,sigh,mux,muy,sdx,sdy,rcorr){
+
+          # joint density of observed values x and y given beta0,beta1,beta2 as bl
+          # parameters (plateau, intercept and slope of bounded linear model).
+          # sigh ss measurement error
+          # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
+          # NB parameterization of rcorr to keep in [-1,1]
+
+          x<-X[1]
+          y<-X[2]
+
+          rho<-tanh(rcorr)
+          cov<-rho*sdx*sdy
+          bet<-cov/(sdx*sdx)
+
+          fx<-dnorm(x,mux,sdx)
+
+          muyc<-muy+((x-mux)*bet)
+          sdyc<-sdy*sqrt(1-(rho*rho))
+
+          C<-BLMod(x,a,b,c,d)
+
+          fy_x<-coffcturb6(y,muyc,sdyc,-Inf,C,sigh)
+
+          fxy<-fy_x*fx
+          return(log(fxy))
+        }
+
+        #########################################################################
+
+        coffcturb6<-function(x,mu,sig,A,C,sigh){
+          #########################################################################
+          #
+          # a is right censor, c is left censor.  Set either to Inf/-Inf
+          #
+          # Notation as in Turban webpage, except k is substituted for c
+
+
+          k<-((mu-C)/sig)
+          D<-((mu-A)/sig)
+          alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
+          beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
+          gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(D)-pnorm(k)))
+
+          com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
+          com2<-gamma*exp(com1)
+          f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
+
+          #rescale for censored
+          f<-f*pnorm(C,mu,sig)
+
+          #add contribution at x from mass at c
+
+          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))
+
+          return(f)
+        }
+        #########################################################################
+
+        nllmvn6<-function(pars){
+
+          mux<-pars[1]
+          muy<-pars[2]
+          sdx<-pars[3]
+          sdy<-pars[4]
+          rcorr<-pars[5]
+
+          rho<-tanh(rcorr)
+          cov<-rho*sdx*sdy
+
+          Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
+          nllmvn<-0
+
+          lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
+          nllmvn<--sum(lliks)
+
+          return(nllmvn)
+        }
+
+
+        ####################END OF SUPPORT FUNCTIONS###################
+
+        ############ OPTIMISING THE MODEL###############################
+
+        mlest<-suppressWarnings(optim(theta,nll_mef6,uplo=UpLo,BLMod=BLMod,
+                                      method=optim.method,
+                                      hessian="T"))
+
+        scale<-suppressWarnings(1/abs(par_nll_mef6(mlest$par,UpLo,BLMod)))
+
+        mlest2<-suppressWarnings(optim(mlest$par,nll_mef6,uplo=UpLo,BLMod=BLMod,
+                                       method=optim.method,
+                                       control = list(parscale = scale),
+                                       hessian="T"))
+
+        # compute the Akaike Information Criterion for the fitted model
+
+
+        AICbl<-(2*8)+(2*mlest2$value)
+
+        # Extract parameters of the boundary line
+
+
+        a<-mlest2$par[1]
+        b<-mlest2$par[2]
+        c<-mlest2$par[3]
+        d<-mlest2$par[4]
+
+
+        ## Plotting the data
+
+        if(plot==TRUE){ plot(vals,...)
+          x<-vals[,1]
+          y<-vals[,2]
+          xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
+          ydraw<-drawBL6((xdraw),a,b,c,d,BLMod)
+          lines(xdraw,ydraw,col=l_col,lwd=lwd)
+        }
+
+        # Now compute the standard error of the boundary line model parameters then
+        # write these out with the estimates
+
+        hesmat<-mlest2$hessian
+
+        estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
+        estimates[,1]<-mlest2$par
+        estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
+
+        rownames(estimates)<-c("a","b","c","d", "mux","muy","sdx","sdy","rcorr")
+
+        #  Now fit the null model, an unbounded multivariate normal, and compute its
+        # Akaike information criterion.
+
+        theta2<-c(theta[c(4,5,6,7)],0)
+
+        mvnmlest<-suppressWarnings(optim( theta2,nllmvn6, method=optim.method))
+
+        AImvn<-(2*5)+(2*mvnmlest$value) #
+
+        # Print the AIC values
+
+        AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
+        AikakeIC[,1]<-c(AImvn,AICbl)
+        rownames(AikakeIC)<-c("mvn","BL")
+
+
+        result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+        class(result)<-"cm"
+        return(result)
+
+      }
+
+      if(v==10){
+
+          BLMod <- equation
+          drawBL7<-function(x,a,b,c,d,e,BLMod){
+            y<-sapply(x,BLMod,a=a,b=b,c=c,d=d,e=e)
+            return(y)
+          }
+
+
+          ######################LIKELIHOOD FUNCTIONS#########################
+          ################################################################
+          nll_mef7<-function(pars,uplo,BLMod){
+            #########################################################################
+            # Returns nll for 3-paramter BL model, parameters in pars,uplo specifies
+            # upper or lower boundary.
+            #
+            # Measurement error fixed (sigh at top level)
+            # Data in vals (n x 2 matrix) at top level.
+            #
+            # BLMod is set to determine the parametric form of the BL model
+            #
+            # BL_bs:  broken stick.  beta0 is maximum, beta1 is intercept,
+            #	  beta2 is slope.
+            #
+            # BL_mit: Mitscherlich.  beta0 is intercept, beta1 is shape parameter,
+            #	  beta2 is max response - beta0
+            #
+            # Three parameters as currently set up.
+
+            a<-pars[1]
+            b<-pars[2]
+            c<-pars[3]
+            d<-pars[4]
+            e<-pars[5]
+            mux<-pars[6]
+            muy<-pars[7]
+            sdx<-pars[8]
+            sdy<-pars[9]
+            rcorr<-pars[10]
+
+            if(uplo=="U"){
+              nliks<-apply(vals,1,jdensup7,BLMod=BLMod,
+                           a=a,b=b,c=c,d=d,e=e,sigh=sigh,mux=mux,muy=muy,
+                           sdx=sdx,sdy=sdy,rcorr=rcorr)
+              nll<--sum(nliks)
+            }else{
+              print("Error, not set up for lower boundary")
+              stop
+            }
+            return(nll)
+          }
+
+          ###########################################################################
+          par_nll_mef7<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+            ###########################################################################
+
+            eps=1e-4
+
+            nr<-length(x)
+            part<-vector("numeric",nr)
+
+            for (i in 1:nr){
+              del<-rep(0,nr)
+              del[i]<-eps
+              part[i]<-(nll_mef7((x+del),UpLo,BLMod)-nll_mef7((x),UpLo,BLMod))/eps
+            }
+
+            return(part)
+          }
+          #########################################################################
+
+          #########################################################################
+          jdensup7<-function(X,BLMod,a,b,c,d,e,sigh,mux,muy,sdx,sdy,rcorr){
+            #########################################################################
+
+            # joint density of observed values x and y given beta0,beta1,beta2 as bl
+            # parameters (plateau, intercept and slope of bounded linear model).
+            # sigh ss measurement error
+            # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
+            # NB parameterization of rcorr to keep in [-1,1]
+
+            x<-X[1]
+            y<-X[2]
+
+            #BLGen3<-match.fun(BLMod)
+
+            rho<-tanh(rcorr)
+            cov<-rho*sdx*sdy
+            bet<-cov/(sdx*sdx)
+
+            fx<-dnorm(x,mux,sdx)
+
+            muyc<-muy+((x-mux)*bet)
+            sdyc<-sdy*sqrt(1-(rho*rho))
+
+            C<-BLMod(x,a,b,c,d,e)
+
+            fy_x<-coffcturb7(y,muyc,sdyc,-Inf,C,sigh)
+
+            fxy<-fy_x*fx
+            return(log(fxy))
+          }
+
+          #########################################################################
+          coffcturb7<-function(x,mu,sig,A,C,sigh){
+            #########################################################################
+            #
+            # a is right censor, c is left censor.  Set either to Inf/-Inf
+            #
+            # Notation as in Turban webpage, except k is substituted for c
+
+
+            k<-((mu-C)/sig)
+            D<-((mu-A)/sig)
+            alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
+            beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
+            gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(D)-pnorm(k)))
+
+            com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
+            com2<-gamma*exp(com1)
+            f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
+
+            #rescale for censored
+            f<-f*pnorm(C,mu,sig)
+
+            #add contribution at x from mass at c
+
+            f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))
+
+            return(f)
+          }
+          #########################################################################
+          ###################################################################
+
+
+          #########################################################################
+          nllmvn7<-function(pars){
+            #########################################################################
+            # all data in ur
+
+
+            mux<-pars[1]
+            muy<-pars[2]
+            sdx<-pars[3]
+            sdy<-pars[4]
+            rcorr<-pars[5]
+
+            rho<-tanh(rcorr)
+            cov<-rho*sdx*sdy
+
+            Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
+            nllmvn<-0
+
+            lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
+            nllmvn<--sum(lliks)
+
+            return(nllmvn)
+          }
+
+          ########################################################################
+#
+#
+#           #########################################################################
+#           nll_mef_maxyield7<-function(pars){
+#             #########################################################################
+#             #
+#             # Returns nll for simple flat upper BL model, parameter in pars.
+#             #
+#             # Measurement error fixed (sigh at top level)
+#             # Data in vals (n x 2 matrix) at top level.
+#             #
+#
+#             ymax<-pars[1]
+#             mux<-pars[2]
+#             muy<-pars[3]
+#             sdx<-pars[4]
+#             sdy<-pars[5]
+#             rcorr<-pars[6]
+#
+#             nliks<-apply(vals,1,jdens_maxyield7,ymax=ymax,
+#                          sigh=sigh,mux=mux,muy=muy,
+#                          sdx=sdx,sdy=sdy,rcorr=rcorr)
+#
+#             nll<--sum(nliks)
+#
+#             return(nll)
+#           }
+#
+#
+#           #########################################################################
+#           jdens_maxyield7<-function(X,ymax,sigh,mux,muy,sdx,sdy,rcorr){
+#             #########################################################################
+#
+#             # joint density of observed values x and y given a fixed maximum y
+#             # as the only model parameter.
+#             # sigh ss measurement error
+#             # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
+#             # NB parameterization of rcorr to keep in [-1,1]
+#
+#             x<-X[1]
+#             y<-X[2]
+#
+#             rho<-tanh(rcorr)
+#             cov<-rho*sdx*sdy
+#             bet<-cov/(sdx*sdx)
+#
+#             fx<-dnorm(x,mux,sdx)
+#
+#             muyc<-muy+((x-mux)*bet)
+#             sdyc<-sdy*sqrt(1-(rho*rho))
+#
+#             c<-ymax
+#
+#             fy_x<-coffcturb7(y,muyc,sdyc,-Inf,c,sigh)
+#
+#             fxy<-fy_x*fx
+#             return(log(fxy))
+#           }
+#           ############################
+
+          ####################END OF SUPPORT FUNCTIONS###################
+          ###############################################################
+
+          ############OPTIMISING THE MODEL###############################
+
+          mlest<-suppressWarnings(optim(theta,nll_mef7,uplo=UpLo,BLMod=BLMod,
+                                        method=optim.method,
+                                        hessian="T"))
+
+          scale<-suppressWarnings(1/abs(par_nll_mef7(mlest$par,UpLo,BLMod)))
+
+          mlest2<-suppressWarnings(optim(mlest$par,nll_mef7,uplo=UpLo,BLMod=BLMod,
+                                         method=optim.method,
+                                         control = list(parscale = scale),
+                                         hessian="T"))
+
+          # there will be warning messages on running this as the optimizer will drift
+          # into areas where density is very small.
+
+          # compute the Akaike Information Criterion for the fitted model
+          # This is 2* number of parameters + 2*(negative log likelihood)
+          # number of parameters is 8
+
+          AICbl<-(2*8)+(2*mlest2$value)
+
+          # extract parameters of the boundary line
+
+
+          a<-mlest2$par[1]
+          b<-mlest2$par[2]
+          c<-mlest2$par[3]
+          d<-mlest2$par[4]
+          e<-mlest2$par[5]
+
+          ##Plotting the data
+
+          if(plot==TRUE){ plot(vals,...)
+
+            x<-vals[,1]
+            y<-vals[,2]
+            xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
+            ydraw<-drawBL7((xdraw),a,b,c,d,e,BLMod)
+            lines(xdraw,ydraw,col=l_col,lwd=lwd)
+          }
+
+          # Now compute the standard error of the boundary line model parameters then
+          # write these out with the estimates
+
+          hesmat<-mlest2$hessian
+
+          estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
+          estimates[,1]<-mlest2$par
+
+          estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
+          rownames(estimates)<-c("a","b","c","d","e","mux","muy","sdx","sdy","rcorr")
+
+
+          #  Now fit the null model, an unbounded multivariate normal, and compute its
+          # Akaike information criterion.
+
+          theta2<-c(theta[c(6,7,8,9)],0)
+
+          mvnmlest<-suppressWarnings(optim( theta2,nllmvn7, #guess2 was c(1.6,9,0.5,1.7,0.0)
+                                            method=optim.method))
+
+          AImvn<-(2*5)+(2*mvnmlest$value) #
+
+
+          #  Now fit a model with a constant upper boundary
+#
+#           ymbest<-mlest2$par[3]+mlest2$par[2]
+#           ymax_guess<-c(ymbest,mlest2$par[c(6,7,8,9,10)])
+#
+#           max_yield<-suppressWarnings(optim(c(ymax_guess),nll_mef_maxyield7,
+#                                             method=optim.method))
+#
+#           AImax_yield<-(2*6)+(2*max_yield$value)#
+
+          #print(c(AImax_yield, AImvn,AICbl))
+
+          AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
+          AikakeIC[,1]<-c(AImvn,AICbl)
+          rownames(AikakeIC)<-c("mvn","BL")
+
+          result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+          class(result)<-"cm"
+          return(result)
+
+
+      }
+
+  }
+
+
 }

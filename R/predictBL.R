@@ -40,7 +40,7 @@ predictBL<-function(object,x){
     return(unlist(y))
   }
 
-  if(object$Model=="logistic"|object[[1]]=="BL_logistic"){
+  if(object$Model=="logistic"|object[[1]]=="logistic"){
 
     y<-tryCatch(lapply(x,
                        function(x,b) b$Parameters[3,1]/(1+exp(b$Parameters[2,1]*(b$Parameters[1,1]-x))),
@@ -48,7 +48,7 @@ predictBL<-function(object,x){
     return(unlist(y))
   }
 
-  if(object$Model=="inv-logistic"|object[[1]]=="BL_inv_logistic"){
+  if(object$Model=="inv-logistic"|object[[1]]=="inv-logistic"){
 
     y<-tryCatch(lapply(x,
                        function(x,b) b$Parameters[3,1]- (b$Parameters[3,1]/(1+exp(b$Parameters[2,1]*(b$Parameters[1,1]-x)))),
@@ -56,7 +56,7 @@ predictBL<-function(object,x){
     return(unlist(y))
   }
 
-  if(object$Model=="logisticfm"|object[[1]]=="BL_logisticfm"){
+  if(object$Model=="logisticfm"|object[[1]]=="logisticfm"){
 
     y<-tryCatch(lapply(x,
                        function(x,b) b$Parameters[3,1]/(1+(b$Parameters[1,1]*exp(-b$Parameters[2,1]*x))),
@@ -64,7 +64,7 @@ predictBL<-function(object,x){
     return(unlist(y))
   }
 
-  if(object$Model=="double-logistic"|object[[1]]=="BL_double_logistic"){
+  if(object$Model=="double-logistic"|object[[1]]=="double-logistic"){
 
     y<-tryCatch(lapply(x,
             function(x,b) {
