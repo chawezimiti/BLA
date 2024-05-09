@@ -82,8 +82,8 @@ distribution to access the appropriateness of the censored model.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cbvn</span><span class="op">(</span><span class="va">vals</span>,model<span class="op">=</span><span class="st">"lp"</span>,<span class="va">theta</span>, <span class="va">sigh</span>, UpLo<span class="op">=</span><span class="st">"U"</span>, optim.method<span class="op">=</span><span class="st">"BFGS"</span>,Hessian<span class="op">=</span><span class="cn">FALSE</span>,</span>
-<span>     plot<span class="op">=</span><span class="cn">TRUE</span>, line_smooth<span class="op">=</span><span class="fl">100</span>, lwd<span class="op">=</span><span class="fl">2</span>, l_col<span class="op">=</span><span class="st">"red"</span>,<span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cbvn</span><span class="op">(</span><span class="va">vals</span>,model<span class="op">=</span><span class="st">"lp"</span>, equation<span class="op">=</span><span class="cn">NULL</span>, <span class="va">theta</span>, <span class="va">sigh</span>, UpLo<span class="op">=</span><span class="st">"U"</span>, optim.method<span class="op">=</span><span class="st">"BFGS"</span>,</span>
+<span>      Hessian<span class="op">=</span><span class="cn">FALSE</span>, plot<span class="op">=</span><span class="cn">TRUE</span>, line_smooth<span class="op">=</span><span class="fl">100</span>, lwd<span class="op">=</span><span class="fl">2</span>, l_col<span class="op">=</span><span class="st">"red"</span>,<span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -96,11 +96,16 @@ dependent (<code>y</code>) variables respectively.</p></dd>
 <dt>model</dt>
 <dd><p>Selects the functional form of the boundary line. It includes
 <code>"blm"</code> for linear model, <code>"lp"</code> for linear plateau model, <code>"mit"</code>
-for the Mitscherlich model, <code>"schmidt"</code> for the Schmidt model, <code>"BL_logistic"</code>
-for logistic model, <code>"BL_logisticfm"</code> for logistic model proposed by
-Fermont et al (2009), <code>"BL_inv-logistic"</code> for the inverse logistic model,
-<code>"BL_double-logistic"</code> for the double logistic model, <code>"qd"</code> for
+for the Mitscherlich model, <code>"schmidt"</code> for the Schmidt model, <code>"logistic"</code>
+for logistic model, <code>"logisticfm"</code> for logistic model proposed by
+Fermont et al (2009), <code>"inv-logistic"</code> for the inverse logistic model,
+<code>"double-logistic"</code> for the double logistic model, <code>"qd"</code> for
 quadratic model and the <code>"trapezium"</code> for the trapezium model.</p></dd>
+
+
+<dt>equation</dt>
+<dd><p>A custom model function writen in the form of an R function. Applies
+only when argument <code>model="other"</code>, else it is <code>NULL</code>.</p></dd>
 
 
 <dt>theta</dt>
@@ -118,12 +123,12 @@ quadratic model and the <code>"trapezium"</code> for the trapezium model.</p></d
   intercept, shape parameter, the maximum or plateau response, mean of <code>x</code>,
   mean of <code>y</code>, standard deviation of <code>x</code>, standard deviation of <code>y</code>
   and the correlation of <code>x</code> and <code>y</code>.</p></li>
-<li><p>For the <code>"BL_logistic"</code>, BL_inv_logistic and "BL_logisticfm" models,
+<li><p>For the <code>"logistic"</code>, inv-logistic and "logisticfm" models,
   it is a vector of length 8 arranged as scaling parameter, shape parameter,
   the maximum or plateau value, mean of <code>x</code>, mean of <code>y</code>,
   standard deviation of <code>x</code>, standard deviation of <code>y</code> and the
   correlation of <code>x</code> and <code>y</code>.</p></li>
-<li><p>For the <code>"BL_double_logistic"</code> model,it is a vector of length 11
+<li><p>For the <code>"double-logistic"</code> model,it is a vector of length 11
   arranged as scaling parameter, shape parameter, maximum response, maximum response,
   scaling parameter two, shape parameter two, mean of <code>x</code>, mean of <code>y</code>,
   standard deviation of <code>x</code>, standard deviation of <code>y</code> and the correlation
@@ -205,17 +210,17 @@ forms are as follows:</p><ol><li><p>Linear model (<code>"blm"</code>)
  $$y= {\rm min}(\beta_1+\beta_2x, \beta_0)$$
  where \(\beta_1\) is the intercept , \(\beta_2\) is the slope  and \(\beta_0\)
  is the maximum response.</p></li>
-<li><p>The logistic (<code>"BL_logistic"</code>) and inverse logistic (<code>"BL_inv-logistic"</code>)
+<li><p>The logistic (<code>"logistic"</code>) and inverse logistic (<code>"inv-logistic"</code>)
  models
  $$ y= \frac{\beta_0}{1+e^{\beta_2(\beta_1-x)}}$$
  $$ y= \beta_0 - \frac{\beta_0}{1+e^{\beta_2(\beta_1-x)}}$$
  where \(\beta_1\) is a scaling parameter , \(\beta_2\) is a shape parameter
  and \(\beta_0\) is the maximum response.</p></li>
-<li><p>Logistic model (<code>"BL_logisticfm"</code>)  (Fermont et al. 2009)
+<li><p>Logistic model (<code>"logisticfm"</code>)  (Fermont et al. 2009)
  $$ y= \frac{\beta_0}{1+(\beta_1 \times e^{-\beta_2x})}$$
   where \(\beta_1\) is a scaling parameter, \(\beta_2\) is a shape
   parameter and \(\beta_0\) is the maximum response.</p></li>
-<li><p>Double logistic model (<code>"BL_double-logistic"</code>)
+<li><p>Double logistic model (<code>"double-logistic"</code>)
  $$ y= \frac{\beta_{0,1}}{1+e^{\beta_2(\beta_1-x)}} -
  \frac{\beta_{0,2}}{1+e^{\beta_4(\beta_3-x)}}$$
  where \(\beta_1\) is a scaling parameter one, \(\beta_2\) is a shape parameter one,

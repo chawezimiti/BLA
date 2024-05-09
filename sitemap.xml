@@ -31,18 +31,6 @@
     <loc>https://chawezimiti.github.io/BLA/reference/BLA-package.html</loc>
   </url>
   <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/BL_double_logistic.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/BL_inv_logistic.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/BL_logistic.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/BL_logisticfm.html</loc>
-  </url>
-  <url>
     <loc>https://chawezimiti.github.io/BLA/reference/BOLIDES.html</loc>
   </url>
   <url>
@@ -52,34 +40,10 @@
     <loc>https://chawezimiti.github.io/BLA/reference/ble_profile.html</loc>
   </url>
   <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/blm.html</loc>
-  </url>
-  <url>
     <loc>https://chawezimiti.github.io/BLA/reference/blqr.html</loc>
   </url>
   <url>
     <loc>https://chawezimiti.github.io/BLA/reference/cbvn.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/coffcturb.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/coffcturb3.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/coffcturb4.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/drawBL.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/drawBL2.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/drawBL3.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/drawBL4.html</loc>
   </url>
   <url>
     <loc>https://chawezimiti.github.io/BLA/reference/evapotranspiration.html</loc>
@@ -91,85 +55,16 @@
     <loc>https://chawezimiti.github.io/BLA/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/jdens_maxyield.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/jdens_maxyield3.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/jdens_maxyield4.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/jdensup.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/jdensup2.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/jdensup3.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/jdensup4.html</loc>
-  </url>
-  <url>
     <loc>https://chawezimiti.github.io/BLA/reference/kurt.html</loc>
   </url>
   <url>
     <loc>https://chawezimiti.github.io/BLA/reference/limfactor.html</loc>
   </url>
   <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/lp.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/mit.html</loc>
-  </url>
-  <url>
     <loc>https://chawezimiti.github.io/BLA/reference/na.drop.html</loc>
   </url>
   <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nll_mef.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nll_mef2.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nll_mef3.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nll_mef4.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nll_mef_maxyield.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nll_mef_maxyield3.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nll_mef_maxyield4.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nllmvn.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nllmvn3.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/nllmvn4.html</loc>
-  </url>
-  <url>
     <loc>https://chawezimiti.github.io/BLA/reference/ocskew.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/par_nll_mef.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/par_nll_mef2.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/par_nll_mef3.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/par_nll_mef4.html</loc>
   </url>
   <url>
     <loc>https://chawezimiti.github.io/BLA/reference/predictBL.html</loc>
@@ -179,12 +74,6 @@
   </url>
   <url>
     <loc>https://chawezimiti.github.io/BLA/reference/print.wm.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/qd.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/schmidt.html</loc>
   </url>
   <url>
     <loc>https://chawezimiti.github.io/BLA/reference/seHessian.html</loc>
@@ -200,8 +89,5 @@
   </url>
   <url>
     <loc>https://chawezimiti.github.io/BLA/reference/summastat.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/trapezium.html</loc>
   </url>
 </urlset>
