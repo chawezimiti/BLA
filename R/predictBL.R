@@ -56,7 +56,7 @@ predictBL<-function(object,x){
     return(unlist(y))
   }
 
-  if(object$Model=="logisticfm"|object[[1]]=="logisticfm"){
+  if(object$Model=="logisticND"|object[[1]]=="logisticND"){
 
     y<-tryCatch(lapply(x,
                        function(x,b) b$Parameters[3,1]/(1+(b$Parameters[1,1]*exp(-b$Parameters[2,1]*x))),

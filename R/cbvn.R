@@ -26,7 +26,7 @@
 #'   intercept, shape parameter, the maximum or plateau response, mean of \code{x},
 #'   mean of \code{y}, standard deviation of \code{x}, standard deviation of \code{y}
 #'   and the correlation of \code{x} and \code{y}.
-#'   \item For the \code{"logistic"}, inv-logistic and "logisticfm" models,
+#'   \item For the \code{"logistic"}, inv-logistic and "logisticND" models,
 #'   it is a vector of length 8 arranged as scaling parameter, shape parameter,
 #'   the maximum or plateau value, mean of \code{x}, mean of \code{y},
 #'   standard deviation of \code{x}, standard deviation of \code{y} and the
@@ -56,8 +56,8 @@
 #' @param model Selects the functional form of the boundary line. It includes
 #'   \code{"blm"} for linear model, \code{"lp"} for linear plateau model, \code{"mit"}
 #'   for the Mitscherlich model, \code{"schmidt"} for the Schmidt model, \code{"logistic"}
-#'   for logistic model, \code{"logisticfm"} for logistic model proposed by
-#'   Fermont et al (2009), \code{"inv-logistic"} for the inverse logistic model,
+#'   for logistic model, \code{"logisticND"} for logistic model proposed by
+#'   Nelder ((1961)), \code{"inv-logistic"} for the inverse logistic model,
 #'   \code{"double-logistic"} for the double logistic model, \code{"qd"} for
 #'   quadratic model and the \code{"trapezium"} for the trapezium model.
 #' @param equation A custom model function writen in the form of an R function. Applies
@@ -98,7 +98,7 @@
 #'  where \eqn{\beta_1} is a scaling parameter , \eqn{\beta_2} is a shape parameter
 #'  and \eqn{\beta_0} is the maximum response.
 #'
-#'  \item Logistic model (\code{"logisticfm"})  (Fermont et al. 2009)
+#'  \item Logistic model (\code{"logisticND"})  (Nelder (1961))
 #'  \deqn{ y= \frac{\beta_0}{1+(\beta_1 \times e^{-\beta_2x})}}
 #'   where \eqn{\beta_1} is a scaling parameter, \eqn{\beta_2} is a shape
 #'   parameter and \eqn{\beta_0} is the maximum response.
@@ -148,9 +148,8 @@
 #' fraction associated with crop yield and nitrous oxide emission. Advances in
 #' Agronomy, 174, 269-295.
 #'
-#' Fermont, A. M., Van Asten, P. J., Tittonell, P., Van Wijk, M. T., &
-#' Giller, K. E. (2009). Closing the cassava yield gap: an analysis from smallholder
-#' farms in East Africa. Field Crops Research, 112 (1), 24–36.
+#' Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
+#' Biometrics 17: 89–110.
 #'
 #' Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the effect of water
 #' filled pore space on nitrous oxide emission from cores of arable soil. European
@@ -210,7 +209,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
   #BLModxx<-model
 
 
-  if(model=="lp"|model=="mit"|model=="logistic"|model=="inv-logistic"|model=="schmidt"|model=="qd"|model=="logisticfm"){
+  if(model=="lp"|model=="mit"|model=="logistic"|model=="inv-logistic"|model=="schmidt"|model=="qd"|model=="logisticND"){
 
     v<-length(theta)
     if(v>8) stop("theta has more than eight values")
@@ -251,12 +250,12 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
       BLMod<-inv_logistic
     }
 
-    if(model=="logisticfm"){
-      logisticfm<-function(x,beta0,beta1,beta2){
+    if(model=="logisticND"){
+      logisticND<-function(x,beta0,beta1,beta2){
         return(beta0/(1+beta1*exp(-x*beta2)))
       }
 
-      BLMod<-logisticfm
+      BLMod<-logisticND
     }
 
     if(model=="schmidt"){
@@ -577,9 +576,9 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     if(model=="lp"){ Equation<-noquote("y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080)")}
     if(model=="mit"){Equation<-noquote("y = \u03B2\u2081 + \u03B2\u2080(1-exp(-x/\u03B2\u2081))")}
-    if(model=="BL_logistic"){ Equation<-noquote("y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082x)]")}
-    if(model=="BL_inv_logistic"){ Equation<-noquote("y = \u03B2\u2080/(1+exp(\u03B2\u2082(\u03B2\u2081-x)))")}
-    if(model=="BL_logisticfm"){ Equation<-noquote("y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082*x)]")}
+    if(model=="logistic"){ Equation<-noquote("y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082x)]")}
+    if(model=="inv-logistic"){ Equation<-noquote("y = \u03B2\u2080/(1+exp(\u03B2\u2082(\u03B2\u2081-x)))")}
+    if(model=="logisticND"){ Equation<-noquote("y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082*x)]")}
     if(model=="schmidt"){Equation<-noquote("y = \u03B2\u2080 - \u03B2\u2081 (1-\u03B2\u2082)\u00B2)")}
     if(model=="qd"){Equation<-noquote("y = \u03B2\u2081+\u03B2\u2082x+\u03B2\u2083x\u00B2")}
 

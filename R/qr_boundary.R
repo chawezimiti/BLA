@@ -11,8 +11,8 @@
 #' @param model Selects the functional form of the boundary line. It includes
 #'   \code{"blm"} for linear model, \code{"lp"} for linear plateau model, \code{"mit"}
 #'   for the Mitscherlich model, \code{"schmidt"} for the Schmidt model,
-#'   \code{"logistic"} for logistic model, \code{"logisticfm"} for logistic model
-#'   proposed by Fermont et al (2009), \code{"inv-logistic"} for the inverse logistic
+#'   \code{"logistic"} for logistic model, \code{"logisticND"} for logistic model
+#'   proposed by Nelder (1961), \code{"inv-logistic"} for the inverse logistic
 #'   model, \code{"double-logistic"} for the double logistic model, \code{"qd"}
 #'   for quadratic model and the \code{"trapezium"} for the trapezium model.
 #' @param equation A custom model function writen in the form of an R function. Applies
@@ -29,7 +29,7 @@
 #'   \item For the \code{"logistic"} and \code{"inv-logistic"} models, it is a
 #'   vector of length 3 arranged as the scaling parameter, shape parameter and maximum
 #'   response.
-#'   \item For the \code{"logisticfm"} model proposed by Fermont et al. (2009), it is a
+#'   \item For the \code{"logisticND"} model proposed by Nelder (1961), it is a
 #'   vector of length 3 arranged as the scaling parameter, shape parameter and maximum
 #'   response.
 #'   \item For the \code{"double-logistic"} model, it is a vector of length 6 arranged
@@ -81,7 +81,7 @@
 #'  where \eqn{\beta_1} is a scaling parameter , \eqn{\beta_2} is a shape parameter
 #'  and \eqn{\beta_0} is the maximum response.
 #'
-#'  \item Logistic model (\code{"logisticfm"})  (Fermont et al. 2009)
+#'  \item Logistic model (\code{"logisticND"})  (Nelder (1961))
 #'  \deqn{ y= \frac{\beta_0}{1+(\beta_1 \times e^{-\beta_2x})}}
 #'   where \eqn{\beta_1} is a scaling parameter, \eqn{\beta_2} is a shape
 #'   parameter and \eqn{\beta_0} is the maximum response.
@@ -142,9 +142,8 @@
 #' equation and its extensions to estimate the soil nitrogen pool fraction associated
 #' with crop yield and nitrous oxide emission. Advances in Agronomy, 174, 269-295.
 #'
-#' Fermont, A. M., Van Asten, P. J., Tittonell, P., Van Wijk, M. T., &
-#' Giller, K. E. (2009).Closing the cassava yield gap: an analysis from smallholder
-#' farms in East Africa. Field Crops Research, 112 (1), 24–36.
+#' Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
+#' Biometrics 17: 89–110.
 #'
 #' Schmidt, U., Thöni, H., & Kaupenjohann, M. (2000). Using a boundary line approach
 #' to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agroecosystems,
@@ -282,7 +281,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
   ########## Fitting three model ##########################
 
-  if(model=="lp"|model=="logistic"|model=="logisticfm"|model=="inv-logistic"|model=="qd"|model=="mit"|model=="schmidt"){
+  if(model=="lp"|model=="logistic"|model=="logisticND"|model=="inv-logistic"|model=="qd"|model=="mit"|model=="schmidt"){
 
     v<-length(theta)
     if(v>3) stop("theta has more than three values")
@@ -307,7 +306,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       }
     }
 
-    if(model=="logisticfm"){
+    if(model=="logisticND"){
       Equation<-noquote("y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082*x)]")
       trap1<-function(x,ar,br,ym){
         yr<-ym/(1+(ar*exp(-br*x)))
