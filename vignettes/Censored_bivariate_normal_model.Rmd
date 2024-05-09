@@ -161,8 +161,9 @@ ble_profile(vals,theta,sigh,model = "lp") # may take a few minutes to run for la
 From the likelihood profile, the `sigh` that maximizes the likelihood is around 0.65. We can use this for the value of `sigh`. Now that all the arguments required for `cbvn()` function are set, the boundary line can be fitted
 
 ```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4) }
+theta<-c(4,3,13.6,3,9,0.5,1.9,0.05) 
 
-model1<-cbvn(vals,theta,sigh=0.7,model = "lp", xlab=expression("P /log ppm"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
+model1<-cbvn(vals,theta=theta,sigh=0.7,model = "lp", xlab=expression("P /log ppm"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
 
 model1
 ```
@@ -266,7 +267,7 @@ The standard deviation of the measurement error, *`sigh`* was already determine 
 
 ```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4) }
 
-model2<-cbvn(vals,theta,sigh=0.7,model = "lp", xlab=expression("pH"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
+model2<-cbvn(vals,theta=theta,sigh=0.7,model = "lp", xlab=expression("pH"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
 
 model2
 ```

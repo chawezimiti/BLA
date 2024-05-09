@@ -4,13 +4,25 @@
 \alias{ble_profile}
 \title{Likelihood profile for various measurement error values}
 \usage{
-ble_profile(vals, sigh, model="lp", equation=NULL,  theta, UpLo="U", optim.method="BFGS", plot=TRUE, ...)
+ble_profile(vals, sigh, model="lp", equation=NULL,  theta, UpLo="U",
+             optim.method="BFGS", plot=TRUE, ...)
 }
 \arguments{
 \item{vals}{A dataframe with two numeric columns, independent (\code{x}) and
 dependent (\code{y}) variables respectively.}
 
 \item{sigh}{A vector of the suggested standard deviations of the measurement error values.}
+
+\item{model}{Selects the functional form of the boundary line. It includes
+\code{"blm"} for linear model, \code{"lp"} for linear plateau model, \code{"mit"}
+for the Mitscherlich model, \code{"schmidt"} for the Schmidt model, \code{"logistic"}
+for logistic model, \code{"logisticfm"} for logistic model proposed by
+Fermont et al (2009), \code{"inv-logistic"} for the inverse logistic model,
+\code{"double-logistic"} for the double logistic model, \code{"qd"} for
+quadratic model and the \code{"trapezium"} for the trapezium model.}
+
+\item{equation}{A custom model function writen in the form of an R function. Applies
+only when argument \code{model="other"}, else it is \code{NULL}.}
 
 \item{theta}{A numeric vector of initial starting values for optimization
   in fitting the boundary model. Its length and arrangement depend on the
@@ -51,17 +63,6 @@ dependent (\code{y}) variables respectively.}
   \code{x}, standard deviation of \code{y} and the correlation of \code{x}
   and \code{y}.
 }}
-
-\item{model}{Selects the functional form of the boundary line. It includes
-\code{"blm"} for linear model, \code{"lp"} for linear plateau model, \code{"mit"}
-for the Mitscherlich model, \code{"schmidt"} for the Schmidt model, \code{"logistic"}
-for logistic model, \code{"logisticfm"} for logistic model proposed by
-Fermont et al (2009), \code{"inv-logistic"} for the inverse logistic model,
-\code{"double-logistic"} for the double logistic model, \code{"qd"} for
-quadratic model and the \code{"trapezium"} for the trapezium model.}
-
-\item{equation}{A custom model function writen in the form of an R function. Applies
-only when argument \code{model="other"}, else it is \code{NULL}.}
 
 \item{UpLo}{Selects the type of boundary. \code{"U"} fits the upper boundary and
 "L" fits the lower boundary.}
@@ -158,7 +159,7 @@ y<-evapotranspiration$`yield(t/ha)`
 vals<-data.frame(x,y)
 theta<-c(0.5,0.02,289.6,2.39,83.8,1.05,0.295)
 sigh<-c(0.08,0.1,0.11,0.13,0.15,0.2,0.3,0.4,0.5)
-ble_profile(vals,sigh=sigh,theta,model="blm")
+ble_profile(vals,sigh=sigh,theta=theta,model="blm")
 
 }
 \references{

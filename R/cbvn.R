@@ -177,8 +177,8 @@
 #'
 #' @rdname cbvn
 #' @usage
-#' cbvn(vals,model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",Hessian=FALSE,
-#'      plot=TRUE, line_smooth=100, lwd=2, l_col="red",...)
+#' cbvn(vals,model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",
+#'       Hessian=FALSE, plot=TRUE, line_smooth=100, lwd=2, l_col="red",...)
 #'
 #' @examples
 #' x<-evapotranspiration$`ET(mm)`
