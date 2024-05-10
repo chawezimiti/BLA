@@ -150,7 +150,7 @@ startValues<-function(model="explore",p=NULL,digits = 2,...){
     dx <- diff(df$x)
     dy <- diff(df$y)
     slopes <- dy / dx
-    inflection<-median(df$x)
+    inflection<-median(df$x) # scaling value
     ymax<-max(df$y)
 
     x2<-vector()
@@ -178,7 +178,7 @@ startValues<-function(model="explore",p=NULL,digits = 2,...){
     dx <- diff(df$x)
     dy <- diff(df$y)
     slopes <- dy / dx
-    inflection<-quantile(df$x, 0.75, names = FALSE)
+    inflection<-quantile(df$x, 0.75, names = FALSE) # scaling value
     ymax<-max(df$y)
 
     x2<-vector()
@@ -206,7 +206,7 @@ startValues<-function(model="explore",p=NULL,digits = 2,...){
     dx <- diff(df$x)
     dy <- diff(df$y)
     slopes <- dy / dx
-    inflection<-quantile(df$x, c(0.3,0.7), names = FALSE)
+    inflection<-quantile(df$x, c(0.3,0.7), names = FALSE) # scaling value
     ymax<-max(df$y)
     max_response<-c(ymax,ymax)
 

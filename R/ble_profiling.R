@@ -25,8 +25,8 @@
 #'   intercept, shape parameter, the maximum or plateau response, mean of \code{x},
 #'   mean of \code{y}, standard deviation of \code{x}, standard deviation of \code{y}
 #'   and the correlation of \code{x} and \code{y}.
-#'   \item For the \code{"logistic"}, \code{"inv-logistic"} and \code{"logisticND"} models,
-#'   it is a vector of length 8 arranged as scaling parameter, shape parameter,
+#'   \item For the \code{"logistic"}, \code{"inv-logistic"} and \code{"logisticND"}
+#'   models, it is a vector of length 8 arranged as scaling parameter, shape parameter,
 #'   the maximum or plateau value, mean of \code{x}, mean of \code{y},
 #'   standard deviation of \code{x}, standard deviation of \code{y} and the
 #'   correlation of \code{x} and \code{y}.
@@ -49,7 +49,8 @@
 #'   \code{x}, standard deviation of \code{y} and the correlation of \code{x}
 #'   and \code{y}.
 #' }
-#' @param sigh A vector of the suggested standard deviations of the measurement error values.
+#' @param sigh A vector of the suggested standard deviations of the measurement error
+#'   values.
 #' @param UpLo Selects the type of boundary. \code{"U"} fits the upper boundary and
 #'   "L" fits the lower boundary.
 #' @param model Selects the functional form of the boundary line. It includes
@@ -99,7 +100,7 @@
 #'  \item Double logistic model (\code{"double-logistic"})
 #'  \deqn{ y= \frac{\beta_{0,1}}{1+e^{\beta_2(\beta_1-x)}} -
 #'  \frac{\beta_{0,2}}{1+e^{\beta_4(\beta_3-x)}}}
-#'  where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is a shape parameter one,
+#'  where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is shape parameter one,
 #'  \eqn{\beta_{0,1}} and \eqn{\beta_{0,2}} are the maximum response ,
 #'  \eqn{\beta_3} is a scaling parameter two and  \eqn{\beta_4} is a shape parameter two.
 #'
@@ -162,19 +163,22 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   cat("Note: This function may take a few minutes to run for large datasets.\n\n")
 
+  ###### Initial data preparation ##################################
+
   data<-data.frame(x=vals[,1],y=vals[,2])
-  ###Removing NA's
-  test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE)
+
+  test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE) ## Removing NA's
 
   if(length(test)>0){
-    vals<-data[-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE),]}else{
+    vals<-data[-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE),]}else{ ##Removing NA's
       vals<-data
     }
-  #vals<-vals
+
   UpLo=UpLo
   BLMod<-model
   likelihood<-vector()
 
+  ### Fitting the three parameter model profile ##########################################
 
   if(model=="lp"|model=="mit"|model=="logistic"|model=="inv-logistic"|model=="logisticND"|model=="schmidt"|model=="qd"){
 
@@ -182,7 +186,8 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
     if(v>8) stop("theta has more than eight values")
     if(v<8) stop("theta has less than eight values")
 
-    #########################################################################
+    ## Defining each model type
+
     if(model=="lp"){
       lp<-function(x,beta0,beta1,beta2){
         return(min(beta0,beta1+beta2*x))
@@ -242,7 +247,6 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
     }
 
 
-
     for(i in 1:length(sigh)){
 
       theta<-theta
@@ -250,8 +254,8 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       BLMod<-BLMod
       vals<-vals
 
-      ######################SUPPORT FUNCTIONS#########################
-      ################################################################
+      ###### likelihood functions #####################
+
       nll_mef<-function(pars,uplo,BLMod){
 
         beta0<-pars[3]
@@ -275,9 +279,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         return(nll)
       }
 
-      ###########################################################################
+      ##
+
       par_nll_mef<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-        ###########################################################################
 
         eps=1e-4
 
@@ -292,22 +296,13 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
         return(part)
       }
-      #########################################################################
 
-      #########################################################################
-      jdensup<-function(X,BLMod,beta0,beta1,beta2,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){
-        #########################################################################
+      ##
 
-        # joint density of observed values x and y given beta0,beta1,beta2 as bl
-        # parameters (plateau, intercept and slope of bounded linear model).
-        # sigh ss measurement error
-        # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
-        # NB parameterization of rcorr to keep in [-1,1]
+      jdensup<-function(X,BLMod,beta0,beta1,beta2,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
 
         x<-X[1]
         y<-X[2]
-
-        #BLGen<-match.fun(BLMod)
 
         rho<-tanh(rcorr)
         cov<-rho*sdx*sdy
@@ -325,15 +320,10 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         fxy<-fy_x*fx
         return(log(fxy))
       }
-      #########################################################################
+
+      ##
 
       coffcturb<-function(x,mu,sig,a,c,sigh=sigh[i]){
-
-        #
-        # a is right censor, c is left censor.  Set either to Inf/-Inf
-        #
-        # Notation as in Turban webpage, except k is substituted for c
-
 
         k<-((mu-c)/sig)
         d<-((mu-a)/sig)
@@ -345,25 +335,14 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         com2<-gamma*exp(com1)
         f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
 
-        #rescale for censored
-        f<-f*pnorm(c,mu,sig)
+        f<-f*pnorm(c,mu,sig) # re-scale for censored
 
-        #add contribution at x from mass at c
-
-        f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))
+        f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig))) # add contribution at x from mass at c
 
         return(f)
       }
-      #########################################################################
 
-
-      ####################END OF SUPPORT FUNCTIONS###################
-      ###############################################################
-
-      ############OPTIMISING THE MODEL###############################
-      #  Estimates are found by minimizing the negative log likelihood.  The first estimate
-      #  starting from guess appears as mlest$par.  scale is recomputed from this, and
-      #  a second run is started from this first solution
+      ########### Optimization of the model ###########
 
       mlest<-suppressWarnings(optim(theta,nll_mef,uplo=UpLo,BLMod=BLMod,
                                     method=optim.method,
@@ -380,15 +359,15 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     }
 
-
   }
+
+  #### Fitting the two parameter model profile ##########################################
 
   if(model=="blm"){
 
     v<-length(theta)
     if(v>7) stop("theta has more than seven values")
     if(v<7) stop("theta has less than seven values")
-
 
     blm<-function(x,beta0,beta1){
       return(beta0+beta1*x)
@@ -398,24 +377,15 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     for(i in 1:length(sigh)){
 
-      #sigh<-sigh[i]
-      #likelihood<-vector()
       theta<-theta
       UpLo=UpLo
       BLMod<-BLMod
       vals<-vals
 
-      #############SUPPORT FUNCTIONS FOR LINEAR MODEL##########################
-      #########################################################################
+      ########### Likelihood functions ##########################
+
       nll_mef2<-function(pars,uplo,BLMod){
-        #########################################################################
-        # Returns nll for 3-paramter BL model, parameters in pars,uplo specifies
-        # upper or lower boundary.
-        #
-        # Measurement error fixed (sigh at top level)
-        # Data in vals (n x 2 matrix) at top level.
-        #
-        # BLMod is set to determine the parametric form of the BL model
+
         beta0<-pars[1]
         beta1<-pars[2]
         mux<-pars[3]
@@ -436,9 +406,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         return(nll)
       }
 
-      ###########################################################################
+      ##
+
       par_nll_mef2<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-        ###########################################################################
 
         eps=1e-4
 
@@ -453,22 +423,13 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
         return(part)
       }
-      #########################################################################
 
-      #########################################################################
-      jdensup2<-function(X,BLMod,beta0,beta1,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){
-        #########################################################################
+      ##
 
-        # joint density of observed values x and y given beta0,beta1,beta2 as bl
-        # parameters (plateau, intercept and slope of bounded linear model).
-        # sigh ss measurement error
-        # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
-        # NB parameterization of rcorr to keep in [-1,1]
+      jdensup2<-function(X,BLMod,beta0,beta1,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
 
         x<-X[1]
         y<-X[2]
-
-        #BLGen2<-match.fun(BLMod)
 
         rho<-tanh(rcorr)
         cov<-rho*sdx*sdy
@@ -488,14 +449,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       }
 
 
-      #########################################################################
-      coffcturb<-function(x,mu,sig,a,c,sigh=sigh[i]){
-        #########################################################################
-        #
-        # a is right censor, c is left censor.  Set either to Inf/-Inf
-        #
-        # Notation as in Turban webpage, except k is substituted for c
+      ##
 
+      coffcturb<-function(x,mu,sig,a,c,sigh=sigh[i]){
 
         k<-((mu-c)/sig)
         d<-((mu-a)/sig)
@@ -507,26 +463,14 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         com2<-gamma*exp(com1)
         f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
 
-        #rescale for censored
-        f<-f*pnorm(c,mu,sig)
+        f<-f*pnorm(c,mu,sig) # re-scale for censored
 
-        #add contribution at x from mass at c
-
-        f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))
+        f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig))) #add contribution at x from mass at c
 
         return(f)
       }
-      #########################################################################
 
-
-      ######################END OF SUPPORT FUNCTIONS##########################
-      ########################################################################
-
-      ####OPTIMISING THE LINEAR MODEL########################
-      #######################################################
-      #  Estimates are found by minimizing the negative log likelihood.  The first estimate
-      #  starting from guess appears as mlest$par.  scale is recomputed from this, and
-      #  a second run is started from this first solution
+      #### Optimization of the model#######################
 
       mlest<-suppressWarnings(optim(theta,nll_mef2,uplo=UpLo,BLMod=BLMod,
                                     method=optim.method,
@@ -539,16 +483,13 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
                                      control = list(parscale = scale),
                                      hessian="T"))
 
-      # there will be warning messages on running this as the optimizer will drift
-      # into areas where density is very small.
-
-
       likelihood[i]<-mlest2$value*-1
 
     }
 
-
   }
+
+  ###############  Fitting the five parameter model ###################################
 
   if(model=="trapezium"){
 
@@ -565,31 +506,16 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     for(i in 1:length(sigh)){
 
-      #sigh<-sigh[i]
-      #likelihood<-vector()
       theta<-theta
       UpLo=UpLo
       BLMod<-BLMod
       vals<-vals
-    ######################SUPPORT FUNCTIONS#########################
-    ################################################################
+
+
+    ################ The likelihood functions #########################
+
     nll_mef3<-function(pars,uplo,BLMod){
-      #########################################################################
-      # Returns nll for 3-paramter BL model, parameters in pars,uplo specifies
-      # upper or lower boundary.
-      #
-      # Measurement error fixed (sigh at top level)
-      # Data in vals (n x 2 matrix) at top level.
-      #
-      # BLMod is set to determine the parametric form of the BL model
-      #
-      # BL_bs:  broken stick.  beta0 is maximum, beta1 is intercept,
-      #	  beta2 is slope.
-      #
-      # BL_mit: Mitscherlich.  beta0 is intercept, beta1 is shape parameter,
-      #	  beta2 is max response - beta0
-      #
-      # Three parameters as currently set up.
+
       beta0<-pars[3]
       beta1<-pars[1]
       beta2<-pars[2]
@@ -613,9 +539,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       return(nll)
     }
 
-    ###########################################################################
+    ##
+
     par_nll_mef3<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-      ###########################################################################
 
       eps=1e-4
 
@@ -630,22 +556,13 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
       return(part)
     }
-    #########################################################################
 
-    #########################################################################
-    jdensup3<-function(X,BLMod,beta0,beta1,beta2,beta3,beta4,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){
-      #########################################################################
+    ##
 
-      # joint density of observed values x and y given beta0,beta1,beta2 as bl
-      # parameters (plateau, intercept and slope of bounded linear model).
-      # sigh ss measurement error
-      # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
-      # NB parameterization of rcorr to keep in [-1,1]
+    jdensup3<-function(X,BLMod,beta0,beta1,beta2,beta3,beta4,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
 
       x<-X[1]
       y<-X[2]
-
-      #BLGen3<-match.fun(BLMod)
 
       rho<-tanh(rcorr)
       cov<-rho*sdx*sdy
@@ -665,14 +582,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
     }
 
 
-    #########################################################################
-    coffcturb3<-function(x,mu,sig,a,c,sigh=sigh[i]){
-      #########################################################################
-      #
-      # a is right censor, c is left censor.  Set either to Inf/-Inf
-      #
-      # Notation as in Turban webpage, except k is substituted for c
+    ##
 
+    coffcturb3<-function(x,mu,sig,a,c,sigh=sigh[i]){
 
       k<-((mu-c)/sig)
       d<-((mu-a)/sig)
@@ -684,22 +596,14 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       com2<-gamma*exp(com1)
       f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
 
-      #rescale for censored
-      f<-f*pnorm(c,mu,sig)
+      f<-f*pnorm(c,mu,sig) # re-scale for censored
 
-      #add contribution at x from mass at c
-
-      f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))
+      f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))# add contribution at x from mass at c
 
       return(f)
     }
-    ###############################################################
 
-
-    ####################END OF SUPPORT FUNCTIONS###################
-    ###############################################################
-
-    ############OPTIMISING THE MODEL###############################
+  ########### optimization of the model ###################
 
     mlest<-suppressWarnings(optim(theta,nll_mef3,uplo=UpLo,BLMod=BLMod,
                                   method=optim.method,
@@ -712,13 +616,12 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
                                    control = list(parscale = scale),
                                    hessian="T"))
 
-    # there will be warning messages on running this as the optimizer will drift
-    # into areas where density is very small.
-
     likelihood[i]<-mlest2$value*-1
     }
 
   }
+
+  ######## Fitting the six parameter double-logistic model #############
 
   if(model=="double-logistic"){
 
@@ -740,25 +643,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       BLMod<-BLMod
       vals<-vals
 
-      ######################SUPPORT FUNCTIONS#########################
-      ################################################################
+  ############### Likelihood functions ################
+
       nll_mef4<-function(pars,uplo,BLMod){
-        #########################################################################
-        # Returns nll for 3-paramter BL model, parameters in pars,uplo specifies
-        # upper or lower boundary.
-        #
-        # Measurement error fixed (sigh at top level)
-        # Data in vals (n x 2 matrix) at top level.
-        #
-        # BLMod is set to determine the parametric form of the BL model
-        #
-        # BL_bs:  broken stick.  beta0 is maximum, beta1 is intercept,
-        #	  beta2 is slope.
-        #
-        # BL_mit: Mitscherlich.  beta0 is intercept, beta1 is shape parameter,
-        #	  beta2 is max response - beta0
-        #
-        # Three parameters as currently set up.
 
         beta1<-pars[1]
         beta2<-pars[2]
@@ -785,9 +672,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         return(nll)
       }
 
-      ###########################################################################
+      ##
+
       par_nll_mef4<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-        ###########################################################################
 
         eps=1e-4
 
@@ -802,22 +689,13 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
         return(part)
       }
-      #########################################################################
 
-      #########################################################################
-      jdensup4<-function(X,BLMod,beta01,beta02,beta1,beta2,beta3,beta4,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){
-        #########################################################################
+      ##
 
-        # joint density of observed values x and y given beta0,beta1,beta2 as bl
-        # parameters (plateau, intercept and slope of bounded linear model).
-        # sigh ss measurement error
-        # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
-        # NB parameterization of rcorr to keep in [-1,1]
+      jdensup4<-function(X,BLMod,beta01,beta02,beta1,beta2,beta3,beta4,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
 
         x<-X[1]
         y<-X[2]
-
-        #BLGen4<-match.fun(BLMod)
 
         rho<-tanh(rcorr)
         cov<-rho*sdx*sdy
@@ -835,15 +713,10 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         fxy<-fy_x*fx
         return(log(fxy))
       }
-      #########################################################################
+
+      ##
 
       coffcturb4<-function(x,mu,sig,a,c,sigh=sigh[i]){
-        #########################################################################
-        #
-        # a is right censor, c is left censor.  Set either to Inf/-Inf
-        #
-        # Notation as in Turban webpage, except k is substituted for c
-
 
         k<-((mu-c)/sig)
         d<-((mu-a)/sig)
@@ -855,21 +728,15 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         com2<-gamma*exp(com1)
         f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
 
-        #rescale for censored
-        f<-f*pnorm(c,mu,sig)
+        f<-f*pnorm(c,mu,sig)# re-scale for censored
 
-        #add contribution at x from mass at c
-
-        f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))
+        f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))# add contribution at x from mass at c
 
         return(f)
       }
 
 
-      ####################END OF SUPPORT FUNCTIONS###################
-      ###############################################################
-
-      ############OPTIMISING THE MODEL###############################
+  ########### Optimization of the model ########
 
       mlest<-suppressWarnings(optim(theta,nll_mef4,uplo=UpLo,BLMod=BLMod,
                                     method=optim.method,
@@ -882,13 +749,12 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
                                      control = list(parscale = scale),
                                      hessian="T"))
 
-      # there will be warning messages on running this as the optimizer will drift
-      # into areas where density is very small.
-
       likelihood[i]<-mlest2$value*-1
     }
 
   }
+
+  ########### Fitting custom models ######################################################
 
   if(model=="other"){
 
@@ -899,6 +765,8 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     if(v==8){
 
+      #### The three parameter models #####
+
       BLMod <- equation
 
       for(i in 1:length(sigh)){
@@ -908,8 +776,8 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         BLMod<-BLMod
         vals<-vals
 
-        ######################SUPPORT FUNCTIONS#########################
-        ################################################################
+      ######### Likelihood functions #########################
+
         nll_mef5<-function(pars,uplo,BLMod){
 
           a<-pars[1]
@@ -933,9 +801,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           return(nll)
         }
 
-        ###########################################################################
+        ##
+
         par_nll_mef5<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-          ###########################################################################
 
           eps=1e-4
 
@@ -950,22 +818,13 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
           return(part)
         }
-        #########################################################################
 
-        #########################################################################
-        jdensup5<-function(X,BLMod,a,b,c,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){
-          #########################################################################
+        ##
 
-          # joint density of observed values x and y given beta0,beta1,beta2 as bl
-          # parameters (plateau, intercept and slope of bounded linear model).
-          # sigh ss measurement error
-          # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
-          # NB parameterization of rcorr to keep in [-1,1]
+        jdensup5<-function(X,BLMod,a,b,c,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
 
           x<-X[1]
           y<-X[2]
-
-          #BLGen<-match.fun(BLMod)
 
           rho<-tanh(rcorr)
           cov<-rho*sdx*sdy
@@ -983,15 +842,10 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           fxy<-fy_x*fx
           return(log(fxy))
         }
-        #########################################################################
+
+        ##
 
         coffcturb5<-function(x,mu,sig,A,C,sigh=sigh[i]){
-
-          #
-          # a is right censor, c is left censor.  Set either to Inf/-Inf
-          #
-          # Notation as in Turban webpage, except k is substituted for c
-
 
           k<-((mu-C)/sig)
           D<-((mu-A)/sig)
@@ -1003,25 +857,16 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           com2<-gamma*exp(com1)
           f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
 
-          #rescale for censored
-          f<-f*pnorm(C,mu,sig)
+          f<-f*pnorm(C,mu,sig)# re-scale for censored
 
-          #add contribution at x from mass at c
-
-          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))
+          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))# add contribution at x from mass at c
 
           return(f)
         }
-        #########################################################################
 
+        ##
 
-        ####################END OF SUPPORT FUNCTIONS###################
-        ###############################################################
-
-        ############OPTIMISING THE MODEL###############################
-        #  Estimates are found by minimizing the negative log likelihood.  The first estimate
-        #  starting from guess appears as mlest$par.  scale is recomputed from this, and
-        #  a second run is started from this first solution
+        ######### Optimization of the model ##########
 
         mlest<-suppressWarnings(optim(theta,nll_mef5,uplo=UpLo,BLMod=BLMod,
                                       method=optim.method,
@@ -1039,19 +884,19 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       }
     }
 
+    ### Fitting the four parameter model #################################################
 
     if(v==9){
 
       BLMod <- equation
 
       for(i in 1:length(sigh)){
-
         theta<-theta
         UpLo=UpLo
         BLMod<-BLMod
         vals<-vals
 
-        ######################SUPPORT FUNCTIONS#########################
+    ######### The likelihood functions #######################
 
         nll_mef6<-function(pars,uplo,BLMod){
 
@@ -1077,9 +922,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           return(nll)
         }
 
-        ###########################################################################
+        ##
+
         par_nll_mef6<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-          ###########################################################################
 
           eps=1e-4
 
@@ -1094,22 +939,13 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
           return(part)
         }
-        #########################################################################
 
-        #########################################################################
-        jdensup6<-function(X,BLMod,a,b,c,d,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){
-          #########################################################################
+        ##
 
-          # joint density of observed values x and y given beta0,beta1,beta2 as bl
-          # parameters (plateau, intercept and slope of bounded linear model).
-          # sigh ss measurement error
-          # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
-          # NB parameterization of rcorr to keep in [-1,1]
+        jdensup6<-function(X,BLMod,a,b,c,d,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
 
           x<-X[1]
           y<-X[2]
-
-          #BLGen<-match.fun(BLMod)
 
           rho<-tanh(rcorr)
           cov<-rho*sdx*sdy
@@ -1127,15 +963,10 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           fxy<-fy_x*fx
           return(log(fxy))
         }
-        #########################################################################
+
+        ##
 
         coffcturb6<-function(x,mu,sig,A,C,sigh=sigh[i]){
-
-          #
-          # a is right censor, c is left censor.  Set either to Inf/-Inf
-          #
-          # Notation as in Turban webpage, except k is substituted for c
-
 
           k<-((mu-C)/sig)
           D<-((mu-A)/sig)
@@ -1147,25 +978,15 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           com2<-gamma*exp(com1)
           f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
 
-          #rescale for censored
-          f<-f*pnorm(C,mu,sig)
 
-          #add contribution at x from mass at c
+          f<-f*pnorm(C,mu,sig) # re-scale for censored
 
-          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))
+          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))# add contribution at x from mass at c
 
           return(f)
         }
-        #########################################################################
 
-
-        ####################END OF SUPPORT FUNCTIONS###################
-        ###############################################################
-
-        ############OPTIMISING THE MODEL###############################
-        #  Estimates are found by minimizing the negative log likelihood.  The first estimate
-        #  starting from guess appears as mlest$par.  scale is recomputed from this, and
-        #  a second run is started from this first solution
+        ############ Optimization of the model ###############################
 
         mlest<-suppressWarnings(optim(theta,nll_mef6,uplo=UpLo,BLMod=BLMod,
                                       method=optim.method,
@@ -1184,6 +1005,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     }
 
+    ### Fitting the five parameter model ######################################
 
     if(v==10){
 
@@ -1191,17 +1013,14 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
       for(i in 1:length(sigh)){
 
-        #sigh<-sigh[i]
-        #likelihood<-vector()
         theta<-theta
         UpLo=UpLo
         BLMod<-BLMod
         vals<-vals
 
-        ######################SUPPORT FUNCTIONS#########################
+        ########### Likelihood functions ########################
 
         nll_mef7<-function(pars,uplo,BLMod){
-
 
           a<-pars[1]
           b<-pars[2]
@@ -1226,9 +1045,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           return(nll)
         }
 
-        ###########################################################################
+        ##
+
         par_nll_mef7<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-          ###########################################################################
 
           eps=1e-4
 
@@ -1243,22 +1062,13 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
           return(part)
         }
-        #########################################################################
 
-        #########################################################################
-        jdensup7<-function(X,BLMod,a,b,c,d,e,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){
-          #########################################################################
+        ##
 
-          # joint density of observed values x and y given beta0,beta1,beta2 as bl
-          # parameters (plateau, intercept and slope of bounded linear model).
-          # sigh ss measurement error
-          # mux,muy,sdx,sdy,rcorr as parameters of underlying bivariate normal rv
-          # NB parameterization of rcorr to keep in [-1,1]
+        jdensup7<-function(X,BLMod,a,b,c,d,e,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
 
           x<-X[1]
           y<-X[2]
-
-          #BLGen3<-match.fun(BLMod)
 
           rho<-tanh(rcorr)
           cov<-rho*sdx*sdy
@@ -1278,14 +1088,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         }
 
 
-        #########################################################################
-        coffcturb7<-function(x,mu,sig,A,C,sigh=sigh[i]){
-          #########################################################################
-          #
-          # a is right censor, c is left censor.  Set either to Inf/-Inf
-          #
-          # Notation as in Turban webpage, except k is substituted for c
+        ##
 
+        coffcturb7<-function(x,mu,sig,A,C,sigh=sigh[i]){
 
           k<-((mu-C)/sig)
           D<-((mu-A)/sig)
@@ -1297,22 +1102,14 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           com2<-gamma*exp(com1)
           f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
 
-          #rescale for censored
-          f<-f*pnorm(C,mu,sig)
+          f<-f*pnorm(C,mu,sig)# re-scale for censored
 
-          #add contribution at x from mass at c
-
-          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))
+          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig))) # add contribution at x from mass at c
 
           return(f)
         }
-        ###############################################################
 
-
-        ####################END OF SUPPORT FUNCTIONS###################
-        ###############################################################
-
-        ############OPTIMISING THE MODEL###############################
+        ############ Optimization of the model ###############################
 
         mlest<-suppressWarnings(optim(theta,nll_mef7,uplo=UpLo,BLMod=BLMod,
                                       method=optim.method,
@@ -1325,16 +1122,13 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
                                        control = list(parscale = scale),
                                        hessian="T"))
 
-        # there will be warning messages on running this as the optimizer will drift
-        # into areas where density is very small.
-
         likelihood[i]<-mlest2$value*-1
       }
     }
 
   }
 
- ###############################
+ ################### Output preparation #################################################
 
   if(plot==TRUE){
     plot(sigh,likelihood, xlab="Measurement error standard deviation",

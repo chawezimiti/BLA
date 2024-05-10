@@ -50,20 +50,24 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
 
   cat("Note: This function may take a few minutes to run for large datasets.\n\n")
 
-  upper.peel<-function(peel){
+
+  ## Selection of the x_min and x_max index values
+
+   upper.peel<-function(peel){
     min.x.index<-which(peel[,2]==max(peel[,2][which(peel[,1]==min(peel[,1]))]) & peel[,1]==min(peel[,1])) # selection of min
     max.x.index<-which(peel[,2]==max(peel[,2][which(peel[,1]==max(peel[,1]))]) & peel[,1]==max(peel[,1])) # and max.x.index
-    if(min.x.index<max.x.index){                                                                          # even when two values
-      op<-peel[min.x.index:max.x.index,]                                                                  # occur. The highest is used
-    }else{
-      op<-rbind(peel[(min.x.index:nrow(peel)),],
-                peel[(1:max.x.index),]
-      )
-    }
-    return(op)
-  }
 
-  #############Removing NA'S ######
+    if(min.x.index<max.x.index){                                                                          # even when two values
+        op<-peel[min.x.index:max.x.index,]                                                                  # occur. The highest is used
+      }else{
+        op<-rbind(peel[(min.x.index:nrow(peel)),],
+                peel[(1:max.x.index),]
+        )
+      }
+      return(op)
+    }
+
+  ## Removing NA'S from the data ######
 
   data<- data.frame(x=x,y=y)
   test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE)
@@ -76,18 +80,19 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
   x<-data1$x
   y<-data1$y
   dat<-cbind(x,y)
-  ################################
-  #setting the output area
+
+  ## setting the output area #######
+
   if(plot==TRUE){
     plot_layout<-rbind(c(1,1,2),c(1,1,3))
     layout(plot_layout)
     plot(dat,...)}
-  #############################
+
+  ## Determination of the convex hull
+
   peels<-list()
   left<-list()
   right<-list()
-  #dat<-cbind(x,y)
-  #plot(dat,...)
   n<-length(dat[,1]) #: sample size
   Sigma<-cov(dat)
 
@@ -99,13 +104,10 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
 
 
     p1.upperx<-data.frame(x=p1.upper[,1],y=p1.upper[,2])
-    #peels[[i]]<-split(p1.upperx,cumsum(1:nrow(p1.upper)%in%which(p1.upperx$y==max(p1.upperx$y))))
+
     ifelse( p1.upperx[1,2]!=max(p1.upperx$y),
             peels[[i]]<-split(p1.upperx,ifelse(p1.upperx$x<p1.upperx$x[which(p1.upperx$y==max(p1.upperx$y))],0,1)),
             peels[[i]]<-split(p1.upperx,ifelse(p1.upperx$x<= p1.upperx$x[which(p1.upperx$y==max(p1.upperx$y))],0,1)))
-    # Added the above line i.e ifelse but the other line was working. this is to deal with error when first value of
-    #y is highest during the split
-
 
     index.func<-function(x,y){
       del<-list()
@@ -137,12 +139,14 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     points(df1$x,df1$y,col="red", pch=16)
     points(df2$x,df2$y,col="blue", pch=16)}
 
-  ## calculates the enclidean distance of vertices
+  ## Calculating the euclidean distance of vertices to center
+
   ED1_sd<-sd(sqrt((mean(x)-df1[,1])^2+(mean(y)-df1[,2])^2))
   ED2_sd<-sd(sqrt((mean(x)-df2[,1])^2+(mean(y)-df2[,2])^2))
 
-  ########################################################
-  #######For a thousand simultions now#####################
+
+  ######### Monte Carlo simulation for evidence testing  #################################
+
   ED1_sim<-list()
   ED2_sim<-list()
   ED_all_sd_rise<-vector()
@@ -155,21 +159,23 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     right<-list()
 
     # simulation of data using summary statistics of the available data
+
     dat<-mvrnorm(n,mu=c(mean(x),mean(y)),Sigma)
     x=dat[,1]
     y=dat[,2]
 
-    #### bagplot to remove outliers from thesimulated data
+    ## Removal of outliers from the simulated data
+
     bag<-bagplot(x,y,na.rm = T,create.plot = FALSE)
     dat<-rbind(bag$pxy.bag,bag$pxy.outer)
     dat<-data.frame(x=dat[,1],y=dat[,2])
 
-
+    ## Determination of convex hull for the simulated data
 
     for(i in 1:shells){
       ch.index<-chull(dat) # find convex hull (index values for points)
       p1<-dat[ch.index,]   # extract peel 1
-      p1_2<-p1[!duplicated(p1), ]#removes duplicate values i.e if two rows have same x and y values
+      p1_2<-p1[!duplicated(p1), ] # removes duplicate values i.e if two rows have same x and y values
       p1.upper<-upper.peel(p1_2)
 
       p1.upperx<-data.frame(x=p1.upper[,1],y=p1.upper[,2])
@@ -177,7 +183,6 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
       ifelse( p1.upperx[1,2]!=max(p1.upperx$y),
               peels[[i]]<-split(p1.upperx,ifelse(p1.upperx$x<p1.upperx$x[which(p1.upperx$y==max(p1.upperx$y))],0,1)),
               peels[[i]]<-split(p1.upperx,ifelse(p1.upperx$x<= p1.upperx$x[which(p1.upperx$y==max(p1.upperx$y))],0,1)))
-
 
 
       index.func<-function(x,y){
@@ -226,6 +231,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     ED_all_sd_fall[i]<-sd(ED2_sim[[i]])
   }
 
+  ## Calculating the sd test indices
 
   p_sd_rise<-length(which(ED_all_sd_rise<=ED1_sd))/length(ED_all_sd_rise)
   p_sd_fall<-length(which(ED_all_sd_fall<=ED2_sd))/length(ED_all_sd_fall)
@@ -233,12 +239,13 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
   MeanSDr<-mean(ED_all_sd_rise)
   MeanSDf<-mean(ED_all_sd_fall)
 
+  ## Output preparation
+
   Index<-c("sd","sd","Mean sd","Mean sd","p_value","p_value")
   value<-c(ED1_sd,ED2_sd,MeanSDr,MeanSDf,p_sd_rise, p_sd_fall)
   Section<-c("Left","Right","Left","Right","Left","Right")
 
-
-  #par(mfrow=c(1,2))
+  ## Plotting the data points for visualization
 
   if(plot==TRUE){
     hist(ED_all_sd_rise,freq = FALSE, xlab="sd",main = "Left")

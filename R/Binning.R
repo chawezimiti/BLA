@@ -106,7 +106,7 @@
 #'  \item Double logistic model (\code{"double-logistic"})
 #'  \deqn{ y= \frac{\beta_{0,1}}{1+e^{\beta_2(\beta_1-x)}} -
 #'  \frac{\beta_{0,2}}{1+e^{\beta_4(\beta_3-x)}}}
-#'  where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is a shape parameter one,
+#'  where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is shape parameter one,
 #'  \eqn{\beta_{0,1}} and \eqn{\beta_{0,2}} are the maximum response ,
 #'  \eqn{\beta_3} is a scaling parameter two and  \eqn{\beta_4} is a shape parameter two.
 #'
@@ -183,15 +183,17 @@
 #'
 #' blbin(x,y, bins=bins ,theta=c(0.5,0.02), model = "blm", xmax = 250)
 #'
-blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.method="Nelder-Mead", xmin=min(bound$x),
+blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95,
+                optim.method="Nelder-Mead", xmin=min(bound$x),
                 xmax=max(bound$x),plot=TRUE, bp_col="red", bp_pch=16, bl_col="red",
                 lwd=1,line_smooth=1000, ...){
 
   BLMod<-model
 
-########### Data preparation for BINNING##################
+########### DATA PREPARATION BINNING##################
 
-#############################Removes NA's
+############# Removing NA's ##############################
+
   data<- data.frame(x=x,y=y)
   test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE)
 
@@ -200,24 +202,24 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
       df<-data
     }
 
-#### Types of binning
+#### Determining the Bins #######################################
+
   if(length(bins) < 3) stop("The bins should be atleast length 3")
   if(length(bins) > 4) stop("The bins length should not be more than 4")
 
-  if(length(bins)==3){
+
+  if(length(bins)==3){     # For Fixed bins
 
     df<- df[order(df$x),]
 
-    startpoint <- bins[1]  # Size of each window
-    endpoint<-bins[2]
-    bin_size <- bins[3]  # Step size for sliding the window
-    step_size <- bins[3] # Step size for sliding the window
+    startpoint <- bins[1]  # start of window
+    endpoint<-bins[2]      # end of window
+    bin_size <- bins[3]    # window size
+    step_size <- bins[3]   # Step size for sliding the window
 
-    # Initialize vectors to store results
-    bound_y <- vector("numeric")
-    avg_x <- vector("numeric")
+    bound_y <- vector("numeric")  # Initialize vectors to store results
+    avg_x <- vector("numeric")    # Initialize vectors to store results
 
-    # Calculate max_y and avg_x for each window
     while (startpoint <= endpoint) {
 
       df1<-df[which(df$x > startpoint & df$x < startpoint+bin_size),]
@@ -238,20 +240,19 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
     }
   }
 
-  if(length(bins)==4){
+  if(length(bins)==4){    # For sliding window
 
    df<- df[order(df$x),]
 
-   startpoint <- bins[1]  # Size of each window
-   endpoint<-bins[2]
-   bin_size <- bins[3]  # Step size for sliding the window
-   step_size <- bins[4] # Step size for sliding the window
+   startpoint <- bins[1]  # start point of window
+   endpoint<-bins[2]      # start point of window
+   bin_size <- bins[3]    # Window size
+   step_size <- bins[4]   # Step size for sliding the window
 
-   # Initialize vectors to store results
-   bound_y <- vector("numeric")
-   avg_x <- vector("numeric")
 
-   # Calculate max_y and avg_x for each window
+   bound_y <- vector("numeric") # Initialize vectors to store results
+   avg_x <- vector("numeric")   # Initialize vectors to store results
+
    while (startpoint <= endpoint) {
 
      df1<-df[which(df$x > startpoint & df$x < startpoint+bin_size),]
@@ -272,13 +273,16 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
    }
 
  }
-  ################################
+
+################### Plotting the boundary data for viewing #####################
 
   if(plot==TRUE){
     plot(x,y,...)
     points(dataset$x,dataset$y,col=bp_col, pch=bp_pch)
     }
-  ########################Setting data limits###########################
+
+################## Setting data limits for boundary fitting ####################
+
   bound<-dataset
 
   L<-xmin
@@ -290,20 +294,22 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
   ifelse(L==min(bound$x), bound2<-bound, bound2<-bound[-which(bound$x<L),])
   ifelse(U==max(bound2$x), newdata5<-bound2, newdata5<-bound2[-which(bound2$x>U),])
 
-  ########Checking if boundary points have NA values
+######## Checking if boundary points have NA values ############################
 
   test2<-which(is.na(newdata5$y)==TRUE)
 
   if(length(test2)>0) stop("Some bins do not contain response values. Make sure all bins contain data points")
 
-  ###############exploring data###########################
+######## Exploring data to choose model ########################################
+
   if(model=="explore"){
     if(plot==TRUE){
       plot(x,y,...)
       points(dataset$x,dataset$y, col=bp_col, pch=bp_pch)}
     return(summary(dataset))
   }
-  ########## Fitting two parameter linear model ##########################
+
+########## Fitting the two parameter linear model ##############################
 
   if(model=="blm"){
 
@@ -343,14 +349,14 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
     }
 
 
-    #initial values are optimised using optim function
+    ## Optimisation using optim function
 
     ooo<-optim(theta,rss,x=newdata5$x,y=newdata5$y,method=optim.method)  #find LS estimate of theta given data in x,yobs
     scale<-1/abs( parscale(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
     ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo. re-investigate this
+    # and hence this make it to use the original values in ooo.
 
     arf=oo$par[1]
     brf=oo$par[2]
@@ -376,7 +382,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
     return(Result)
   }
 
-  ########## Fitting three parameter model ##########################
+########## Fitting the three parameter model ###################################
 
   if(model=="lp"|model=="logistic"|model=="logisticND"|model=="inv-logistic"|model=="qd"|model=="mit"|model=="schmidt"){
 
@@ -384,7 +390,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
     if(v>3) stop("theta has more than three values")
     if(v<3) stop("theta has less than three values")
 
-    ## set the trap1 function for each method
+    ## Set the function and loss function for each method
 
     if(model=="lp"){
       Equation<-noquote("y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080)")
@@ -479,14 +485,14 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
     }
 
 
-    #initial values are optimised using optim function
+    # Optimization using optim function
 
     ooo<-optim(theta,rss1,x=newdata5$x,y=newdata5$y,method=optim.method)
     scale<-1/abs( parscale1(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss1,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
     ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo. re-investigate this
+    # and hence this make it to use the original values in ooo.
 
     arf=oo$par[1]
     brf=oo$par[2]
@@ -516,7 +522,8 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
     return(Parameters)
   }
 
-  ################ Fitting five parameter Trapezium model##########################
+################ Fitting the five parameter Trapezium model#####################
+
   if(model=="trapezium"){
 
     v<-length(theta)
@@ -563,22 +570,20 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
     }
 
 
-    #initial values are optimised
+    ## Optimization
 
-    ooo<-optim(theta,rss2,x=newdata5$x,y=newdata5$y,method=optim.method)   #find LS estimate of theta given data in x,yobs
+    ooo<-optim(theta,rss2,x=newdata5$x,y=newdata5$y,method=optim.method)
     scale<-1/abs( parscale2(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss2,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
     ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo. re-investigate this
+    # and hence this make it to use the original values in ooo.
 
     arf=oo$par[1]
     brf=oo$par[2]
     ymf=oo$par[3]
     aff=oo$par[4]
     bff=oo$par[5]
-    bp1<-(ymf-arf)/(brf) #estimates of the boundary break points
-    bp2<-(ymf-aff)/(bff) #estimates of the boundary break points
 
     xfine=seq(min(x,na.rm = T),max(x,na.rm = T),(max(x,na.rm = T)-min(x,na.rm = T))/((max(x,na.rm = T)-min(x,na.rm = T))*line_smooth)) # this needs attention in all methods
     yfit<-lapply(xfine,FUN=trap2,ar=arf,br=brf,ym=ymf,af=aff,bf=bff)
@@ -586,7 +591,6 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
 
     if(plot==TRUE){lines(xfine,yfit,lwd=lwd,col=bl_col)}
 
-    #Parameters<-data.frame(Paramter=c("ar","br","ym","af","bf", "bp1","bp2"), value=c(arf,brf,ymf,aff,bff, bp1,bp2))
     estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-c(arf,brf,ymf,aff,bff)
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u2080","\u03B2\u2083","\u03B2\u2084")
@@ -600,7 +604,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
     return(Result)
   }
 
-  ###################### Fitting six parameter logistics  ##############
+###################### Fitting the six parameter logistics model ###############
 
   if(model=="double-logistic"){
     v<-length(theta)
@@ -647,14 +651,14 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
       return(part)
     }
 
-    #initial values are optimised using optim function
+    #Optimization using optim function
 
     ooo<-optim(theta,rss3,x=newdata5$x,y=newdata5$y,method=optim.method)
     scale<-1/abs( parscale3(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss3,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
     ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo. re-investigate this
+    # and hence this make it to use the original values in ooo.
 
     arf=oo$par[1]
     brf=oo$par[2]
@@ -684,14 +688,15 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
     return(Result)
   }
 
-  ########### OWN CUSTOM FUNCTION ####################################
+########### USING CUSTOM FUNCTIONS ##############################################
 
   if(model=="other"){
     v<-length(theta)
     Equation<-equation # to print equation in output
     theta<-unname(theta) # removes names from theta
 
-    ### three parameters ####
+### The three parameter model ############################
+
     if(v==3){
 
       rss4<-function(theta,x,y,equation){
@@ -724,7 +729,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
       }
 
 
-      #initial values are optimised using optim function
+      #Optimization using optim function
 
       ooo<-optim(theta,rss4,x=newdata5$x,y=newdata5$y,method=optim.method,equation=equation)
       scale<-1/abs( parscale4(ooo$par,x=newdata5$x,y=newdata5$y, equation=equation))
@@ -732,7 +737,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
                 control = list(parscale = scale), equation=equation)
 
       ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-      # and hence this make it to use the original values in ooo. re-investigate this
+      # and hence this make it to use the original values in ooo.
 
       af=oo$par[1]
       bf=oo$par[2]
@@ -760,7 +765,8 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
 
     }
 
-    ### four parameters ####
+#### The four parameter model #############################
+
     if(v==4){
 
       rss4<-function(theta,x,y,equation){
@@ -794,7 +800,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
       }
 
 
-      #initial values are optimised using optim function
+      # Optimization using optim function
 
       ooo<-optim(theta,rss4,x=newdata5$x,y=newdata5$y,method=optim.method,equation=equation)
       scale<-1/abs( parscale4(ooo$par,x=newdata5$x,y=newdata5$y, equation=equation))
@@ -802,7 +808,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
                 control = list(parscale = scale), equation=equation)
 
       ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-      # and hence this make it to use the original values in ooo. re-investigate this
+      # and hence this make it to use the original values in ooo.
 
       af=oo$par[1]
       bf=oo$par[2]
@@ -830,7 +836,8 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
       return(Parameters)
     }
 
-    ### five parameters ####
+#### The five parameter model ######################
+
     if(v==5){
 
       rss4<-function(theta,x,y,equation){
@@ -865,7 +872,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
       }
 
 
-      #initial values are optimised using optim function
+      # Optimization using optim function
 
       ooo<-optim(theta,rss4,x=newdata5$x,y=newdata5$y,method=optim.method,equation=equation)
       scale<-1/abs( parscale4(ooo$par,x=newdata5$x,y=newdata5$y, equation=equation))
@@ -873,7 +880,7 @@ blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95, optim.m
                 control = list(parscale = scale), equation=equation)
 
       ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-      # and hence this make it to use the original values in ooo. re-investigate this
+      # and hence this make it to use the original values in ooo.
 
       af=oo$par[1]
       bf=oo$par[2]

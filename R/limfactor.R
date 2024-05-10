@@ -14,7 +14,7 @@
 #' @export
 #' @examples
 #'
-#' N<-rnorm(10,50,5) #assuming these are predicted responses using the fitted BL for N,P,K
+#' N<-rnorm(10,50,5)#assuming these are predicted responses using the fitted BL for N,P,K
 #' K<-rnorm(10,50,4)
 #' P<-rnorm(10,50,6)
 #'
@@ -25,8 +25,8 @@ limfactor<-function(...){
   dat<-data.frame(...)
   name<-names(dat)
   dat2<- as.data.frame(t(dat)) # transpose the dataframe. changes rows to columns and vice-versal
-  dat3<-suppressWarnings(unlist(lapply(dat2,min,na.rm=T))) #minimum values for each column
-  dat3[which(dat3==Inf)]<-NA # Inf is returned if the column has only NA's. This coz NA are removed using the rm.na=T
+  dat3<-suppressWarnings(unlist(lapply(dat2,min,na.rm=T))) # minimum values for each column
+  dat3[which(dat3==Inf)]<-NA # Inf is returned if the column has only NA's.
   dat4<-lapply(dat2,which.min)
 
   dat5<-lapply(dat4, function(a,b){
@@ -39,7 +39,8 @@ limfactor<-function(...){
   data<-data.frame(Rs=dat3,Factor=unlist(dat6))
   data2<-data.frame(Rs=data$Rs, Lim_factor=data$Factor)
 
-  ##unidentified yield gap
+  ## Determining unidentified yield gap
+
   test<-apply(dat2,1,max, na.rm=T)
 
   unidentified<-unlist(lapply(dat2,function(x,test){
@@ -49,7 +50,9 @@ limfactor<-function(...){
   for(i in 1:dim(data2)[1]){
     ifelse(unidentified[i]==TRUE,data2$Lim_factor[i]<-"unidentified",data2$Lim_factor[i]<-data2$Lim_factor[i])
   }
+
   ##
+
   Largest<-max(dat, na.rm=T)
 
   return(list(data2,Largest))

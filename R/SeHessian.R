@@ -1,5 +1,3 @@
-
-#########################################################################
 #' Hessian matrix
 #'
 #' This is a set of functions that support the censored bivariate normal model.
