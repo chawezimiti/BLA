@@ -11,12 +11,13 @@ ble_profile(vals, sigh, model="lp", equation=NULL,  theta, UpLo="U",
 \item{vals}{A dataframe with two numeric columns, independent (\code{x}) and
 dependent (\code{y}) variables respectively.}
 
-\item{sigh}{A vector of the suggested standard deviations of the measurement error values.}
+\item{sigh}{A vector of the suggested standard deviations of the measurement error
+values.}
 
 \item{model}{Selects the functional form of the boundary line. It includes
 \code{"blm"} for linear model, \code{"lp"} for linear plateau model, \code{"mit"}
 for the Mitscherlich model, \code{"schmidt"} for the Schmidt model, \code{"logistic"}
-for logistic model, \code{"logisticfm"} for logistic model proposed by
+for logistic model, \code{"logisticND"} for logistic model proposed by
 Fermont et al (2009), \code{"inv-logistic"} for the inverse logistic model,
 \code{"double-logistic"} for the double logistic model, \code{"qd"} for
 quadratic model and the \code{"trapezium"} for the trapezium model.}
@@ -39,8 +40,8 @@ only when argument \code{model="other"}, else it is \code{NULL}.}
   intercept, shape parameter, the maximum or plateau response, mean of \code{x},
   mean of \code{y}, standard deviation of \code{x}, standard deviation of \code{y}
   and the correlation of \code{x} and \code{y}.
-  \item For the \code{"logistic"}, \code{"inv-logistic"} and \code{"logisticfm"} models,
-  it is a vector of length 8 arranged as scaling parameter, shape parameter,
+  \item For the \code{"logistic"}, \code{"inv-logistic"} and \code{"logisticND"}
+  models, it is a vector of length 8 arranged as scaling parameter, shape parameter,
   the maximum or plateau value, mean of \code{x}, mean of \code{y},
   standard deviation of \code{x}, standard deviation of \code{y} and the
   correlation of \code{x} and \code{y}.
@@ -110,7 +111,7 @@ forms are as follows: \enumerate{
  where \eqn{\beta_1} is a scaling parameter , \eqn{\beta_2} is a shape parameter
  and \eqn{\beta_0} is the maximum response.
 
- \item Logistic model (\code{"logisticfm"})  (Fermont et al. 2009)
+ \item Logistic model (\code{"logisticND"})  (Nelder (1961))
  \deqn{ y= \frac{\beta_0}{1+(\beta_1 \times e^{-\beta_2x})}}
   where \eqn{\beta_1} is a scaling parameter, \eqn{\beta_2} is a shape
   parameter and \eqn{\beta_0} is the maximum response.
@@ -118,7 +119,7 @@ forms are as follows: \enumerate{
  \item Double logistic model (\code{"double-logistic"})
  \deqn{ y= \frac{\beta_{0,1}}{1+e^{\beta_2(\beta_1-x)}} -
  \frac{\beta_{0,2}}{1+e^{\beta_4(\beta_3-x)}}}
- where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is a shape parameter one,
+ where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is shape parameter one,
  \eqn{\beta_{0,1}} and \eqn{\beta_{0,2}} are the maximum response ,
  \eqn{\beta_3} is a scaling parameter two and  \eqn{\beta_4} is a shape parameter two.
 
@@ -167,9 +168,8 @@ Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the effect of wate
 filled pore space on nitrous oxide emission from cores of arable soil. European
 Journal of Soil Science, 67 , 148-159.
 
-Fermont, A. M., Van Asten, P. J., Tittonell, P., Van Wijk, M. T., &
-Giller, K. E. (2009). Closing the cassava yield gap: an analysis from smallholder
-farms in East Africa. Field Crops Research, 112 (1), 24–36.
+Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
+Biometrics 17: 89–110.
 }
 \author{
 Chawezi Miti <chawezi.miti@nottingham.ac.uk>

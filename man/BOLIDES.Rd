@@ -16,8 +16,8 @@ bolides(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",
 \item{model}{Selects the functional form of the boundary line. It includes
 \code{"explore"} as default, \code{"blm"} for linear model, \code{"lp"} for
 linear plateau model, \code{"mit"} for the Mitscherlich model, \code{"schmidt"}
-for the Schmidt model, \code{"logistic"} for logistic model, \code{"logisticfm"}
-for logistic model proposed by Fermont et al (2009), \code{"inv-logistic"} for
+for the Schmidt model, \code{"logistic"} for logistic model, \code{"logisticND"}
+for logistic model proposed by Nelder (1961), \code{"inv-logistic"} for
 the inverse logistic model, \code{"double-logistic"} for the double logistic model,
 \code{"qd"} for quadratic model and the \code{"trapezium"} for the trapezium model.
 The \code{"explore"} is used to check the position of boundary points in each bin
@@ -37,7 +37,7 @@ slope and maximum response.
 \item For the \code{"logistic"} and \code{"inv-logistic"} models, it is a
 vector of length 3 arranged as the scaling parameter, shape parameter and maximum
 response.
-\item For the \code{"logisticfm"} model proposed by Fermont et al. (2009), it is a
+\item For the \code{"logisticND"} model proposed by Nelder (1961), it is a
 vector of length 3 arranged as the scaling parameter, shape parameter and maximum
 response.
 \item For the \code{"double-logistic"} model, it is a vector of length 6 arranged
@@ -94,10 +94,10 @@ hence requires some starting values for the model parameters for the proposed
 model.
 }
 \details{
-Some inbuilt models are available for the \code{BOLIDES()} function. The \code{"explore"}
-option for the argument \code{model} generates a plot showing the location
-of the boundary points selected by the binning procedure. This helps to identify
-which model type is suitable to fit as a boundary line. The suggest model
+Some inbuilt models are available for the \code{BOLIDES()} function. The
+\code{"explore"} option for the argument \code{model} generates a plot showing the
+ocation of the boundary points selected by the binning procedure. This helps to
+identify which model type is suitable to fit as a boundary line. The suggest model
 forms are as follows: \enumerate{
  \item Linear model (\code{"blm"})
  \deqn{y=\beta_1 + \beta_2x}
@@ -115,7 +115,7 @@ forms are as follows: \enumerate{
  where \eqn{\beta_1} is a scaling parameter , \eqn{\beta_2} is a shape parameter
  and \eqn{\beta_0} is the maximum response.
 
- \item Logistic model (\code{"logisticfm"})  (Fermont et al. 2009)
+ \item Logistic model (\code{"logisticND"})  (Nelder (1961))
  \deqn{ y= \frac{\beta_0}{1+(\beta_1 \times e^{-\beta_2x})}}
   where \eqn{\beta_1} is a scaling parameter, \eqn{\beta_2} is a shape
   parameter and \eqn{\beta_0} is the maximum response.
@@ -123,8 +123,8 @@ forms are as follows: \enumerate{
  \item Double logistic model (\code{"double-logistic"})
  \deqn{ y= \frac{\beta_{0,1}}{1+e^{\beta_2(\beta_1-x)}} -
  \frac{\beta_{0,2}}{1+e^{\beta_4(\beta_3-x)}}}
- where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is a shape parameter one,
- \eqn{\beta_{0,1}} and \eqn{\beta_{0,2}} are the maximum response ,
+ where \eqn{\beta_1} is a scaling parameter one, \eqn{\beta_2} is a shape parameter
+ one, \eqn{\beta_{0,1}} and \eqn{\beta_{0,2}} are the maximum response ,
  \eqn{\beta_3} is a scaling parameter two and  \eqn{\beta_4} is a shape parameter two.
 
  \item Quadratic model (\code{"qd"})
@@ -162,7 +162,7 @@ The function \code{bolides()} utilities the optimization procedure of the
 \code{optim()} function to determine the model parameters. There is a tendency
 for optimization algorithms to settle at a local optimum. To remove the risk of
 settling for local optimum parameters, it is advised that the function is run using
-several starting values and the results with the smallest error (residue mean square )
+several starting values and the results with the smallest error (residue mean square)
 can be taken as a representation of the global optimum.
 }
 \examples{
@@ -180,9 +180,8 @@ Powell, C. D., ... & France, J. (2022). Overview and application of the Mitscher
 equation and its extensions to estimate the soil nitrogen pool fraction associated
 with crop yield and nitrous oxide emission. Advances in Agronomy, 174, 269-295.
 
-Fermont, A. M., Van Asten, P. J., Tittonell, P., Van Wijk, M. T., &
-Giller, K. E. (2009). Closing the cassava yield gap: an analysis from smallholder
-farms in East Africa. Field Crops Research, 112 (1), 24–36.
+Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
+Biometrics 17: 89–110.
 
 Schmidt, U., Thöni, H., & Kaupenjohann, M. (2000). Using a boundary line approach
 to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agroecosystems,

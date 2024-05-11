@@ -23,7 +23,7 @@ most limiting factor (Casanova et al. 1995).
 }
 \examples{
 
-N<-rnorm(10,50,5) #assuming these are predicted responses using the fitted BL for N,P,K
+N<-rnorm(10,50,5)#assuming these are predicted responses using the fitted BL for N,P,K
 K<-rnorm(10,50,4)
 P<-rnorm(10,50,6)
 
