@@ -98,10 +98,10 @@ values.</p></dd>
 <dt>model</dt>
 <dd><p>Selects the functional form of the boundary line. It includes
 <code>"blm"</code> for linear model, <code>"lp"</code> for linear plateau model, <code>"mit"</code>
-for the Mitscherlich model, <code>"schmidt"</code> for the Schmidt model, <code>"logistic"</code>
-for logistic model, <code>"logisticND"</code> for logistic model proposed by
-Fermont et al (2009), <code>"inv-logistic"</code> for the inverse logistic model,
-<code>"double-logistic"</code> for the double logistic model, <code>"qd"</code> for
+for the Mitscherlich model, <code>"schmidt"</code> for the Schmidt model,
+<code>"logistic"</code> for logistic model, <code>"logisticND"</code> for logistic model
+proposed by Nelder (1961), <code>"inv-logistic"</code> for the inverse logistic
+model, <code>"double-logistic"</code> for the double logistic model, <code>"qd"</code> for
 quadratic model and the <code>"trapezium"</code> for the trapezium model.</p></dd>
 
 
@@ -130,7 +130,7 @@ only when argument <code>model="other"</code>, else it is <code>NULL</code>.</p>
   the maximum or plateau value, mean of <code>x</code>, mean of <code>y</code>,
   standard deviation of <code>x</code>, standard deviation of <code>y</code> and the
   correlation of <code>x</code> and <code>y</code>.</p></li>
-<li><p>For the <code>"double-logistic"</code> model,it is a vector of length 11
+<li><p>For the <code>"double-logistic"</code> model, it is a vector of length 11
   arranged as scaling parameter, shape parameter, maximum response, maximum response,
   scaling parameter two, shape parameter two, mean of <code>x</code>, mean of <code>y</code>,
   standard deviation of <code>x</code>, standard deviation of <code>y</code> and the correlation
