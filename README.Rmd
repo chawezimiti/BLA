@@ -25,7 +25,7 @@ The BLA `R` package provides a set of tools to fit boundary line models to a dat
 
 ## How can I install the package?
 
-Install the current version on Github. You will need to install the package `devtools` before installing BLA.
+Install the current version on Github. You will need to install the package `devtools` before installing BLA. Also ensure that the dependent packages `aplpack ``MASS` and `mvtnorm` are installed.
 
 ```{r, include = TRUE, eval=FALSE}
 library(devtools)

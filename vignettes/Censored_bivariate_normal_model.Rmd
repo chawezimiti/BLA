@@ -16,24 +16,11 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-The censored bivariate normal model (Lark and Milne, 2016) is a statistical method to fit the boundary line to data. It fits the boundary line using the maximum likelihood approach on a censored bivariate distribution. This removes the subjectivity associated with the other boundary line fitting methods ( BOLIDES, Binning and quantile regression) of selecting boundary points to which the boundary line is fitted or specifying an arbitrary quantile to model. It also gives evidence for the presence of boundary in a data set against a bivariate normal null distribution. This method has been previously used to fit boundary lines to data on nitrous oxide emission as a function of soil moisture (Lark and Milne, 2016) and, wheat yield as a function of nutrient concentration (Lark *et al.* 2020). An `R` package, `BLA`, contains exploratory and boundary fitting functions that can be used in the process of fitting a boundary line to data using the censored bivariate normal model. This vignette gives a step by step process for fitting the boundary line and subsequent post-hoc analysis. In this demonstration, the data set soil will be used and boundary line analysis will be carried out on soil P and pH.
+The censored bivariate normal model (Lark and Milne, 2016) is a statistical method to fit the boundary line to data. It fits the boundary line using the maximum likelihood approach on a censored bivariate distribution. This removes the subjectivity associated with the other boundary line fitting methods ( bolides, Binning and quantile regression) of selecting boundary points to which the boundary line is fitted or specifying an arbitrary quantile to model. It also gives evidence for the presence of boundary in a data set against a bivariate normal null distribution. This method has been previously used to fit boundary lines to data on nitrous oxide emission as a function of soil moisture (Lark and Milne, 2016) and, wheat yield as a function of nutrient concentration (Lark *et al.* 2020). An `R` package, `BLA`, contains exploratory and boundary fitting functions that can be used in the process of fitting a boundary line to data using the censored bivariate normal model. This vignette gives a step by step process for fitting the boundary line and subsequent post-hoc analysis. In this demonstration, the data set `soil` will be used and boundary line analysis will be carried out on soil P and pH.
 
-# Installing dependent packages
+# Load the BLA package
 
-The `BLA` package requires that the packages `MASS,` `aplpack` and `mvtnorm` are installed in `R`. You can install these packages using the following code
-
-```{r, eval=FALSE}
-# package names
-packages <- c("MASS", "mvtnorm", "aplpack")
-#
-# install packages
-installed_packages <- packages %in% rownames(installed.packages())
-if (any(installed_packages == FALSE)){
-   install.packages(packages[!installed_packages])}
-
-```
-
-The `BLA` package can then be loaded
+The `BLA` package is loaded together with the `aplpack` package. The `aplpack` package contains the `bagplot()` function which is used to identify outliers in a data set.
 
 ```{r setup}
 library(BLA)
