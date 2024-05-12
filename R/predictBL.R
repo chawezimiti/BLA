@@ -21,7 +21,9 @@
 #' y<-evapotranspiration$`yield(t/ha)`
 #' z<-bolides(x,y, theta = c(0.5,0.02), model= "blm", xmax = 350)
 #'
-#' predictBL(z,x)
+#' Results<-predictBL(z,x)
+#'
+#' head(Results) # prediction for first 6 lines
 #'
 #'
 predictBL<-function(object,x){
