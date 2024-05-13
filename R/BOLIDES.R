@@ -19,8 +19,7 @@
 #'   The \code{"explore"} is used to check the position of boundary points so that the
 #'   correct \code{model} can be applied. For custom models, set \code{model = "other"}.
 #' @param equation A custom model function writen in the form of an R function. Applies
-#'   only when argument \code{model="other"}, else it is \code{NULL} (see the vignette
-#'   `vignette("Introduction_to_BLA")`).
+#'   only when argument \code{model="other"}, else it is \code{NULL}.
 #'
 #' @param theta A numeric vector of initial starting values for optimization
 #'   in fitting the boundary model. Its length and arrangement depend on the

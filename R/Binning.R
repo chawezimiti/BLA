@@ -24,7 +24,7 @@
 #'   \code{"qd"} for quadratic model and the \code{"trapezium"} for the trapezium model.
 #'   The \code{"explore"} is used to check the position of boundary points in each bin
 #'   so that the correct \code{model} can be applied. For custom models, set
-#'   \code{model = "other"} (see the vignette `vignette("Introduction_to_BLA")`).
+#'   \code{model = "other"}.
 #' @param equation A custom model function writen in the form of an R function. Applies
 #'   only when argument \code{model="other"}, else it is \code{NULL}.
 #'
