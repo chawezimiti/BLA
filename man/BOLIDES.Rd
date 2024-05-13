@@ -20,12 +20,12 @@ for the Schmidt model, \code{"logistic"} for logistic model, \code{"logisticND"}
 for logistic model proposed by Nelder (1961), \code{"inv-logistic"} for
 the inverse logistic model, \code{"double-logistic"} for the double logistic model,
 \code{"qd"} for quadratic model and the \code{"trapezium"} for the trapezium model.
-The \code{"explore"} is used to check the position of boundary points in each bin
-so that the correct \code{model} can be applied. For custom models, set
-\code{model = "other"}.}
+The \code{"explore"} is used to check the position of boundary points so that the
+correct \code{model} can be applied. For custom models, set \code{model = "other"}.}
 
 \item{equation}{A custom model function writen in the form of an R function. Applies
-only when argument \code{model="other"}, else it is \code{NULL}.}
+only when argument \code{model="other"}, else it is \code{NULL} (see the vignette
+`vignette("Introduction_to_BLA")`).}
 
 \item{theta}{A numeric vector of initial starting values for optimization
 in fitting the boundary model. Its length and arrangement depend on the

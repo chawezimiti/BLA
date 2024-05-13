@@ -59,7 +59,9 @@
 #'   for logistic model, \code{"logisticND"} for logistic model proposed by
 #'   Nelder (1961), \code{"inv-logistic"} for the inverse logistic model,
 #'   \code{"double-logistic"} for the double logistic model, \code{"qd"} for
-#'   quadratic model and the \code{"trapezium"} for the trapezium model.
+#'   quadratic model and the \code{"trapezium"} for the trapezium model. For custom
+#'   models, set \code{model = "other"} (see the vignette
+#'   `vignette("Introduction_to_BLA")`).
 #' @param equation A custom model function writen in the form of an R function. Applies
 #'   only when argument \code{model="other"}, else it is \code{NULL}.
 #' @param optim.method Describes the method used to optimize the model as in the
