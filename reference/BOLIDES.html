@@ -99,14 +99,14 @@ for the Schmidt model, <code>"logistic"</code> for logistic model, <code>"logist
 for logistic model proposed by Nelder (1961), <code>"inv-logistic"</code> for
 the inverse logistic model, <code>"double-logistic"</code> for the double logistic model,
 <code>"qd"</code> for quadratic model and the <code>"trapezium"</code> for the trapezium model.
-The <code>"explore"</code> is used to check the position of boundary points in each bin
-so that the correct <code>model</code> can be applied. For custom models, set
-<code>model = "other"</code>.</p></dd>
+The <code>"explore"</code> is used to check the position of boundary points so that the
+correct <code>model</code> can be applied. For custom models, set <code>model = "other"</code>.</p></dd>
 
 
 <dt>equation</dt>
 <dd><p>A custom model function writen in the form of an R function. Applies
-only when argument <code>model="other"</code>, else it is <code>NULL</code>.</p></dd>
+only when argument <code>model="other"</code>, else it is <code>NULL</code> (see the vignette
+`vignette("Introduction_to_BLA")`).</p></dd>
 
 
 <dt>theta</dt>
