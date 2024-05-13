@@ -116,7 +116,7 @@
 #'  and \eqn{\beta_3} is the slope two.
 #'
 #'  \item Mitscherlich model (\code{"mit"})
-#'  \deqn{y= \beta_0 + \beta_1(1-e^{\frac{-x}{\beta_2}})}
+#'  \deqn{y= \beta_0 - \beta_1*\beta_2^x}
 #'  where \eqn{\beta_1} is the intercept, \eqn{\beta_2} is a shape parameter
 #'  and \eqn{\beta_0} is the maximum response.
 #'
@@ -199,7 +199,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     if(model=="mit"){
       mit<-function(x,beta0,beta1,beta2){
-        return(beta1+beta0*(1-exp(-x/beta2)))
+        return(beta0-beta1*beta2^x)
       }
 
       BLMod<-mit

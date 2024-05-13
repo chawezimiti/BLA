@@ -109,7 +109,7 @@ predictBL<-function(object,x){
   if(object$Model=="mit"){
 
     y<-tryCatch(lapply(x,
-                       function(x,b) b$Parameters[1,1]+b$Parameters[3,1]*(1-exp(-x/b$Parameters[2,1])),
+                       function(x,b) b$Parameters[3,1]-b$Parameters[1,1]*b$Parameters[2,1]^x,
                        b=object),error=function(e) NA)
     return(unlist(y))
   }

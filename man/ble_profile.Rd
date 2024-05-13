@@ -135,7 +135,7 @@ forms are as follows: \enumerate{
  and \eqn{\beta_3} is the slope two.
 
  \item Mitscherlich model (\code{"mit"})
- \deqn{y= \beta_0 + \beta_1(1-e^{\frac{-x}{\beta_2}})}
+ \deqn{y= \beta_0 - \beta_1*\beta_2^x}
  where \eqn{\beta_1} is the intercept, \eqn{\beta_2} is a shape parameter
  and \eqn{\beta_0} is the maximum response.
 

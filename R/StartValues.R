@@ -22,16 +22,27 @@
 #' the points that make up the boundary points are selected using mouse click on
 #' the plots.
 #' @returns A list containing the parameters of the suggested model.
+#'
+#' @references
+#'
+#' Fekedulegn, D., Mac Siurtain, M.P., & Colbert, J.J. 1999. Parameter estimation of
+#' nonlinear growth models in forestry. Silva Fennica 33(4): 327–336.
+#'
+#' Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the effect of water
+#' filled pore space on nitrous oxide emission from cores of arable soil. European
+#' Journal of Soil Science, 67 , 148-159.
+#'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
 #' @export
 #' @examples
 #' startValues(model="explore")
 #'
+#'
 startValues<-function(model="explore",p=NULL,digits = 2,...){
 
   if (model != "blm" && model != "lp" && model != "qd" && model!="trapezium" &&
       model!="logistic" && model!="double-logistic" && model!="inv-logistic" &&
-      model!="explore") {
+      model!="mit" && model!="schmidt" && model!="explore") {
     stop("model type not recorgnised ")
   }
 
@@ -68,6 +79,16 @@ startValues<-function(model="explore",p=NULL,digits = 2,...){
   if(model=="double-logistic"){
     n<-p
     cat("select all points on the plot that make up the double-logistic model in ascending order of x\n\n")
+  }
+
+  if(model=="mit"){
+    n<-p
+    cat("select all points on the plot that make up the logistic model in ascending order of x\n\n")
+  }
+
+  if(model=="schmidt"){
+    n<-p
+    cat("select all points on the plot that make up the logistic model in ascending order of x\n\n")
   }
 
 
@@ -226,6 +247,85 @@ startValues<-function(model="explore",p=NULL,digits = 2,...){
     names(max_response)<-c("\u03B2\u20801","\u03B2\u20802")
 
     results<-list(max_response=max_response , scaling_parameters=inflection, shape_parameters =slopes2)
+    return(results)
+
+  }
+
+  if(model=="mit"){
+    #Fekedulegn et al. (1999)
+
+    d<-locator(n)
+    df<-data.frame(x=d$x,y=d$y)
+    ymax<-max(df$y) # Estimate of B_0
+
+    dx <- diff(df$x)
+    dy <- diff(df$y)
+    slopes <- dy / dx
+
+    shape_B2<- min(abs(slopes/ymax)) # Estimate of B_2 i.e rate of approach to B_0
+
+    intercept<- df$y[2]-slopes[1]*df$x[2]
+
+    B1<-(ymax-intercept)/min(abs(slopes)) # Estimate of magnitude of y at start of growth
+
+    x2<-vector()
+    y2<-vector()
+    for(i in 1:(length(df$x)-1)){
+      x2[i]<-(df$x[i]+df$x[i+1])/2
+      y2[i]<-(df$y[i]+df$y[i+1])/2
+    }
+
+    slopes2 <- round(slopes/ymax, digits = digits)
+    #text(x2,y2,slopes2, ...)
+
+    cat("y = \u03B2\u2080 + \u03B2\u2081*\u03B2\u2082^x\n\n")
+
+    names(B1)<-c("\u03B2\u2081")
+    names(shape_B2)<-c("\u03B2\u2082")
+    names(ymax)<-c("\u03B2\u2080")
+
+
+    results<-list(max_response=ymax, scaling_parameter=B1, shape_parameter = shape_B2)
+    return(results)
+
+  }
+
+  if(model=="schmidt"){
+    #Lark, R. M., & Milne, A. E. (2016)
+    d<-locator(n)
+    df<-data.frame(x=d$x,y=d$y)
+    ymax<-max(df$y) # Estimate of B_0
+
+    dx <- diff(df$x)
+    dy <- diff(df$y)
+    slopes <- dy / dx
+
+    shape_B2<- mean(df$x[which(df$y==max(df$y))]) # Estimate of B_2 i.e x at which y= maximum
+                                                  # the mean is used in case there are two max values
+
+    intercept<- df$y[2]-slopes[1]*df$x[2]
+
+    B1<-(ymax-intercept)/min(abs(slopes))*-1 # Estimate of shape parameter. zero is a flat curve
+
+    x2<-vector()
+    y2<-vector()
+    for(i in 1:(length(df$x)-1)){
+      x2[i]<-(df$x[i]+df$x[i+1])/2
+      y2[i]<-(df$y[i]+df$y[i+1])/2
+    }
+
+    slopes2 <- round(slopes/ymax, digits = digits)
+    #text(x2,y2,slopes2, ...)
+
+    cat("y = \u03B2\u2080 - \u03B2\u2081 (1-\u03B2\u2082)\u00B2)\n\n")
+
+    names(B1)<-c("\u03B2\u2081")
+    names(shape_B2)<-c("\u03B2\u2082")
+    names(ymax)<-c("\u03B2\u2080")
+
+
+    results<-list(max_response=ymax, scaling_parameter=B1,
+                  shape_parameter = shape_B2)
     return(results)
 
   }

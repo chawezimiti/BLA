@@ -40,6 +40,15 @@ the plots.
 \examples{
 startValues(model="explore")
 
+
+}
+\references{
+Fekedulegn, D., Mac Siurtain, M.P., & Colbert, J.J. 1999. Parameter estimation of
+nonlinear growth models in forestry. Silva Fennica 33(4): 327–336.
+
+Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the effect of water
+filled pore space on nitrous oxide emission from cores of arable soil. European
+Journal of Soil Science, 67 , 148-159.
 }
 \author{
 Chawezi Miti <chawezi.miti@nottingham.ac.uk>

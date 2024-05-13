@@ -149,7 +149,7 @@ forms are as follows: \enumerate{
  and \eqn{\beta_3} is the slope two.
 
  \item Mitscherlich model (\code{"mit"})
- \deqn{y= \beta_0 + \beta_1(1-e^{\frac{-x}{\beta_2}})}
+ \deqn{y= \beta_0 - \beta_1*\beta_2^x}
  where \eqn{\beta_1} is the intercept, \eqn{\beta_2} is a shape parameter
  and \eqn{\beta_0} is the maximum response.
 
@@ -187,13 +187,11 @@ blbin(x,y, bins=bins ,theta=c(0.5,0.02), model = "blm", xmax = 250)
 Casanova, D., Goudriaan, J., Bouma, J., & Epema, G. (1999). Yield gap analysis
 in relation to soil properties in direct-seeded flooded rice.
 
-Dhanoa, M. S., Sanderson, R., Cardenas, L. M., Shepherd, A., Chadwick, D. R.,
-Powell, C. D., ... & France, J. (2022). Overview and application of the Mitscherlich
-equation and its extensions to estimate the soil nitrogen pool fraction associated
-with crop yield and nitrous oxide emission. Advances in Agronomy, 174, 269-295.
-
 Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
 Biometrics 17: 89–110.
+
+Phillips, B.F. & Campbell, N.A. 1968. A new method of fitting the von Bertelanffy
+growth curve using data on the whelk. Dicathais, Growth 32: 317–329.
 
 Schmidt, U., Thöni, H., & Kaupenjohann, M. (2000). Using a boundary line approach
 to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agro-ecosystems,
