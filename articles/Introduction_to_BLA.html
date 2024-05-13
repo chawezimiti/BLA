@@ -607,13 +607,14 @@ method, see the
 </h4>
 <p>The illustrated methods for fitting the boundary line have some
 in-built models. These include the linear, linear plateau, mitscherlich,
-schmidt, logistic, logistic model proposed by Fermont <em>et al</em>.
-(2009), the inverse logistic, double logistic, quadratic and the
-trapezium models. However, there are some cases where one wants to fit
-another model which is not part of the built in models. The following
-step will illustrate how to fit a custom model. Though this will be
-illusterated using the <code><a href="../reference/BOLIDES.html">bolides()</a></code> function, it also applies
-for the <code><a href="../reference/blbin.html">blbin()</a></code> and <code><a href="../reference/blqr.html">blqr()</a></code> functions.</p>
+schmidt, logistic, logistic model proposed by Nelder (1961), the inverse
+logistic, double logistic, quadratic and the trapezium models. However,
+there are some cases where one wants to fit another model which is not
+part of the built in models. The following steps will illustrate how to
+fit a custom model. Though this will be illustrated using the
+<code><a href="../reference/BOLIDES.html">bolides()</a></code> function, it also applies for the
+<code><a href="../reference/blbin.html">blbin()</a></code>, <code><a href="../reference/blqr.html">blqr()</a></code> and <code><a href="../reference/cbvn.html">cbvn()</a></code>
+functions.</p>
 <p>Assuming that the initial data exploratory step have been done, the
 first step is to check the structure of the boundary points using the
 argument <code>model="explore"</code> in the <code><a href="../reference/BOLIDES.html">bolides()</a></code>
@@ -632,12 +633,13 @@ function.</p>
 <p><span class="math display">\[
 y=\beta_0 - \beta_1(x-\beta_2)^2
 \]</span></p>
-<p>The model is written in form of an <code>R</code> function. The
+<p>The model is written in form of an <code>R</code> function and the
 parameters should always be written in alphabetical order as
 <em><strong>a</strong>, <strong>b</strong></em> and
 <strong><em>c</em></strong> for a three parameter function,
 <em><strong>a</strong>, <strong>b</strong>,<strong>c</strong></em> and
-<strong><em>d</em></strong> for four parameter function and so on</p>
+<strong><em>d</em></strong> for four parameter function and so on.
+Currently, this is only set up for upto five parameter models.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">custom_function</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">a</span>,<span class="va">b</span>,<span class="va">c</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">y</span><span class="op">&lt;-</span> <span class="va">a</span> <span class="op">-</span> <span class="va">b</span><span class="op">*</span><span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">c</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
@@ -670,7 +672,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; function(x,a,b,c){</span></span>
 <span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55fb64461208&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55e764e9ab20&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
@@ -707,10 +709,6 @@ value.</p>
 <li><p>Cade, B. S., &amp; Noon, B. R. (2003). A gentle introduction to
 quantile regression for ecologists. Frontiers in Ecology and the
 Environment, 1(8), 412-420. <a href="https://doi.org/10.1890/1540-9295(2003)001%5B0412:AGITQR%5D2.0.CO;2" class="external-link uri">https://doi.org/10.1890/1540-9295(2003)001[0412:AGITQR]2.0.CO;2</a></p></li>
-<li><p>Fermont, A. M., Van Asten, P. J., Tittonell, P., Van Wijk, M. T.,
-&amp; Giller, K. E. (2009). Closing the cassava yield gap: an analysis
-from smallholder farms in east africa. Field Crops Research, 112 (1),
-24–36. <a href="https://doi.org/10.1016/j.fcr.2009.01.009" class="external-link uri">https://doi.org/10.1016/j.fcr.2009.01.009</a></p></li>
 <li><p>Lark, R. M., Gillingham, V., Langton, D., &amp; Marchant, B. P.
 (2020). Boundary line models for soil nutrient concentrations and wheat
 yield in national-scale datasets. European Journal of Soil Science, 71 ,
@@ -724,6 +722,8 @@ methodology. Computers and Electronics in Agriculture, 219. <a href="https://doi
 <li><p>Miti, C., Milne, A., Giller, K., &amp; Lark, R. (2024). The
 concepts and quantification of yield gap using boundary lines. a review.
 Field Crops Research, 311. <a href="https://doi.org/10.1016/j.fcr.2024.109365" class="external-link uri">https://doi.org/10.1016/j.fcr.2024.109365</a>.</p></li>
+<li><p>Nelder, J.A. 1961. The fitting of a generalization of the
+logistic curve. Biometrics 17: 89–110. <a href="https://doi.org/10.2307/2527498" class="external-link uri">https://doi.org/10.2307/2527498</a></p></li>
 <li><p>Rousseeuw, P. J., Ruts, I., &amp; Tukey, J. W. (1999). The
 bagplot: A bivariate boxplot. The American Statistician, 53, 382–387. <a href="https://doi.org/10.1080/00031305.1999.10474494" class="external-link uri">https://doi.org/10.1080/00031305.1999.10474494</a></p></li>
 <li><p>Shatar, T. M., &amp; McBratney, A. B. (2004). Boundary-line
