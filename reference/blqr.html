@@ -218,7 +218,7 @@ forms are as follows:</p><ol><li><p>Linear model (<code>"blm"</code>)
  \(\beta_0\) is the maximum response, \(\beta_3\) is the intercept two
  and \(\beta_3\) is the slope two.</p></li>
 <li><p>Mitscherlich model (<code>"mit"</code>)
- $$y= \beta_0 + \beta_1(1-e^{\frac{-x}{\beta_2}})$$
+ $$y= \beta_0 - \beta_1*\beta_2^x$$
  where \(\beta_1\) is the intercept, \(\beta_2\) is a shape parameter
  and \(\beta_0\) is the maximum response.</p></li>
 <li><p>Schmidt model (<code>"schmidt"</code>)
@@ -245,12 +245,10 @@ using several starting values and the results with the smallest error
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Cade, B. S., &amp; Noon, B. R. (2003). A gentle introduction to quantile regression
 for ecologists. Frontiers in Ecology and the Environment, 1(8), 412-420.</p>
-<p>Dhanoa, M. S., Sanderson, R., Cardenas, L. M., Shepherd, A., Chadwick, D. R.,
-Powell, C. D., ... &amp; France, J. (2022). Overview and application of the Mitscherlich
-equation and its extensions to estimate the soil nitrogen pool fraction associated
-with crop yield and nitrous oxide emission. Advances in Agronomy, 174, 269-295.</p>
 <p>Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
 Biometrics 17: 89–110.</p>
+<p>Phillips, B.F. &amp; Campbell, N.A. 1968. A new method of fitting the von Bertelanffy
+growth curve using data on the whelk. Dicathais, Growth 32: 317–329.</p>
 <p>Schmidt, U., Thöni, H., &amp; Kaupenjohann, M. (2000). Using a boundary line approach
 to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agroecosystems,
 57, 119-129.</p>

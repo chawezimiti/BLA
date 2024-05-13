@@ -236,7 +236,7 @@ forms are as follows:</p><ol><li><p>Linear model (<code>"blm"</code>)
  \(\beta_0\) is the maximum response, \(\beta_3\) is the intercept two
  and \(\beta_3\) is the slope two.</p></li>
 <li><p>Mitscherlich model (<code>"mit"</code>)
- $$y= \beta_0 + \beta_1(1-e^{\frac{-x}{\beta_2}})$$
+ $$y= \beta_0 - \beta_1*\beta_2^x$$
  where \(\beta_1\) is the intercept, \(\beta_2\) is a shape parameter
  and \(\beta_0\) is the maximum response.</p></li>
 <li><p>Schmidt model (<code>"schmidt"</code>)
@@ -253,12 +253,7 @@ can be taken as a representation of the global optimum.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Dhanoa, M. S., Sanderson, R., Cardenas, L. M., Shepherd, A., Chadwick, D. R.,
-Powell, C. D., ... &amp; France, J. (2022). Overview and application of the
-Mitscherlich equation and its extensions to estimate the soil nitrogen pool
-fraction associated with crop yield and nitrous oxide emission. Advances in
-Agronomy, 174, 269-295.</p>
-<p>Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
+    <p>Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
 Biometrics 17: 89–110.</p>
 <p>Lark, R. M., &amp; Milne, A. E. (2016). Boundary line analysis of the effect of water
 filled pore space on nitrous oxide emission from cores of arable soil. European
@@ -269,6 +264,8 @@ European Journal of Soil Science, 71 , 334-351.</p>
 <p>Milne, A. E., Ferguson, R. B., &amp; Lark, R. M. (2006). Estimating a boundary line
 model for a biological response by maximum likelihood.Annals of Applied Biology,
 149, 223–234.</p>
+<p>Phillips, B.F. &amp; Campbell, N.A. 1968. A new method of fitting the von Bertelanffy
+growth curve using data on the whelk. Dicathais, Growth 32: 317–329.</p>
 <p>Schmidt, U., Thöni, H., &amp; Kaupenjohann, M. (2000). Using a boundary line approach
 to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agroecosystems,
 57, 119-129.</p>
