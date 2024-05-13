@@ -274,7 +274,7 @@ To fit the boundary line using the Censored bivariate normal model method, see t
 
 ### Using your own defined model
 
-The illustrated methods for fitting the boundary line have some in-built models. These include the linear, linear plateau, mitscherlich, schmidt, logistic, logistic model proposed by Fermont *et al*. (2009), the inverse logistic, double logistic, quadratic and the trapezium models. However, there are some cases where one wants to fit another model which is not part of the built in models. The following step will illustrate how to fit a custom model. Though this will be illusterated using the `bolides()` function, it also applies for the `blbin()` and `blqr()` functions.
+The illustrated methods for fitting the boundary line have some in-built models. These include the linear, linear plateau, mitscherlich, schmidt, logistic, logistic model proposed by Nelder (1961), the inverse logistic, double logistic, quadratic and the trapezium models. However, there are some cases where one wants to fit another model which is not part of the built in models. The following steps will illustrate how to fit a custom model. Though this will be illustrated using the `bolides()` function, it also applies for the `blbin()`, `blqr()` and `cbvn()` functions.
 
 Assuming that the initial data exploratory step have been done, the first step is to check the structure of the boundary points using the argument `model="explore"` in the `bolides()` function.
 
@@ -288,7 +288,7 @@ $$
 y=\beta_0 - \beta_1(x-\beta_2)^2
 $$
 
-The model is written in form of an `R` function. The parameters should always be written in alphabetical order as ***a**, **b*** and ***c*** for a three parameter function, ***a**, **b**,**c*** and ***d*** for four parameter function and so on
+The model is written in form of an `R` function and the parameters should always be written in alphabetical order as ***a**, **b*** and ***c*** for a three parameter function, ***a**, **b**,**c*** and ***d*** for four parameter function and so on. Currently, this is only set up for upto five parameter models.
 
 ```{r}
 custom_function<-function(x,a,b,c){
@@ -322,15 +322,16 @@ The boundary line fitting methods illustrated here all use the optimization func
 
 1. Cade, B. S., & Noon, B. R. (2003). A gentle introduction to quantile regression for ecologists. Frontiers in Ecology and the Environment, 1(8), 412-420. https://doi.org/10.1890/1540-9295(2003)001[0412:AGITQR]2.0.CO;2
 
-2. Fermont, A. M., Van Asten, P. J., Tittonell, P., Van Wijk, M. T., & Giller, K. E. (2009). Closing the cassava yield gap: an analysis from smallholder farms in east africa. Field Crops Research, 112 (1), 24--36. https://doi.org/10.1016/j.fcr.2009.01.009
 
-3. Lark, R. M., Gillingham, V., Langton, D., & Marchant, B. P. (2020). Boundary line models for soil nutrient concentrations and wheat yield in national-scale datasets. European Journal of Soil Science, 71 , 334-351. https://doi.org/10.1111/ejss.12891
+2. Lark, R. M., Gillingham, V., Langton, D., & Marchant, B. P. (2020). Boundary line models for soil nutrient concentrations and wheat yield in national-scale datasets. European Journal of Soil Science, 71 , 334-351. https://doi.org/10.1111/ejss.12891
 
-4. Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing biological data for the presence of a boundary. Annals of Applied Biology, 149 , 213-222. https://doi.org/10.1111/j.1744-7348.2006.00085.x
+3. Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing biological data for the presence of a boundary. Annals of Applied Biology, 149 , 213-222. https://doi.org/10.1111/j.1744-7348.2006.00085.x
 
-5. Miti, C., Milne, A., Giller, K., Sadras, V., & Lark, R. (2024). Exploration of data for analysis using boundary line methodology. Computers and Electronics in Agriculture, 219. https://doi.org/10.1016/j.compag.2024.108794
+4. Miti, C., Milne, A., Giller, K., Sadras, V., & Lark, R. (2024). Exploration of data for analysis using boundary line methodology. Computers and Electronics in Agriculture, 219. https://doi.org/10.1016/j.compag.2024.108794
 
-6. Miti, C., Milne, A., Giller, K., & Lark, R. (2024). The concepts and quantification of yield gap using boundary lines. a review. Field Crops Research, 311. https://doi.org/10.1016/j.fcr.2024.109365.
+5. Miti, C., Milne, A., Giller, K., & Lark, R. (2024). The concepts and quantification of yield gap using boundary lines. a review. Field Crops Research, 311. https://doi.org/10.1016/j.fcr.2024.109365.
+
+6. Nelder, J.A. 1961. The fitting of a generalization of the logistic curve. Biometrics 17: 89–110. https://doi.org/10.2307/2527498
 
 7. Rousseeuw, P. J., Ruts, I., & Tukey, J. W. (1999). The bagplot: A bivariate boxplot. The American Statistician, 53, 382–387. https://doi.org/10.1080/00031305.1999.10474494
 

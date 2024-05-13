@@ -26,7 +26,7 @@ procedures. Learn more in `vignette("Introduction_to_BLA")`.
 
 Install the current version on Github. You will need to install the
 package `devtools` before installing BLA. Also ensure that the dependent
-packages ``` aplpack ``MASS ``` and `mvtnorm` are installed.
+packages `aplpack`, `MASS` and `mvtnorm` are installed.
 
 ``` r
 library(devtools)

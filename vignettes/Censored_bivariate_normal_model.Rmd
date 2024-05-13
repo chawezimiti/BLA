@@ -20,7 +20,7 @@ The censored bivariate normal model (Lark and Milne, 2016) is a statistical meth
 
 # Load the BLA package
 
-The `BLA` package is loaded together with the `aplpack` package. The `aplpack` package contains the `bagplot()` function which is used to identify outliers in a data set.
+Load the `BLA` package using the `library()` function. In addition, the `aplpack` package is also loaded. The `aplpack` package contains the `bagplot()` function which is used to identify outliers in a data set.
 
 ```{r setup}
 library(BLA)
