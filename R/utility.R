@@ -5,6 +5,7 @@
 #' It returns TRUE if `tcltk` is successfully loaded, otherwise FALSE.
 #' @return Logical value indicating whether `tcltk` was successfully loaded.
 #' @keywords internal
+#' @import tcltk
 #' @export
 #'
 check_and_load_tcltk <- function() {

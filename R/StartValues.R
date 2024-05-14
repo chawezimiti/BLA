@@ -34,6 +34,7 @@
 #'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
 #' @export
+#' @importFrom tcltk tk_messageBox
 #' @examples
 #' startValues(model="explore")
 #'
