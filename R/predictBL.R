@@ -116,8 +116,12 @@ predictBL<-function(object,x){
 
   if(object$Model=="other"){
 
-    y<-do.call(object$Equation, c(list(x=x),as.list(c(object$Parameters[,1]))))
-    return(y)
+    predict_y<-function(x){
+      do.call(object$Equation, c(list(x=x),as.list(c(object$Parameters[,1]))))
+    }
+
+    y <- tryCatch(lapply(x, predict_y),error=function(e) NA)
+    return(unlist(y))
   }
 
 }

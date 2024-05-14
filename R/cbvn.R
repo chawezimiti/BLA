@@ -1392,11 +1392,15 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
         ## Compute the standard error of the parameters
 
         hesmat<-mlest2$hessian
-        estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
-        estimates[,1]<-mlest2$par
-        estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
-        rownames(estimates)<-c("a","b","c","mux","muy","sdx","sdy","rcorr")
+        estimates<-matrix(NA,length(theta)-5,2,dimnames=list(c(),c("Estimate","Standard error")))
+        estimates[,1]<-mlest2$par[1:3]
+        estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:3]
+        rownames(estimates)<-c("a","b","c")
 
+        distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
+        distribution[,1]<-mlest2$par[4:8]
+        distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[4:8]
+        rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
         ## Fitting the null model, an unbounded multivariate normal, and compute its AIC
 
         theta2<-c(theta[c(4,5,6,7)],0)
@@ -1409,7 +1413,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
         AikakeIC[,1]<-c(AImvn,AICbl)
         rownames(AikakeIC)<-c("mvn","BL")
 
-        result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+        result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution=distribution, Hessian=hesmat)
         class(result)<-"cm"
         return(result)
 
@@ -1577,11 +1581,15 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
         ## Compute the standard error of the parameters
 
         hesmat<-mlest2$hessian
-        estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
-        estimates[,1]<-mlest2$par
-        estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
+        estimates<-matrix(NA,length(theta)-5,2,dimnames=list(c(),c("Estimate","Standard error")))
+        estimates[,1]<-mlest2$par[1:4]
+        estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:4]
+        rownames(estimates)<-c("a","b","c","d")
 
-        rownames(estimates)<-c("a","b","c","d", "mux","muy","sdx","sdy","rcorr")
+        distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
+        distribution[,1]<-mlest2$par[5:9]
+        distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[5:9]
+        rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
 
         ## Fitting the null model, an unbounded multivariate normal, and compute its AIC
 
@@ -1595,7 +1603,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
         AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
         AikakeIC[,1]<-c(AImvn,AICbl)
         rownames(AikakeIC)<-c("mvn","BL")
-        result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+        result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution= distribution, Hessian=hesmat)
         class(result)<-"cm"
         return(result)
 
@@ -1764,10 +1772,15 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
           ## Compute the standard error of the parameters
 
           hesmat<-mlest2$hessian
-          estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
-          estimates[,1]<-mlest2$par
-          estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
-          rownames(estimates)<-c("a","b","c","d","e","mux","muy","sdx","sdy","rcorr")
+          estimates<-matrix(NA,length(theta)-5,2,dimnames=list(c(),c("Estimate","Standard error")))
+          estimates[,1]<-mlest2$par[1:5]
+          estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:5]
+          rownames(estimates)<-c("a","b","c","d","e")
+
+          distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
+          distribution[,1]<-mlest2$par[6:10]
+          distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[6:10]
+          rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
 
 
           ## Fitting the null model, an unbounded multivariate normal, and compute its AIC
@@ -1785,7 +1798,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
           AikakeIC[,1]<-c(AImvn,AICbl)
           rownames(AikakeIC)<-c("mvn","BL")
 
-          result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+          result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution=distribution, Hessian=hesmat)
           class(result)<-"cm"
           return(result)
 
