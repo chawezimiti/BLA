@@ -383,12 +383,12 @@ technique.</p>
 <span><span class="co">#&gt;  3rd Qu.:4.520   3rd Qu.:13.575  </span></span>
 <span><span class="co">#&gt;  Max.   :4.736   Max.   :14.159</span></span></code></pre>
 <p>From the plot, it can be seen that a “trapezium” model will be more
-appropriate for this data set. The function <code><a href="../reference/startValues.html">startValues()</a></code>
+appropriate for this data set. The function <code>startValues()</code>
 can be used to determine initial start <code>theta</code> values. For
-more information on <code><a href="../reference/startValues.html">startValues()</a></code> function see
+more information on <code>startValues()</code> function see
 <code>?startValues()</code>.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">?</span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="op">?</span><span class="fu">startValues</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>With a scatter plot of <em><code>y</code></em> against
 <em><code>x</code></em> active in the plot window in <code>R</code>, run
 the function <code>startValues("trapezium")</code>, then use the mouse
@@ -396,7 +396,7 @@ to click on the plot at five boundary points that follow the trapezium
 model in order of increasing <em><code>x</code></em> values.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span> <span class="co"># then select the five points at the edge of the dataset that make up the trapezium model in order of increasing x values.</span></span></code></pre></div>
+<span><span class="fu">startValues</span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span> <span class="co"># then select the five points at the edge of the dataset that make up the trapezium model in order of increasing x values.</span></span></code></pre></div>
 <p>The proposed start values will be produced. Note that this can be
 done for other models as well. Once all the arguments are set, the
 function can be run</p>
@@ -489,7 +489,7 @@ in the previous section</p>
 <p>From the plot, it can be seen that a “trapezium” model will be more
 appropriate for this data set.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">startValues</span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
 <p>The values for <code>theta</code> can now be obtained and the
 function can now be run.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
@@ -548,7 +548,7 @@ describes the quantile value described as boundary. We assume that the
 assumption, and for this reason we treat the method as heuristic.</p>
 <p>The initial start theta values can be determined as previously shown
 in the previous section. however, the <code><a href="../reference/blqr.html">blqr()</a></code> function does
-not have the explore option and hence the <code><a href="../reference/startValues.html">startValues()</a></code>
+not have the explore option and hence the <code>startValues()</code>
 function is used just on the plot of <em><code>x</code></em> and
 <em><code>y</code></em> directly according to the suggested model from
 the structure at the upper edge of the data. The trapezium model will be
@@ -557,7 +557,7 @@ used for this data.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">startValues</span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>theta</code>values can now be used in the
 <code><a href="../reference/blqr.html">blqr()</a></code> function.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
@@ -672,7 +672,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; function(x,a,b,c){</span></span>
 <span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x565479fa6198&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x558670931290&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
