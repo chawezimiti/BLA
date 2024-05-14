@@ -69,8 +69,8 @@ bin (default is \code{tau = 0.95}).}
 boundary line is to be fitted (default is \code{min(x)}).}
 
 \item{xmax}{A numeric value that describes the maximum \code{x} value to which the
-boundary line is to be fitted (default is \code{max(x)}). \code{xmin} and \code{xmax}
-determine the subset of the data set used to fit boundary model.}
+boundary line is to be fitted (default is \code{max(x)}). \code{xmin} and
+\code{xmax} determine the subset of the data set used to fit boundary model.}
 
 \item{plot}{If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
 is not part of output (default is \code{TRUE}).}
@@ -104,10 +104,10 @@ points by the least squares method. This is done using optimization procedure
 and hence requires some starting guess parameters for the proposed model.
 }
 \details{
-Some inbuilt models are available for the \code{blbin()} function. The \code{"explore"}
-option for the argument \code{model} generates a plot showing the location
-of the boundary points selected by the binning procedure. This helps to identify
-which model type is suitable to fit as a boundary line. The suggest model
+Some inbuilt models are available for the \code{blbin()} function. The
+\code{"explore"} option for the argument \code{model} generates a plot showing the
+location of the boundary points selected by the binning procedure. This helps to
+identify which model type is suitable to fit as a boundary line. The suggest model
 forms are as follows: \enumerate{
  \item Linear model (\code{"blm"})
  \deqn{y=\beta_1 + \beta_2x}
@@ -172,7 +172,7 @@ The function \code{blbin()} utilities the optimization procedure of the
 \code{optim()} function to determine the model parameters. There is a tendency
 for optimization algorithms to settle at a local optimum. To remove the risk of
 settling for local optimum parameters, it is advised that the function is run using
-several starting values and the results with the smallest error (residue mean square )
+several starting values and the results with the smallest error (residue mean square)
 can be taken as a representation of the global optimum.
 }
 \examples{

@@ -55,9 +55,9 @@
 #'   "L" fits the lower boundary.
 #' @param model Selects the functional form of the boundary line. It includes
 #'   \code{"blm"} for linear model, \code{"lp"} for linear plateau model, \code{"mit"}
-#'   for the Mitscherlich model, \code{"schmidt"} for the Schmidt model, \code{"logistic"}
-#'   for logistic model, \code{"logisticND"} for logistic model proposed by
-#'   Nelder (1961), \code{"inv-logistic"} for the inverse logistic model,
+#'   for the Mitscherlich model, \code{"schmidt"} for the Schmidt model,
+#'   \code{"logistic"} for logistic model, \code{"logisticND"} for logistic model
+#'   proposed by Nelder (1961), \code{"inv-logistic"} for the inverse logistic model,
 #'   \code{"double-logistic"} for the double logistic model, \code{"qd"} for
 #'   quadratic model and the \code{"trapezium"} for the trapezium model. For custom
 #'   models, set \code{model = "other"}.

@@ -130,9 +130,9 @@ The p-values in the left and right sections are both less than 0.05. These resul
 
 ## Fitting boundary line using different methods
 
-The exploratory tests indicated that the data provides evidence of an upper boundary, there are no outliers and the variables, *`x`* and *`y`*, appear normally distributed. We therefore, proceed to fit a boundary line model to the data set. There are several methods that can be used to fit a boundary line to the data set which can be classified as heuristic (BOLIDES, Binning & quantile regression) and statistical methods (censored bivariate normal). Miti *et al.* (2024a) give more detail on each of these methods.
+The exploratory tests indicated that the data provides evidence of an upper boundary, there are no outliers and the variables, *`x`* and *`y`*, appear normally distributed. We therefore, proceed to fit a boundary line model to the data set. There are several methods that can be used to fit a boundary line to the data set which can be classified as heuristic (Bolides, Binning & quantile regression) and statistical methods (censored bivariate normal). Miti *et al.* (2024a) give more detail on each of these methods.
 
-### BOLIDES algorithm
+### Bolides algorithm
 
 This method fit the boundary line following the boundary line determination technique proposed by Schnug *et al.* (1995). To fit the boundary line using the BOLIDES algorithm , the `bolides()` function can be used. To check the required arguments for the function, the help page can be launched.
 

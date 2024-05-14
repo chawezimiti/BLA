@@ -52,8 +52,8 @@
 #' @param xmin Numeric value that describes the minimum \code{x} value to which the
 #'   boundary line is to be fitted (default is \code{min(x)}).
 #' @param xmax A numeric value that describes the maximum \code{x} value to which the
-#'   boundary line is to be fitted (default is \code{max(x)}). \code{xmin} and \code{xmax}
-#'   determine the subset of the data set used to fit boundary model.
+#'   boundary line is to be fitted (default is \code{max(x)}). \code{xmin} and
+#'   \code{xmax} determine the subset of the data set used to fit boundary model.
 #' @param line_smooth Parameter that describes the smoothness of the boundary line.
 #'   (default is 1000). The higher the value, the smoother the line.
 #' @param lwd Determines the thickness of the boundary line on the plot (default is 1).

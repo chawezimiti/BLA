@@ -10,26 +10,26 @@ startValues(model = "explore", p = NULL, digits = 2, ...)
 \item{model}{Selects the functional form of the boundary line. It includes
 \code{"blm"} for linear model, \code{"lp"} for
 linear plateau model, \code{"mit"} for the Mitscherlich model, \code{"schmidt"}
-for the Schmidt model, \code{"logistic"} for logistic model, \code{"logisticfm"}
-for logistic model proposed by Fermont et al (2009), \code{"inv-logistic"} for
+for the Schmidt model, \code{"logistic"} for logistic model, \code{"logisticND"}
+for logistic model proposed by Nelder (1961), \code{"inv-logistic"} for
 the inverse logistic model, \code{"double-logistic"} for the double logistic model,
 \code{"qd"} for quadratic model, \code{"trapezium"} for the trapezium model and
 \code{"explore"} for function use exploration. The default is \code{"explore"}.}
 
 \item{p}{The number of selected points used to obtain start values for the logistic
-type models. It is \code{NULL} for other models.}
+mitcherlich and schmidt models. It is \code{NULL} for other models.}
 
 \item{digits}{Number of decimal points for logistic type models (default is 2).}
 
-\item{...}{Additional graphical parameters. Applies to the logistic models to
-control the text on the plot.}
+\item{...}{Additional graphical parameters. Applies to the logistic, mitcherlich and
+schmidt models to control the text on the plot.}
 }
 \value{
 A list containing the parameters of the suggested model.
 }
 \description{
 This functions helps to determine initial values for a selected boundary line
-model when using the functions \code{blbin()}, \code{blqr()}, \code{BOLIDES()},
+model when using the functions \code{blbin()}, \code{blqr()}, \code{bolides()},
 \code{cbvn()} and \code{ble_profile()} to determine model parameters.
 }
 \details{

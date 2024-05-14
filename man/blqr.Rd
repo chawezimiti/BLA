@@ -61,8 +61,8 @@ parameter, shape parameter (x-value at maximum response ) and maximum response.}
 boundary line is to be fitted (default is \code{min(x)}).}
 
 \item{xmax}{A numeric value that describes the maximum \code{x} value to which the
-boundary line is to be fitted (default is \code{max(x)}). \code{xmin} and \code{xmax}
-determine the subset of the data set used to fit boundary model.}
+boundary line is to be fitted (default is \code{max(x)}). \code{xmin} and
+\code{xmax} determine the subset of the data set used to fit boundary model.}
 
 \item{plot}{If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
 is not part of output (default is \code{TRUE}).}
