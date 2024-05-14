@@ -40,6 +40,7 @@
 #'
 startValues<-function(model="explore",p=NULL,digits = 2,...){
 
+
   if (model != "blm" && model != "lp" && model != "qd" && model!="trapezium" &&
       model!="logistic" && model!="double-logistic" && model!="inv-logistic" &&
       model!="mit" && model!="schmidt" && model!="explore") {
@@ -328,6 +329,17 @@ startValues<-function(model="explore",p=NULL,digits = 2,...){
                   shape_parameter = shape_B2)
     return(results)
 
+  }
+
+
+  ### Checking if the Use tcltk is required #####
+
+  if (check_and_load_tcltk()) {
+    # If tcltk is available, use it (e.g., display a message box)
+    tk_messageBox(message = "Plot created successfully!")
+  } else {
+    # Alternative functionality if tcltk is not available
+    message("Unable to use 'tcltk' functionalities.")
   }
 
 

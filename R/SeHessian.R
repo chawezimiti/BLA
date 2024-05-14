@@ -5,6 +5,7 @@
 #' @param hessian If `True`, hessian matrix is used.
 #' @param silent Condition of matrix.
 #' @param a The hessian matrix.
+#' @export
 #' @keywords internal
 #'
 seHessian<-function(a, hessian = FALSE, silent = FALSE){

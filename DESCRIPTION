@@ -28,9 +28,7 @@ Depends:
 Imports: 
     aplpack,
     MASS,
-    mvtnorm,
-    tcltk, 
-    grDevices
+    mvtnorm
 Suggests: 
     knitr,
     rmarkdown,
