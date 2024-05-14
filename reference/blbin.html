@@ -165,8 +165,8 @@ boundary line is to be fitted (default is <code>min(x)</code>).</p></dd>
 
 <dt>xmax</dt>
 <dd><p>A numeric value that describes the maximum <code>x</code> value to which the
-boundary line is to be fitted (default is <code>max(x)</code>). <code>xmin</code> and <code>xmax</code>
-determine the subset of the data set used to fit boundary model.</p></dd>
+boundary line is to be fitted (default is <code>max(x)</code>). <code>xmin</code> and
+<code>xmax</code> determine the subset of the data set used to fit boundary model.</p></dd>
 
 
 <dt>plot</dt>
@@ -210,10 +210,10 @@ the shape of the boundary points on plot (<code>bp_pch = 16</code> as default).<
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Some inbuilt models are available for the <code>blbin()</code> function. The <code>"explore"</code>
-option for the argument <code>model</code> generates a plot showing the location
-of the boundary points selected by the binning procedure. This helps to identify
-which model type is suitable to fit as a boundary line. The suggest model
+    <p>Some inbuilt models are available for the <code>blbin()</code> function. The
+<code>"explore"</code> option for the argument <code>model</code> generates a plot showing the
+location of the boundary points selected by the binning procedure. This helps to
+identify which model type is suitable to fit as a boundary line. The suggest model
 forms are as follows:</p><ol><li><p>Linear model (<code>"blm"</code>)
  $$y=\beta_1 + \beta_2x$$
  where \(\beta_1\) is the intercept and \(\beta_2\) is the slope.</p></li>
@@ -266,7 +266,7 @@ forms are as follows:</p><ol><li><p>Linear model (<code>"blm"</code>)
 <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code> function to determine the model parameters. There is a tendency
 for optimization algorithms to settle at a local optimum. To remove the risk of
 settling for local optimum parameters, it is advised that the function is run using
-several starting values and the results with the smallest error (residue mean square )
+several starting values and the results with the smallest error (residue mean square)
 can be taken as a representation of the global optimum.</p>
     </div>
     <div class="section level2">
