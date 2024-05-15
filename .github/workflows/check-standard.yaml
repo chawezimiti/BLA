@@ -52,3 +52,10 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+
+      - name: Upload .Rcheck directory as artifact
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: R-check-results
+          path: '**/*.Rcheck/'
