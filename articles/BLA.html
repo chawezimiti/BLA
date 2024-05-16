@@ -160,8 +160,9 @@ after fitting a boundary line.</p>
 load it to your R session using the <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code> command.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chawezimiti.github.io/BLA/">BLA</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: no DISPLAY variable so Tk is not available</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.uni-bielefeld.de/fakultaeten/wirtschaftswissenschaften/fakultaet/lehrende-ehemalige/pwolf/wolf_aplpack/index.xml" class="external-link">aplpack</a></span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; Warning: no DISPLAY variable so Tk is not available</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.uni-bielefeld.de/fakultaeten/wirtschaftswissenschaften/fakultaet/lehrende-ehemalige/pwolf/wolf_aplpack/index.xml" class="external-link">aplpack</a></span><span class="op">)</span></span></code></pre></div>
 <p>The package <code>aplpack</code> has also been loaded for use in the
 outlier detection function <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot()</a></code>.</p>
 </div>
@@ -173,7 +174,7 @@ consisting of soil pH, phosphorus and wheat yield measurements from
 farms in the UK. We will use this data set to illustrate the functions
 in the <code>BLA</code> package. To view the first six lines of the
 data, run the code below:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">soil</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      yield   pH  P</span></span>
 <span><span class="co">#&gt; 1  9.55787 6.66 10</span></span>
@@ -210,18 +211,19 @@ representation of the variable distribution. Let us set the variables P
 and wheat yield in the data set to <em><code>x</code></em> and
 <em><code>y</code></em> respectively before applying the
 <code><a href="../reference/summastat.html">summastat()</a></code> functions</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">P</span></span>
 <span><span class="va">y</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">yield</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-5-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;         Mean Median Quartile.1 Quartile.3 Variance       SD Skewness</span></span>
 <span><span class="co">#&gt; [1,] 25.9647     22         16         32 207.0066 14.38772 1.840844</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
-<span><span class="co">#&gt; [1,]       0.3571429 5.765138           43</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></code></pre>
+<span><span class="co">#&gt; [1,]       0.3571429 5.765138           43</span></span></code></pre>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-5-2.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;          Mean  Median Quartile.1 Quartile.3 Variance       SD   Skewness</span></span>
 <span><span class="co">#&gt; [1,] 9.254813 9.36468   8.203703   10.39477 3.456026 1.859039 -0.4819805</span></span>
@@ -235,15 +237,16 @@ from a normal distribution, the indices skewness should be between -1 to
 the distribution is given as well.</p>
 <p>The soil P can be log transformed and check the summary statistics
 and plot</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;          Mean   Median Quartile.1 Quartile.3  Variance        SD  Skewness</span></span>
 <span><span class="co">#&gt; [1,] 3.126361 3.091042   2.772589   3.465736 0.2556936 0.5056615 0.1297406</span></span>
 <span><span class="co">#&gt;      Octile skewness    Kurtosis No. outliers</span></span>
-<span><span class="co">#&gt; [1,]      0.08395839 -0.05372586            0</span></span>
-<span></span>
-<span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># transforms soil P to log </span></span></code></pre>
+<span><span class="co">#&gt; [1,]      0.08395839 -0.05372586            0</span></span></code></pre>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># transforms soil P to log </span></span></code></pre></div>
 <p>From the results, variable log of soil P can be assumed to be from a
 normal distribution.</p>
 </div>
@@ -267,7 +270,7 @@ the bag but are not outliers</p></li>
 <li><p><strong>Outliers</strong> which are values outside the
 loop</p></li>
 </ol>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">vals_ur</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,<span class="fl">2</span><span class="op">)</span> <span class="co">#Create a matrix with x and y as required by the bag plot function</span></span>
 <span><span class="va">vals_ur</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">&lt;-</span><span class="va">x</span> </span>
@@ -278,13 +281,13 @@ loop</p></li>
 <span>        pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>,<span class="fl">15</span>,<span class="fl">16</span>,<span class="fl">8</span><span class="op">)</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>,<span class="st">"lightblue"</span>,<span class="st">"red"</span>,<span class="st">"red"</span><span class="op">)</span>,</span>
 <span>       cex<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-7-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">bag</span><span class="op">$</span><span class="va">pxy.bag</span>,<span class="va">bag</span><span class="op">$</span><span class="va">pxy.outer</span><span class="op">)</span> <span class="co"># to remove outliers, select points in the bag and loop only</span></span></code></pre></div>
 <p>The variables <em><code>x</code></em> and <em><code>y</code></em> and
 now be extracted from the results of the bag plot with outliers
 removed</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span><span class="op">&lt;-</span><span class="va">vals</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
 <span><span class="va">y</span><span class="op">&lt;-</span><span class="va">vals</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span></code></pre></div>
 </div>
@@ -307,12 +310,12 @@ having the observed density of points at the upper edges of the data
 under the bivariate normal null hypothesis. More detail is provided by
 Miti <em>et al</em>. 2024b. We reject the null hypothesis if p&lt;
 0.05.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bound_test</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/expl_boundary.html">expl_boundary</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,shells <span class="op">=</span> <span class="fl">10</span>, simulations <span class="op">=</span> <span class="fl">100</span>, </span>
 <span>                          pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="co"># </span></span>
 <span><span class="co">#&gt; Note: This function may take a few minutes to run for large datasets.</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-9-1.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">bound_test</span></span>
 <span><span class="co">#&gt;     Index Section    value</span></span>
@@ -352,7 +355,7 @@ determination technique proposed by Schnug <em>et al.</em> (1995). To
 fit the boundary line using the BOLIDES algorithm , the
 <code><a href="../reference/BOLIDES.html">bolides()</a></code> function can be used. To check the required
 arguments for the function, the help page can be launched.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">bolides</span></span></code></pre></div>
 <p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
 the independent and dependent variable respectively and
@@ -372,7 +375,7 @@ optimized to find the parameters of the proposed model as in the
 is run with the argument <code>model="explore"</code>. This allows us to
 view the selected boundary points using the boundary line determination
 technique.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,model <span class="op">=</span> <span class="st">"explore"</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-11-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;        x               y         </span></span>
@@ -387,20 +390,20 @@ appropriate for this data set. The function <code><a href="../reference/startVal
 can be used to determine initial start <code>theta</code> values. For
 more information on <code><a href="../reference/startValues.html">startValues()</a></code> function see
 <code>?startValues()</code>.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>With a scatter plot of <em><code>y</code></em> against
 <em><code>x</code></em> active in the plot window in <code>R</code>, run
 the function <code>startValues("trapezium")</code>, then use the mouse
 to click on the plot at five boundary points that follow the trapezium
 model in order of increasing <em><code>x</code></em> values.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span> <span class="co"># then select the five points at the edge of the dataset that make up the trapezium model in order of increasing x values.</span></span></code></pre></div>
 <p>The proposed start values will be produced. Note that this can be
 done for other models as well. Once all the arguments are set, the
 function can be run</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">14</span>,<span class="fl">104</span>,<span class="op">-</span><span class="fl">22</span><span class="op">)</span> <span class="co"># start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. </span></span>
 <span></span>
@@ -409,7 +412,7 @@ function can be run</p>
 <span>                ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield/ t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, </span>
 <span>                col<span class="op">=</span><span class="st">"grey"</span>, bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model1</span></span>
 <span><span class="co">#&gt; $Model</span></span>
@@ -439,7 +442,7 @@ soil P and therefore, these values must first be log transformed before
 the prediction is made. We can use the function <code><a href="../reference/predictBL.html">predictBL()</a></code>
 for this purpose. For more information on this function, see
 <code>?predictBL()</code> .</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">P</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.5</span>, <span class="fl">7.4</span>, <span class="fl">12.2</span>, <span class="fl">20.1</span>, <span class="fl">54.5</span><span class="op">)</span></span>
 <span><span class="va">P_log</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">P</span><span class="op">)</span></span>
@@ -460,7 +463,7 @@ percentile) (Shatar and McBratney, 2004). To fit the boundary line using
 the binning method, the <code><a href="../reference/blbin.html">blbin()</a></code> function can be used. To
 check the required arguments for the function, the help page can be
 launched.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">blbin</span></span></code></pre></div>
 <p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
 the independent and dependent variable respectively and
@@ -474,7 +477,7 @@ assume that the 99<span class="math inline">\(^{\rm th}\)</span>
 percentile (<code>tau=0.99</code>) is the boundary.</p>
 <p>The initial start theta values can be determined as previously shown
 in the previous section</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bins</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.61</span>,<span class="fl">4.74</span>,<span class="fl">0.313</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="fu"><a href="../reference/blbin.html">blbin</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, <span class="va">bins</span>,model <span class="op">=</span> <span class="st">"explore"</span>, tau<span class="op">=</span><span class="fl">0.99</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
@@ -488,11 +491,11 @@ in the previous section</p>
 <span><span class="co">#&gt;  Max.   :4.591   Max.   :13.37</span></span></code></pre>
 <p>From the plot, it can be seen that a “trapezium” model will be more
 appropriate for this data set.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
 <p>The values for <code>theta</code> can now be obtained and the
 function can now be run.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.75</span>, <span class="fl">3.23</span>, <span class="fl">13.3</span>, <span class="fl">24.87</span>,<span class="op">-</span><span class="fl">2.95</span> <span class="op">)</span></span>
 <span></span>
@@ -502,7 +505,7 @@ function can now be run.</p>
 <span>              xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
 <span>              pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span>, bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-19-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model2</span></span>
 <span><span class="co">#&gt; $Model</span></span>
@@ -535,7 +538,7 @@ regression (Cade and Noon, 2003). To fit the boundary line using the
 quantile regression method, the <code><a href="../reference/blqr.html">blqr()</a></code> function can be
 used. To check the required arguments for the function, the help page
 can be launched.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">blqr</span></span></code></pre></div>
 <p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
 the independent and dependent variable respectively and
@@ -553,14 +556,14 @@ function is used just on the plot of <em><code>x</code></em> and
 <em><code>y</code></em> directly according to the suggested model from
 the structure at the upper edge of the data. The trapezium model will be
 used for this data.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>theta</code>values can now be used in the
 <code><a href="../reference/blqr.html">blqr()</a></code> function.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.5</span>,<span class="fl">31</span>,<span class="op">-</span><span class="fl">4.5</span><span class="op">)</span></span>
 <span></span>
@@ -569,7 +572,7 @@ used for this data.</p>
 <span>             ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>,</span>
 <span>             pch<span class="op">=</span><span class="fl">16</span>,tau<span class="op">=</span><span class="fl">0.99</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="co"># may take a few seconds to ran</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-22-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model3</span></span>
 <span><span class="co">#&gt; $Model</span></span>
@@ -619,7 +622,7 @@ functions.</p>
 first step is to check the structure of the boundary points using the
 argument <code>model="explore"</code> in the <code><a href="../reference/BOLIDES.html">bolides()</a></code>
 function.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,model<span class="op">=</span><span class="st">"explore"</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-23-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;        x               y         </span></span>
@@ -640,7 +643,7 @@ parameters should always be written in alphabetical order as
 <em><strong>a</strong>, <strong>b</strong>,<strong>c</strong></em> and
 <strong><em>d</em></strong> for four parameter function and so on.
 Currently, this is only set up for upto five parameter models.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">custom_function</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">a</span>,<span class="va">b</span>,<span class="va">c</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">y</span><span class="op">&lt;-</span> <span class="va">a</span> <span class="op">-</span> <span class="va">b</span><span class="op">*</span><span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">c</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -653,7 +656,7 @@ your choice.</p>
 this case, the argument model while be set to “other”. The arguments
 equation is now set to your custom function
 (<code>equation=custom_function</code>)</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">13.5</span>,<span class="fl">3</span>,<span class="fl">3.3</span><span class="op">)</span>  </span>
 <span></span>
 <span><span class="va">model4</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, theta <span class="op">=</span> <span class="va">theta</span>,model <span class="op">=</span> <span class="st">"other"</span>,</span>
@@ -662,7 +665,7 @@ equation is now set to your custom function
 <span>                ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
 <span>                pch<span class="op">=</span><span class="fl">16</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.8</span>,<span class="fl">14.5</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"grey"</span>,bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-25-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model4</span></span>
 <span><span class="co">#&gt; $Model</span></span>
@@ -672,7 +675,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; function(x,a,b,c){</span></span>
 <span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x559d237d5848&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55dfdd0cda20&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
