@@ -30,7 +30,7 @@ Install the current version on Github. You will need to install the package `dev
 ```{r, include = TRUE, eval=FALSE}
 library(devtools)
 
-install_github("https://chawezimiti.github.io/BLA")
+install_github("chawezimiti/BLA")
 ```
 
 ## What can I use the BLA package for?

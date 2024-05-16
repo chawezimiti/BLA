@@ -31,7 +31,7 @@ packages `aplpack`, `MASS` and `mvtnorm` are installed.
 ``` r
 library(devtools)
 
-install_github("https://chawezimiti.github.io/BLA")
+install_github("chawezimiti/BLA")
 ```
 
 ## What can I use the BLA package for?
