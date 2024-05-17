@@ -6,15 +6,23 @@ template:
     bg: "white"
     fg: "black"
     primary: "#306cc9"
-    base_font: {google: "Roboto"} # font colours for text and headings
+    base_font: {google: "Roboto"}
     heading_font: {google: "Roboto Slab"}
-  navbar:
-    structure:
-      right: [twitter, github]
-    components:
-      twitter:
-        icon: fa-twitter
-        href: http://twitter.com/ChaweziMiti
-        aria-label: Twitter
+
+navbar:
+  structure:
+    right: [github, twitter, linkedin]
+  components:
+    twitter:
+      icon: fa-twitter
+      href: http://twitter.com/ChaweziMiti
+      aria-label: Twitter
+    linkedin:
+      icon: fa-linkedin
+      href: https://www.linkedin.com/in/chawezi-miti-051077b8/
+      aria-label: LinkedIn
+
+news:
+  title: "News"
 
 
