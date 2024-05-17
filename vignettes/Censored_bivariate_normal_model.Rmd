@@ -24,8 +24,12 @@ Load the `BLA` package using the `library()` function. In addition, the `aplpack
 
 ```{r setup}
 library(BLA)
+```
+
+```{r, eval=FALSE, echo=TRUE}
 library(aplpack)
 ```
+
 
 # Yield gap analysis using boundary lines
 
@@ -65,12 +69,10 @@ summastat(y)
 
 Boundary line analysis is sensitive to outlying values and hence it is required that they are identified and removed. A bag plot (a bivariate box plot) is used to identify outliers. The bag plot has four main components, (1) a depth median (equivalent to the median in a box plot) which is represents the centre of the data set, (2) The bag which contains 50% of the data points (eqiuavalent to the interquartile range), (3) a 'fence' that separates probable outliers, (4) a loop which contains points outside the bag but are not outliers.
 
-```{r,fig.align='center', fig.dim=c(4,4)}
+```{r, eval=FALSE, echo=TRUE,fig.align='center', fig.dim=c(4,4)}
 x<-log(x) # since we requred a transformation
 df<-data.frame(x,y) 
-bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = TRUE)
-legend("topright", c("bag","loop","outliers", "d.median"),
-           pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
+bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = FALSE)
 
 # Combine data points from "bag" and within the loop
 
@@ -80,6 +82,14 @@ dat<-rbind(bag$pxy.bag,bag$pxy.outer)
 
 x<-dat[,1] 
 y<-dat[,2]
+```
+
+
+```{r, eval=TRUE, echo=FALSE,fig.align='center', fig.dim=c(4,4)}
+# for vignette purpose only
+x<-log(SoilP$P) # since we required a transformation
+y<-SoilP$yield
+
 ```
 
 3\. Testing data for presence of boundary
@@ -127,8 +137,6 @@ cor(x,y)
 
 #The parameters of the boundary line and the data can be combined in a #vector theta in the order 
 #theta<-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))
-
-theta<-c(4,3,13.6,3,9,0.5,1.9,0.05) 
 ```
 
 Another important argument is the standard deviation of the measurement error, `sigh`, of the response variable `y`. In some cases this might be estimated from observations of analytical duplicates, or experiments to determine measurement error for variables such as crop yield (e.g. Kosmowski *et al*. 2021). However, in cases when this is not available, it can be estimated using different options. One option of estimation is to use a variogram if the location data for samples is available. In that case, nugget variance which is the unexplained short distance variations can be taken as an estimate of the measurement error. If this is not possible, a profiling procedure can be done. This is done by fitting a proposed model using a varied number of `sigh` values while keeping the rest of the model parameters constant. The log-likelihood values of the model for each `sigh` are determined and the value that maximizes the likelihood can be selected from the log-likelihood profile. This can be implemented using the `ble_profile()` function. For more information on this function run
@@ -148,7 +156,7 @@ ble_profile(vals,theta,sigh,model = "lp") # may take a few minutes to run for la
 From the likelihood profile, the `sigh` that maximizes the likelihood is around 0.65. We can use this for the value of `sigh`. Now that all the arguments required for `cbvn()` function are set, the boundary line can be fitted
 
 ```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4) }
-theta<-c(4,3,13.6,3,9,0.5,1.9,0.05) 
+theta<-c(4,3,13.6,3,9,0.50,1.9,0.05)
 
 model1<-cbvn(vals,theta=theta,sigh=0.7,model = "lp", xlab=expression("P /log ppm"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
 
@@ -196,12 +204,10 @@ summastat(x)
 
 2\. Removal of outliers
 
-```{r,fig.align='center', fig.dim=c(4,4)}
+```{r, eval=FALSE, echo=TRUE,fig.align='center', fig.dim=c(4,4)}
  
 df<-data.frame(x,y) 
-bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = TRUE)
-legend("topleft", c("bag","loop","outliers", "d.median"),
-           pch = c(15,15,16,8),col=c("blue","lightblue","red","red"),cex=0.7)
+bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = FALSE)
 
 # Combine data points from "bag" and within the loop
 
@@ -211,6 +217,12 @@ dat<-rbind(bag$pxy.bag,bag$pxy.outer)
 
 x<-dat[,1] 
 y<-dat[,2]
+```
+
+```{r, eval=TRUE, echo=FALSE}
+# for vignette purpose only
+x<-SoilpH$pH # since we required a transformation
+y<-SoilpH$yield
 ```
 
 3\. Testing data for presence of boundary

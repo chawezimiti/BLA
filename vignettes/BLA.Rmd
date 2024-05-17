@@ -32,6 +32,9 @@ With the `BLA` package installed, the first step is to load it to your R session
 
 ```{r setup}
 library(BLA)
+```
+
+```{r, eval=FALSE, echo=TRUE}
 library(aplpack)
 ```
 
@@ -93,7 +96,7 @@ Outliers are identified using the bagplot method (Rousseeuw *et al*., 1999. A ba
 
 4.  **Outliers** which are values outside the loop
 
-```{r, fig.align='center', fig.dim=c(4,4)}
+```{r, eval=FALSE, echo=TRUE,fig.align='center', fig.dim=c(4,4)}
 
 vals_ur<-matrix(NA,length(x),2) #Create a matrix with x and y as required by the bag plot function
 vals_ur[,1]<-x 
@@ -107,6 +110,15 @@ legend("topright", c("bag","loop","outliers", "d.median"),
 vals<-rbind(bag$pxy.bag,bag$pxy.outer) # to remove outliers, select points in the bag and loop only
 
 ```
+
+```{r, eval=TRUE, echo=FALSE,fig.align='center', fig.dim=c(4,4)}
+
+# for vignette purpose only
+x<-log(SoilP$P) # since we required a transformation
+y<-SoilP$yield
+vals <- data.frame(x,y)
+```
+
 
 The variables *`x`* and *`y`* and now be extracted from the results of the bag plot with outliers removed
 
