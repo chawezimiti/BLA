@@ -59,6 +59,7 @@ summastat(x)
 
 summastat(log(x)) 
 
+x<-log(x) # since x required a transformation to assume it is from a normal distribution.
 
 #Distribution of the y variable
 
@@ -67,14 +68,19 @@ summastat(y)
 
 2\. Removal of outliers
 
-Boundary line analysis is sensitive to outlying values and hence it is required that they are identified and removed. A bag plot (a bivariate box plot) is used to identify outliers. The bag plot has four main components, (1) a depth median (equivalent to the median in a box plot) which is represents the centre of the data set, (2) The bag which contains 50% of the data points (eqiuavalent to the interquartile range), (3) a 'fence' that separates probable outliers, (4) a loop which contains points outside the bag but are not outliers.
+Boundary line analysis is sensitive to outlying values and hence it is required that they are identified and removed. This can be done using the `bagplot()` function of the `aplpack` package. The bag plot, a bivariate box plot, has four main components, (1) a depth median (equivalent to the median in a box plot) which is represents the centre of the data set, (2) The bag which contains 50% of the data points (eqiuavalent to the interquartile range), (3) a 'fence' that separates probable outliers, (4) a loop which contains points outside the bag but are not outliers.
 
 ```{r, eval=FALSE, echo=TRUE,fig.align='center', fig.dim=c(4,4)}
-x<-log(x) # since we requred a transformation
-df<-data.frame(x,y) 
+
+# Create a dataframe containing x and y
+
+df<-data.frame(x,y)
+
+# Input the dataframe into the bagplot() function
+
 bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = FALSE)
 
-# Combine data points from "bag" and within the loop
+# Combine data points from "bag" and within the loop i.e. exclude the outliers
 
 dat<-rbind(bag$pxy.bag,bag$pxy.outer)
 
@@ -196,7 +202,7 @@ We can proceed to the next variable pH using the same procedure.
 x<-soil$pH
 y<-soil$yield
 
-#Distribution of the x variable
+# Distribution of the x variable
 
 summastat(x) 
 
@@ -206,7 +212,12 @@ summastat(x)
 
 ```{r, eval=FALSE, echo=TRUE,fig.align='center', fig.dim=c(4,4)}
  
+# Create a dataframe of x and y which is an input into the bagplot() function
+
 df<-data.frame(x,y) 
+
+# Input the dataframe into the bagplot() function.
+
 bag<-bagplot(df,show.whiskers = FALSE, ylim=c(0,20),create.plot = FALSE)
 
 # Combine data points from "bag" and within the loop
