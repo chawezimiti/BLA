@@ -27,7 +27,7 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
-      DISPLAY: ":99.0"  # Setting a dummy DISPLAY variable
+      #DISPLAY: ":99.0"  # Setting a dummy DISPLAY variable
 
     steps:
       - uses: actions/checkout@v4
@@ -45,9 +45,9 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
-      - name: Install XQuartz on macOS
-        if: runner.os == 'macOS'
-        run: brew install xquartz --cask
+      # - name: Install XQuartz on macOS
+      #   if: runner.os == 'macOS'
+      #   run: brew install xquartz --cask
 
       - uses: r-lib/actions/check-r-package@v2
         with:
