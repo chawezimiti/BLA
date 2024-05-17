@@ -124,8 +124,7 @@ function. In addition, the <code>aplpack</code> package is also loaded.
 The <code>aplpack</code> package contains the <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot()</a></code>
 function which is used to identify outliers in a data set.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chawezimiti.github.io/BLA/">BLA</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: no DISPLAY variable so Tk is not available</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chawezimiti.github.io/BLA/">BLA</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.uni-bielefeld.de/fakultaeten/wirtschaftswissenschaften/fakultaet/lehrende-ehemalige/pwolf/wolf_aplpack/index.xml" class="external-link">aplpack</a></span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -172,7 +171,7 @@ values under our target model.</p>
 <span><span class="co">#Distribution of the x variable</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;         Mean Median Quartile.1 Quartile.3 Variance       SD Skewness</span></span>
 <span><span class="co">#&gt; [1,] 25.9647     22         16         32 207.0066 14.38772 1.840844</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
@@ -180,7 +179,7 @@ values under our target model.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-3-2.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-4-2.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;          Mean   Median Quartile.1 Quartile.3  Variance        SD  Skewness</span></span>
 <span><span class="co">#&gt; [1,] 3.126361 3.091042   2.772589   3.465736 0.2556936 0.5056615 0.1297406</span></span>
 <span><span class="co">#&gt;      Octile skewness    Kurtosis No. outliers</span></span>
@@ -191,7 +190,7 @@ values under our target model.</p>
 <span><span class="co">#Distribution of the y variable</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-3-3.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-4-3.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;          Mean  Median Quartile.1 Quartile.3 Variance       SD   Skewness</span></span>
 <span><span class="co">#&gt; [1,] 9.254813 9.36468   8.203703   10.39477 3.456026 1.859039 -0.4819805</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
@@ -208,12 +207,8 @@ contains points outside the bag but are not outliers.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># since we requred a transformation</span></span>
 <span><span class="va">df</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> </span>
-<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot</a></span><span class="op">(</span><span class="va">df</span>,show.whiskers <span class="op">=</span> <span class="cn">FALSE</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,create.plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bag"</span>,<span class="st">"loop"</span>,<span class="st">"outliers"</span>, <span class="st">"d.median"</span><span class="op">)</span>,</span>
-<span>           pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>,<span class="fl">15</span>,<span class="fl">16</span>,<span class="fl">8</span><span class="op">)</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>,<span class="st">"lightblue"</span>,<span class="st">"red"</span>,<span class="st">"red"</span><span class="op">)</span>,cex<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot</a></span><span class="op">(</span><span class="va">df</span>,show.whiskers <span class="op">=</span> <span class="cn">FALSE</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,create.plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Combine data points from "bag" and within the loop</span></span>
 <span></span>
 <span><span class="va">dat</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">bag</span><span class="op">$</span><span class="va">pxy.bag</span>,<span class="va">bag</span><span class="op">$</span><span class="va">pxy.outer</span><span class="op">)</span></span>
@@ -233,7 +228,7 @@ function, which is based on the convex hull, can be used to access
 presence of boundary (Miti <em>et al</em>, 2024). This function checks
 probability of the observed clustering if it came from a bivariate
 normal distribution (p-value).</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/expl_boundary.html">expl_boundary</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="co"># may take a few minutes to complete</span></span></code></pre></div>
 <p>From the results, the probability (<em>p</em>-value) of the having
@@ -253,12 +248,12 @@ distributed. We therefore proceed to fit a boundary line model to the
 data set using the censored bivariate normal model. The function
 <code><a href="../reference/cbvn.html">cbvn()</a></code> fits the boundary line to the data. For more
 information about the arguments of this function, check</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">cbvn</span></span></code></pre></div>
 <p>Argument values for the function <code><a href="../reference/cbvn.html">cbvn()</a></code> need to be set .
 Firstly, create a data-frame containing <em><code>x</code></em> and
 <em><code>y</code></em>, called <code>vals</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="co">#This is an input dataframe containing the variables</span></span></code></pre></div>
 <p>Secondly, the <code><a href="../reference/cbvn.html">cbvn()</a></code> requires initial starting values,
 <code>theta</code>, which are parameters of the boundary line (the
@@ -278,7 +273,7 @@ expect to be the lowest and the largest response of a linear model at
 the boundary. Note that starting values for other models can be
 determined by changing the model name from “lp” to the desired models
 (see <code><a href="../reference/startValues.html">?startValues</a></code> help file).</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"lp"</span><span class="op">)</span> </span></code></pre></div>
@@ -287,27 +282,25 @@ which include the means of the <em><code>x</code></em> and
 <em><code>y</code></em> variables, standard deviation of the
 <em><code>x</code></em> and <em><code>y</code></em> variables, and the
 correlation of <em><code>x</code></em> and <em><code>y</code></em>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 3.125969</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 9.28862</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 0.5005755</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 1.728996</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.0346758</span></span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co">#The parameters of the boundary line and the data can be combined in a #vector theta in the order </span></span>
-<span><span class="co">#theta&lt;-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))</span></span>
-<span></span>
-<span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>,<span class="fl">3</span>,<span class="fl">9</span>,<span class="fl">0.5</span>,<span class="fl">1.9</span>,<span class="fl">0.05</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="co">#theta&lt;-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))</span></span></code></pre></div>
 <p>Another important argument is the standard deviation of the
 measurement error, <code>sigh</code>, of the response variable
 <code>y</code>. In some cases this might be estimated from observations
@@ -325,11 +318,11 @@ each <code>sigh</code> are determined and the value that maximizes the
 likelihood can be selected from the log-likelihood profile. This can be
 implemented using the <code><a href="../reference/ble_profile.html">ble_profile()</a></code> function. For more
 information on this function run</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">ble_profile</span></span></code></pre></div>
 <p>The possible <code>sigh</code> values can be set to 0.5, 0.7 and 0.8
 and we can check the likelihood profile.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">sigh</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.7</span>,<span class="fl">0.8</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/ble_profile.html">ble_profile</a></span><span class="op">(</span><span class="va">vals</span>,<span class="va">theta</span>,<span class="va">sigh</span>,model <span class="op">=</span> <span class="st">"lp"</span><span class="op">)</span> <span class="co"># may take a few minutes to run for large datasets</span></span></code></pre></div>
@@ -338,13 +331,13 @@ likelihood is around 0.65. We can use this for the value of
 <code>sigh</code>. Now that all the arguments required for
 <code><a href="../reference/cbvn.html">cbvn()</a></code> function are set, the boundary line can be
 fitted</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>,<span class="fl">3</span>,<span class="fl">9</span>,<span class="fl">0.5</span>,<span class="fl">1.9</span>,<span class="fl">0.05</span><span class="op">)</span> </span>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>,<span class="fl">3</span>,<span class="fl">9</span>,<span class="fl">0.50</span>,<span class="fl">1.9</span>,<span class="fl">0.05</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">model1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,theta<span class="op">=</span><span class="va">theta</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"P /log ppm"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Note: This function may take a few minutes to run for large datasets.</span></span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model1</span></span>
 <span><span class="co">#&gt; $Model</span></span>
@@ -381,12 +374,12 @@ line can now be used to predict the boundary yield given the value of
 P.</p>
 <p>The function <code><a href="../reference/predictBL.html">predictBL()</a></code> in the BLA package can be used
 for this. For more information about the function, see</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">predictBL</span></span></code></pre></div>
 <p>We need to predict the largest expected yield for each point given
 the soil P. We will replace any missing values with the mean value of
 P.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">xp</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">soil</span><span class="op">$</span><span class="va">P</span><span class="op">)</span> <span class="co"># let xp be the P content in our dataset</span></span>
 <span><span class="va">xp</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">xp</span><span class="op">)</span><span class="op">==</span><span class="cn">T</span><span class="op">)</span><span class="op">]</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">xp</span>,na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
@@ -401,28 +394,24 @@ P.</p>
 <h4 id="data-exploration-1">Data exploration<a class="anchor" aria-label="anchor" href="#data-exploration-1"></a>
 </h4>
 <p>1. Testing for normality of independent and dependent variable</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">pH</span></span>
 <span><span class="va">y</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">yield</span></span>
 <span></span>
 <span><span class="co">#Distribution of the x variable</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-15-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;          Mean Median Quartile.1 Quartile.3  Variance        SD  Skewness</span></span>
 <span><span class="co">#&gt; [1,] 7.566133   7.74       7.12        8.1 0.4346898 0.6593101 -0.798602</span></span>
 <span><span class="co">#&gt;      Octile skewness    Kurtosis No. outliers</span></span>
 <span><span class="co">#&gt; [1,]      -0.3594771 -0.07176715            0</span></span></code></pre>
 <p>2. Removal of outliers</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> </span>
 <span><span class="va">df</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> </span>
-<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot</a></span><span class="op">(</span><span class="va">df</span>,show.whiskers <span class="op">=</span> <span class="cn">FALSE</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,create.plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bag"</span>,<span class="st">"loop"</span>,<span class="st">"outliers"</span>, <span class="st">"d.median"</span><span class="op">)</span>,</span>
-<span>           pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>,<span class="fl">15</span>,<span class="fl">16</span>,<span class="fl">8</span><span class="op">)</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>,<span class="st">"lightblue"</span>,<span class="st">"red"</span>,<span class="st">"red"</span><span class="op">)</span>,cex<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot</a></span><span class="op">(</span><span class="va">df</span>,show.whiskers <span class="op">=</span> <span class="cn">FALSE</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,create.plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Combine data points from "bag" and within the loop</span></span>
 <span></span>
 <span><span class="va">dat</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">bag</span><span class="op">$</span><span class="va">pxy.bag</span>,<span class="va">bag</span><span class="op">$</span><span class="va">pxy.outer</span><span class="op">)</span></span>
@@ -449,7 +438,7 @@ boundary line to the data.</p>
 as before . Firstly, create a data-frame containing
 <em><code>x</code></em> and <em><code>y</code>,</em> called
 <code>vals</code>.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="co">#This is an input dataframe containing the variables</span></span></code></pre></div>
 <p>Secondly, the <code><a href="../reference/cbvn.html">cbvn()</a></code> requires initial starting values,
 <em><code>theta</code></em>, which are parameters of the boundary line
@@ -463,7 +452,7 @@ the point you expect to be the lowest and the largest response of a
 linear model at the boundary. Note that starting values for other models
 can be determined by changing the model name from “lp” to the desired
 models (see <code><a href="../reference/startValues.html">?startValues</a></code> help file)</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"lp"</span><span class="op">)</span> </span></code></pre></div>
@@ -472,22 +461,22 @@ which include the means of the <em><code>x</code></em> and
 <em><code>y</code></em> variables, standard deviation of the
 <em><code>x</code></em> and <em><code>y</code></em> variables, and the
 correlation of <em><code>x</code></em> and <em><code>y</code></em>.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 7.569203</span></span></code></pre></div>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 9.277917</span></span></code></pre></div>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 0.656315</span></span></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> </span>
 <span><span class="co">#&gt; [1] 1.755941</span></span></code></pre></div>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.1169399</span></span></code></pre></div>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co">#The parameters of the boundary line and the data can be combined in a #vector theta in the order </span></span>
 <span><span class="co">#theta&lt;-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))</span></span>
@@ -497,12 +486,12 @@ correlation of <em><code>x</code></em> and <em><code>y</code></em>.</p>
 <em><code>sigh</code></em> was already determine as 0.7. Now that all
 the arguments required for <code><a href="../reference/cbvn.html">cbvn()</a></code> function are set, the
 boundary line can be fitted</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,theta<span class="op">=</span><span class="va">theta</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"pH"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Note: This function may take a few minutes to run for large datasets.</span></span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-20-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-23-1.png" width="384" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model2</span></span>
 <span><span class="co">#&gt; $Model</span></span>
@@ -535,7 +524,7 @@ yield given the value of pH using the function <code><a href="../reference/predi
 We need to predict the largest expected yield for each farm given the
 soil pH. We will replace any missing values with the mean value of
 pH.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">xpH</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">pH</span> <span class="co"># let xpH be the P content in our dataset</span></span>
 <span><span class="va">xpH</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">xpH</span><span class="op">)</span><span class="op">==</span><span class="cn">T</span><span class="op">)</span><span class="op">]</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">xpH</span>,na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
@@ -554,18 +543,18 @@ y={\rm min}(f_1(x_1),f_2(x_2),...,f_n(x_n))
 <p>In the BLA package, the function <code><a href="../reference/limfactor.html">limfactor()</a></code> can be used
 to determine the most limiting factor at each point. For more
 information on the function, see</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">limfactor</span></span></code></pre></div>
 <p>For the two soil properties in our dataset, the most limiting factor
 for each data point is determined as</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">Limiting_factor</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/limfactor.html">limfactor</a></span><span class="op">(</span><span class="va">P</span>,<span class="va">pH</span><span class="op">)</span> <span class="co"># This produces a list of length 2 containg a vector limiting factors at each pont and the maximum predicted response in the dataset.</span></span>
 <span></span>
 <span><span class="va">Limiting_factors</span><span class="op">&lt;-</span><span class="va">Limiting_factor</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> </span></code></pre></div>
 <p>We can check the proportion of cases in which each of the soil
 properties was limiting</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Lim_factors</span><span class="op">&lt;-</span><span class="va">Limiting_factors</span><span class="op">$</span><span class="va">Lim_factor</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/proportions.html" class="external-link">prop.table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">Lim_factors</span><span class="op">)</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span>,</span>
@@ -576,12 +565,12 @@ properties was limiting</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/axis.html" class="external-link">axis</a></span><span class="op">(</span>side <span class="op">=</span> <span class="fl">1</span>, at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span>, by <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, labels <span class="op">=</span> <span class="cn">FALSE</span>, lwd <span class="op">=</span> <span class="fl">1</span>, col.ticks <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span>  </span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/axis.html" class="external-link">axis</a></span><span class="op">(</span>side <span class="op">=</span> <span class="fl">2</span>, lwd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>  </span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-24-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-27-1.png" width="384" style="display: block; margin: auto;"></p>
 <p>As only two factors were evaluated, most of the yield gap cause was
 unidentified. This is because there many other factors affecting yield
 which we did not consider in this case. You can also plot the predicted
 yield by the most limiting factor against the actual yield.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Limiting_factors</span><span class="op">$</span><span class="va">Rs</span>, <span class="va">soil</span><span class="op">$</span><span class="va">yield</span>,</span>
 <span>     xlab<span class="op">=</span><span class="st">"Predicted yield (ton/ha)"</span>,</span>
@@ -594,7 +583,7 @@ yield by the most limiting factor against the actual yield.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"bottomleft"</span>,legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Att yield"</span>, <span class="st">"1:1 line"</span><span class="op">)</span>,</span>
 <span>       lty<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">1</span><span class="op">)</span>, col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"red"</span><span class="op">)</span>, lwd<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-25-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-28-1.png" width="384" style="display: block; margin: auto;"></p>
 <p>The dashed blue line represents the attainable yield for this
 particular setting. The 1:1 describes the situations in which the actual
 yield is equal to the predicted yield by the most limiting factor. The
