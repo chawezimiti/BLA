@@ -19,16 +19,16 @@ Description: Tools to fit a boundary line model (Webb, 1972) to a data set and
     make statistical inferences about its parameters. It tests a data set for 
     evidence of boundary presence, fit a boundary line model and conduct post-hoc 
     analysis e.g. prediction of boundary values and the most limiting factor.
-    See Miti et al. (2024)<doi.org/10.1016/j.fcr.2024.109365>.
+    See Miti, Milne, Giller, Lark(2024)<doi.org/10.1016/j.fcr.2024.109365>.
 License: GPL (>= 3)
 URL: https://chawezimiti.github.io/BLA/
 BugReports: https://github.com/chawezimiti/BLA/issues
 Depends: 
     R (>= 4.0)
 Imports: 
-    aplpack,
     MASS,
-    mvtnorm
+    mvtnorm,
+    stats
 Suggests: 
     knitr,
     rmarkdown,

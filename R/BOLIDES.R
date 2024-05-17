@@ -158,7 +158,7 @@
 #'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
 #'
-#' @import mvtnorm MASS aplpack
+#' @import mvtnorm MASS
 #' @export
 #' @rdname BOLIDES
 #' @usage

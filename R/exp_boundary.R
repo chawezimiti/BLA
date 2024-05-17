@@ -23,7 +23,7 @@
 #'   dataset for the left and right sections of the dataset.
 #'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
-#'
+#' @import MASS stats
 #' @export
 #'
 #' @details
@@ -161,14 +161,14 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     # simulation of data using summary statistics of the available data
 
     dat<-mvrnorm(n,mu=c(mean(x),mean(y)),Sigma)
-    x=dat[,1]
-    y=dat[,2]
 
     ## Removal of outliers from the simulated data
 
-    bag<-bagplot(x,y,na.rm = T,create.plot = FALSE)
-    dat<-rbind(bag$pxy.bag,bag$pxy.outer)
-    dat<-data.frame(x=dat[,1],y=dat[,2])
+    cov.robust <- cov.rob(dat)
+    md <- mahalanobis(dat, cov.robust$center, cov.robust$cov)
+    threshold <- qchisq(0.995, df=ncol(dat))  # 1% significance level
+    outliers <- md > threshold
+    dat <- dat[!outliers, ]
 
     ## Determination of convex hull for the simulated data
 

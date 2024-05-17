@@ -18,8 +18,4 @@
 #' Webb, R. A. (1972). Use of the boundary line in analysis of biological
 #'   data. Journal of Horticultural Science, 47, 309-319.
 "_PACKAGE"
-
-## usethis namespace: start
-#' @importFrom aplpack bagplot
-## usethis namespace: end
 NULL
