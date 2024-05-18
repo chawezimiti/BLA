@@ -175,7 +175,7 @@
 #' @rdname cbvn
 #' @usage
 #' cbvn(vals,model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",
-#'       Hessian=FALSE, plot=TRUE, line_smooth=100, lwd=2, l_col="red",...)
+#'       Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...)
 #'
 #' @examples
 #' x<-evapotranspiration$`ET(mm)`
@@ -204,17 +204,21 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Define model functions-------------------------------------------------------------
 
-    model_funcs <- list(
-      lp = function(x, beta0, beta1, beta2) pmin(beta0, beta1 + beta2 * x),
-      mit = function(x, beta0, beta1, beta2) beta0 - beta1 * beta2^x,
-      logistic = function(x, beta0, beta1, beta2) beta0 / (1 + exp(beta2 * (beta1 - x))),
-      inv_logistic = function(x, beta0, beta1, beta2) beta0 - (beta0 / (1 + exp(beta2 * (beta1 - x)))),
-      logisticND = function(x, beta0, beta1, beta2) beta0 / (1 + beta1 * exp(-x * beta2)),
-      schmidt = function(x, beta0, beta1, beta2) beta0 - beta2 * (x - beta1)^2,
-      qd = function(x, beta0, beta1, beta2) beta1 + beta2 * x + beta0 * x^2
-    )
+      model_funcs <- list(
+        lp = function(x, beta0, beta1, beta2) pmin(beta0, beta1 + beta2 * x),
+        mit = function(x, beta0, beta1, beta2) beta0 - beta1 * beta2^x,
+        logistic = function(x, beta0, beta1, beta2) beta0 / (1 + exp(beta2 * (beta1 - x))),
+        inv_logistic = function(x, beta0, beta1, beta2) beta0 - (beta0 / (1 + exp(beta2 * (beta1 - x)))),
+        logisticND = function(x, beta0, beta1, beta2) beta0 / (1 + beta1 * exp(-x * beta2)),
+        schmidt = function(x, beta0, beta1, beta2) beta0 - beta2 * (x - beta1)^2,
+        qd = function(x, beta0, beta1, beta2) beta1 + beta2 * x + beta0 * x^2
+      )
 
-    BLMod <- model_funcs[[model]]
+      BLMod <- model_funcs[[model]]
+
+
+
+
 
     ## Define likelihood functions--------------------------------------------------------
 
@@ -352,7 +356,9 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Define model functions-------------------------------------------------------------
 
-    BLMod <- function(x,beta0,beta1) beta0+beta1*x
+
+    blm <- function(x,beta0,beta1) beta0+beta1*x
+    BLMod <- blm
 
 
     drawBL2<-function(x,beta0,beta1,BLMod){
@@ -492,7 +498,8 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Define model functions------------------------------------------------------------
 
-    BLMod <- function(x,beta0,beta1,beta2,beta3,beta4) pmin(beta0,beta1+beta2*x,beta3+beta4*x)
+    trapezium <- function(x,beta0,beta1,beta2,beta3,beta4) pmin(beta0,beta1+beta2*x,beta3+beta4*x)
+    BLMod <- trapezium
 
     drawBL3<-function(x,beta0,beta1,beta2,beta3,beta4,BLMod){
       y<-sapply(x,BLMod,beta0=beta0,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4)
@@ -636,9 +643,11 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Define model functions-------------------------------------------------------------
 
-    BLMod <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
+    double_logistic <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
       (beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x))))
     }
+
+    BLMod <- double_logistic
 
     drawBL4<-function(x,beta01,beta02,beta1,beta2,beta3,beta4,BLMod){
       y<-sapply(x,BLMod,beta01=beta01,beta02=beta02,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4)

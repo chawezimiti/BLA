@@ -68,7 +68,6 @@
 #'   \code{"CG"}, \code{"L-BFGS-B"}, \code{"SANN"} and \code{"Brent"}.
 #' @param plot If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
 #'   is not part of output (default is \code{TRUE}).
-#' @param ... Additional graphical parameters as in the \code{par()} function.
 #' @returns  A list of length 2 containing the suggested standard deviations of
 #'   measurement error values and the corresponding log-likelihood values.
 #'   additionally, a likelihood profile plot (log-likelihood against the standard
@@ -150,7 +149,7 @@
 #' @rdname ble_profile
 #' @usage
 #' ble_profile(vals, sigh, model="lp", equation=NULL,  theta, UpLo="U",
-#'              optim.method="BFGS", plot=TRUE, ...)
+#'              optim.method="BFGS", plot=TRUE)
 #'
 #' @examples
 #'
@@ -287,7 +286,8 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     ## Define model functions-------------------------------------------------------------
 
-    BLMod <- function(x,beta0,beta1) beta0+beta1*x
+    blm <- function(x,beta0,beta1) beta0+beta1*x
+    BLMod <-blm
 
     for(i in 1:length(sigh)){
 
@@ -382,7 +382,8 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     ## Define model functions-------------------------------------------------------------
 
-    BLMod <- function(x,beta0,beta1,beta2,beta3,beta4) pmin(beta0,beta1+beta2*x,beta3+beta4*x)
+    trapezium <- function(x,beta0,beta1,beta2,beta3,beta4) pmin(beta0,beta1+beta2*x,beta3+beta4*x)
+    BLMod<-trapezium
 
     for(i in 1:length(sigh)){
 
@@ -481,9 +482,12 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     ## Define model functions------------------------------------------------------------
 
-    BLMod <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
+    double_logistic <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
       (beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x))))
     }
+
+    BLMod<-double_logistic
+
 
     for(i in 1:length(sigh)){
 
