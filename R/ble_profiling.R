@@ -178,7 +178,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     if (length(theta) != 8) stop("theta must have exactly eight values")
 
-    ## Define model functions------------------------------------------------------------------------------------
+    ## Define model functions-------------------------------------------------------------
 
     model_funcs <- list(
       lp = function(x, beta0, beta1, beta2) pmin(beta0, beta1 + beta2 * x),
