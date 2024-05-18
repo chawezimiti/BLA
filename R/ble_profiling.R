@@ -145,6 +145,7 @@
 #'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
 #'
+#' @import mvtnorm data.table numDeriv
 #' @export
 #' @rdname ble_profile
 #' @usage
@@ -160,20 +161,13 @@
 #' sigh<-c(0.08,0.1,0.11,0.13,0.15,0.2,0.3,0.4,0.5)
 #' ble_profile(vals,sigh=sigh,theta=theta,model="blm")
 #'
-ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", optim.method="BFGS", plot=TRUE, ...){
+ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", optim.method="BFGS", plot=TRUE){
 
-  cat("Note: This function may take a few minutes to run for large datasets.\n\n")
+  cat("Note: This function may take longer to run.\n\n")
 
   ###### Initial data preparation ##################################
 
-  data<-data.frame(x=vals[,1],y=vals[,2])
-
-  test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE) ## Removing NA's
-
-  if(length(test)>0){
-    vals<-data[-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE),]}else{ ##Removing NA's
-      vals<-data
-    }
+  vals <- na.omit(as.data.table(vals))
 
   UpLo=UpLo
   BLMod<-model
@@ -183,69 +177,21 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   if(model=="lp"|model=="mit"|model=="logistic"|model=="inv-logistic"|model=="logisticND"|model=="schmidt"|model=="qd"){
 
-    v<-length(theta)
-    if(v>8) stop("theta has more than eight values")
-    if(v<8) stop("theta has less than eight values")
+    if (length(theta) != 8) stop("theta must have exactly eight values")
 
-    ## Defining each model type
+    ## Define model functions------------------------------------------------------------------------------------
 
-    if(model=="lp"){
-      lp<-function(x,beta0,beta1,beta2){
-        return(min(beta0,beta1+beta2*x))
-      }
+    model_funcs <- list(
+      lp = function(x, beta0, beta1, beta2) pmin(beta0, beta1 + beta2 * x),
+      mit = function(x, beta0, beta1, beta2) beta0 - beta1 * beta2^x,
+      logistic = function(x, beta0, beta1, beta2) beta0 / (1 + exp(beta2 * (beta1 - x))),
+      inv_logistic = function(x, beta0, beta1, beta2) beta0 - (beta0 / (1 + exp(beta2 * (beta1 - x)))),
+      logisticND = function(x, beta0, beta1, beta2) beta0 / (1 + beta1 * exp(-x * beta2)),
+      schmidt = function(x, beta0, beta1, beta2) beta0 - beta2 * (x - beta1)^2,
+      qd = function(x, beta0, beta1, beta2) beta1 + beta2 * x + beta0 * x^2
+    )
 
-      BLMod<-lp
-    }
-
-
-    if(model=="mit"){
-      mit<-function(x,beta0,beta1,beta2){
-        return(beta0-beta1*beta2^x)
-      }
-
-      BLMod<-mit
-    }
-
-    if(model=="logistic"){
-      logistic<-function(x,beta0,beta1,beta2){
-        return(beta0/(1+exp(beta2*(beta1-x))))
-      }
-
-      BLMod<-logistic
-    }
-
-
-    if(model=="inv-logistic"){
-      inv_logistic<-function(x,beta0,beta1,beta2){
-        return(beta0-(beta0/(1+exp(beta2*(beta1-x)))))
-      }
-
-      BLMod<-inv_logistic
-    }
-
-    if(model=="logisticND"){
-      logisticND<-function(x,beta0,beta1,beta2){
-        return(beta0/(1+beta1*exp(-x*beta2)))
-      }
-
-      BLMod<-logisticND
-    }
-
-    if(model=="schmidt"){
-      schmidt<-function(x,beta0,beta1,beta2){
-        return(beta0-beta2*(x-beta1)*(x-beta1))
-      }
-
-      BLMod<-schmidt
-    }
-
-    if(model=="qd"){
-      qd<-function(x,beta0,beta1,beta2){
-        return(beta1+beta2*x+beta0*x*x)
-      }
-
-      BLMod<-qd
-    }
+    BLMod <- model_funcs[[model]]
 
 
     for(i in 1:length(sigh)){
@@ -255,106 +201,77 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       BLMod<-BLMod
       vals<-vals
 
-      ###### likelihood functions #####################
+      ## Define likelihood functions------------------------------------------------------
 
-      nll_mef<-function(pars,uplo,BLMod){
+      nll_mef <- function(pars, uplo, BLMod) {
+        beta0 <- pars[3]
+        beta1 <- pars[1]
+        beta2 <- pars[2]
+        mux <- pars[4]
+        muy <- pars[5]
+        sdx <- pars[6]
+        sdy <- pars[7]
+        rcorr <- pars[8]
 
-        beta0<-pars[3]
-        beta1<-pars[1]
-        beta2<-pars[2]
-        mux<-pars[4]
-        muy<-pars[5]
-        sdx<-pars[6]
-        sdy<-pars[7]
-        rcorr<-pars[8]
+        if (uplo == "U") {
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
+          bet <- cov / (sdx^2)
 
-        if(uplo=="U"){
-          nliks<-apply(vals,1,jdensup,BLMod=BLMod,
-                       beta0=beta0,beta1=beta1,beta2=beta2,sigh=sigh[i],mux=mux,muy=muy,
-                       sdx=sdx,sdy=sdy,rcorr=rcorr)
-          nll<--sum(nliks)
-        }else{
-          print("Error, not set up for lower boundary")
-          stop
+          fx <- dnorm(vals[, x], mux, sdx)
+          muyc <- muy + ((vals[, x] - mux) * bet)
+          sdyc <- sdy * sqrt(1 - rho^2)
+
+          c <- BLMod(vals[, x], beta0, beta1, beta2)
+          fy_x <- coffcturb(vals[, y], muyc, sdyc, -Inf, c, sigh)
+
+          fxy <- fy_x * fx
+          -sum(log(fxy))
+        } else {
+          stop("Error, not set up for lower boundary")
         }
-        return(nll)
       }
 
-      ##
+      coffcturb <- function(x, mu, sig, a, c, sigh=sigh[i]) {
+        k <- (mu - c) / sig
+        d <- (mu - a) / sig
+        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(d) - pnorm(k)))
 
-      par_nll_mef<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+        com2 <- gamma * exp(com1)
+        f <- com2 * (pnorm((x - a - alpha) / beta) - pnorm((x - c - alpha) / beta))
 
-        eps=1e-4
-
-        nr<-length(x)
-        part<-vector("numeric",nr)
-
-        for (i in 1:nr){
-          del<-rep(0,nr)
-          del[i]<-eps
-          part[i]<-(nll_mef((x+del),UpLo,BLMod)-nll_mef((x),UpLo,BLMod))/eps
-        }
-
-        return(part)
+        f <- f * pnorm(c, mu, sig)
+        f + (dnorm((x - c), 0, sigh) * (1 - pnorm(c, mu, sig)))
       }
 
-      ##
+      nllmvn <- function(pars) {
+        mux <- pars[1]
+        muy <- pars[2]
+        sdx <- pars[3]
+        sdy <- pars[4]
+        rcorr <- pars[5]
 
-      jdensup<-function(X,BLMod,beta0,beta1,beta2,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
 
-        x<-X[1]
-        y<-X[2]
-
-        rho<-tanh(rcorr)
-        cov<-rho*sdx*sdy
-        bet<-cov/(sdx*sdx)
-
-        fx<-dnorm(x,mux,sdx)
-
-        muyc<-muy+((x-mux)*bet)
-        sdyc<-sdy*sqrt(1-(rho*rho))
-
-        c<-BLMod(x,beta0,beta1,beta2)
-
-        fy_x<-coffcturb(y,muyc,sdyc,-Inf,c,sigh)
-
-        fxy<-fy_x*fx
-        return(log(fxy))
+        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        -sum(lliks)
       }
 
-      ##
+      ## Optimization of the model-------------------------------------------------------
 
-      coffcturb<-function(x,mu,sig,a,c,sigh=sigh[i]){
+      mlest <- suppressWarnings(optim(theta, nll_mef, uplo = UpLo, BLMod = BLMod,
+                                      method = optim.method, hessian = TRUE))
 
-        k<-((mu-c)/sig)
-        d<-((mu-a)/sig)
-        alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-        beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-        gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(d)-pnorm(k)))
+      scale <- suppressWarnings(1 / abs(grad(nll_mef, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-        com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-        com2<-gamma*exp(com1)
-        f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
-
-        f<-f*pnorm(c,mu,sig) # re-scale for censored
-
-        f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig))) # add contribution at x from mass at c
-
-        return(f)
-      }
-
-      ########### Optimization of the model ###########
-
-      mlest<-suppressWarnings(optim(theta,nll_mef,uplo=UpLo,BLMod=BLMod,
-                                    method=optim.method,
-                                    hessian="T"))
-
-      scale<-suppressWarnings(1/abs(par_nll_mef(mlest$par,UpLo,BLMod)))
-
-      mlest2<-suppressWarnings(optim(mlest$par,nll_mef,uplo=UpLo,BLMod=BLMod,
-                                     method=optim.method,
-                                     control = list(parscale = scale),
-                                     hessian="T"))
+      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef, uplo = UpLo, BLMod = BLMod,
+                                       method = optim.method, control = list(parscale = scale),
+                                       hessian = TRUE))
 
       likelihood[i]<-mlest2$value*-1
 
@@ -362,19 +279,15 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   }
 
-  #### Fitting the two parameter model profile ##########################################
+  ### Fitting the two parameter model profile ############################################
 
   if(model=="blm"){
 
-    v<-length(theta)
-    if(v>7) stop("theta has more than seven values")
-    if(v<7) stop("theta has less than seven values")
+    if (length(theta) != 7) stop("theta must have exactly seven values")
 
-    blm<-function(x,beta0,beta1){
-      return(beta0+beta1*x)
-    }
+    ## Define model functions-------------------------------------------------------------
 
-    BLMod<-blm
+    BLMod <- function(x,beta0,beta1) beta0+beta1*x
 
     for(i in 1:length(sigh)){
 
@@ -383,10 +296,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       BLMod<-BLMod
       vals<-vals
 
-      ########### Likelihood functions ##########################
+      ## Define likelihood functions------------------------------------------------------
 
-      nll_mef2<-function(pars,uplo,BLMod){
-
+      nll_mef2 <- function(pars, uplo, BLMod) {
         beta0<-pars[1]
         beta1<-pars[2]
         mux<-pars[3]
@@ -395,94 +307,66 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         sdy<-pars[6]
         rcorr<-pars[7]
 
-        if(uplo=="U"){
-          nliks<-apply(vals,1,jdensup2,BLMod=BLMod,
-                       beta0=beta0,beta1=beta1,sigh=sigh[i],mux=mux,muy=muy,
-                       sdx=sdx,sdy=sdy,rcorr=rcorr)
-          nll<--sum(nliks)
-        }else{
-          print("Error, not set up for lower boundary")
-          stop
+        if (uplo == "U") {
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
+          bet <- cov / (sdx^2)
+
+          fx <- dnorm(vals[, x], mux, sdx)
+          muyc <- muy + ((vals[, x] - mux) * bet)
+          sdyc <- sdy * sqrt(1 - rho^2)
+
+          c <- BLMod(vals[, x], beta0, beta1)
+          fy_x <- coffcturb2(vals[, y], muyc, sdyc, -Inf, c, sigh)
+
+          fxy <- fy_x * fx
+          -sum(log(fxy))
+        } else {
+          stop("Error, not set up for lower boundary")
         }
-        return(nll)
       }
 
-      ##
+      coffcturb2 <- function(x, mu, sig, a, c, sigh=sigh[i]) {
+        k <- (mu - c) / sig
+        d <- (mu - a) / sig
+        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(d) - pnorm(k)))
 
-      par_nll_mef2<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+        com2 <- gamma * exp(com1)
+        f <- com2 * (pnorm((x - a - alpha) / beta) - pnorm((x - c - alpha) / beta))
 
-        eps=1e-4
-
-        nr<-length(x)
-        part<-vector("numeric",nr)
-
-        for (i in 1:nr){
-          del<-rep(0,nr)
-          del[i]<-eps
-          part[i]<-(nll_mef2((x+del),UpLo,BLMod)-nll_mef2((x),UpLo,BLMod))/eps
-        }
-
-        return(part)
+        f <- f * pnorm(c, mu, sig)
+        f + (dnorm((x - c), 0, sigh) * (1 - pnorm(c, mu, sig)))
       }
 
-      ##
+      nllmvn2 <- function(pars) {
+        mux <- pars[1]
+        muy <- pars[2]
+        sdx <- pars[3]
+        sdy <- pars[4]
+        rcorr <- pars[5]
 
-      jdensup2<-function(X,BLMod,beta0,beta1,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
 
-        x<-X[1]
-        y<-X[2]
-
-        rho<-tanh(rcorr)
-        cov<-rho*sdx*sdy
-        bet<-cov/(sdx*sdx)
-
-        fx<-dnorm(x,mux,sdx)
-
-        muyc<-muy+((x-mux)*bet)
-        sdyc<-sdy*sqrt(1-(rho*rho))
-
-        c<-BLMod(x,beta0,beta1)
-
-        fy_x<-coffcturb(y,muyc,sdyc,-Inf,c,sigh)
-
-        fxy<-fy_x*fx
-        return(log(fxy))
+        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        -sum(lliks)
       }
 
 
-      ##
+      ## Optimization of the model--------------------------------------------------------
 
-      coffcturb<-function(x,mu,sig,a,c,sigh=sigh[i]){
+      mlest <- suppressWarnings(optim(theta, nll_mef2, uplo = UpLo, BLMod = BLMod,
+                                      method = optim.method, hessian = TRUE))
 
-        k<-((mu-c)/sig)
-        d<-((mu-a)/sig)
-        alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-        beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-        gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(d)-pnorm(k)))
+      scale <- suppressWarnings(1 / abs(grad(nll_mef2, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-        com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-        com2<-gamma*exp(com1)
-        f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
-
-        f<-f*pnorm(c,mu,sig) # re-scale for censored
-
-        f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig))) #add contribution at x from mass at c
-
-        return(f)
-      }
-
-      #### Optimization of the model#######################
-
-      mlest<-suppressWarnings(optim(theta,nll_mef2,uplo=UpLo,BLMod=BLMod,
-                                    method=optim.method,
-                                    hessian="T"))
-
-      scale<-suppressWarnings(1/abs(par_nll_mef2(mlest$par,UpLo,BLMod)))
-
-      mlest2<-suppressWarnings(optim(mlest$par,nll_mef2,uplo=UpLo,BLMod=BLMod,
-                                     method=optim.method,
-                                     control = list(parscale = scale),
-                                     hessian="T"))
+      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef2, uplo = UpLo, BLMod = BLMod,
+                                       method = optim.method, control = list(parscale = scale),
+                                       hessian = TRUE))
 
       likelihood[i]<-mlest2$value*-1
 
@@ -490,20 +374,15 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   }
 
-  ###############  Fitting the five parameter model ###################################
+  ### Fitting the five parameter model ###################################################
 
   if(model=="trapezium"){
 
-    v<-length(theta)
-    if(v>10) stop("theta has more than ten values")
-    if(v<10) stop("theta has less than ten values")
+    if (length(theta) != 10) stop("theta must have exactly ten values")
 
+    ## Define model functions-------------------------------------------------------------
 
-    trapezium<-function(x,beta0,beta1,beta2,beta3,beta4){
-      return(min(beta0,beta1+beta2*x,beta3+beta4*x))
-    }
-
-    BLMod <- trapezium
+    BLMod <- function(x,beta0,beta1,beta2,beta3,beta4) pmin(beta0,beta1+beta2*x,beta3+beta4*x)
 
     for(i in 1:length(sigh)){
 
@@ -513,129 +392,98 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       vals<-vals
 
 
-    ################ The likelihood functions #########################
+      ## Define likelihood functions-----------------------------------------------------
 
-    nll_mef3<-function(pars,uplo,BLMod){
+      nll_mef3 <- function(pars, uplo, BLMod) {
+        beta0<-pars[3]
+        beta1<-pars[1]
+        beta2<-pars[2]
+        beta3<-pars[4]
+        beta4<-pars[5]
+        mux<-pars[6]
+        muy<-pars[7]
+        sdx<-pars[8]
+        sdy<-pars[9]
+        rcorr<-pars[10]
 
-      beta0<-pars[3]
-      beta1<-pars[1]
-      beta2<-pars[2]
-      beta3<-pars[4]
-      beta4<-pars[5]
-      mux<-pars[6]
-      muy<-pars[7]
-      sdx<-pars[8]
-      sdy<-pars[9]
-      rcorr<-pars[10]
+        if (uplo == "U") {
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
+          bet <- cov / (sdx^2)
 
-      if(uplo=="U"){
-        nliks<-apply(vals,1,jdensup3,BLMod=BLMod,
-                     beta0=beta0,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4,sigh=sigh[i],mux=mux,muy=muy,
-                     sdx=sdx,sdy=sdy,rcorr=rcorr)
-        nll<--sum(nliks)
-      }else{
-        print("Error, not set up for lower boundary")
-        stop
-      }
-      return(nll)
-    }
+          fx <- dnorm(vals[, x], mux, sdx)
+          muyc <- muy + ((vals[, x] - mux) * bet)
+          sdyc <- sdy * sqrt(1 - rho^2)
 
-    ##
+          c <- BLMod(vals[, x], beta0, beta1, beta2, beta3, beta4)
+          fy_x <- coffcturb3(vals[, y], muyc, sdyc, -Inf, c, sigh)
 
-    par_nll_mef3<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-
-      eps=1e-4
-
-      nr<-length(x)
-      part<-vector("numeric",nr)
-
-      for (i in 1:nr){
-        del<-rep(0,nr)
-        del[i]<-eps
-        part[i]<-(nll_mef3((x+del),UpLo,BLMod)-nll_mef3((x),UpLo,BLMod))/eps
+          fxy <- fy_x * fx
+          -sum(log(fxy))
+        } else {
+          stop("Error, not set up for lower boundary")
+        }
       }
 
-      return(part)
-    }
+      coffcturb3 <- function(x, mu, sig, a, c, sigh=sigh[i]) {
+        k <- (mu - c) / sig
+        d <- (mu - a) / sig
+        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(d) - pnorm(k)))
 
-    ##
+        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+        com2 <- gamma * exp(com1)
+        f <- com2 * (pnorm((x - a - alpha) / beta) - pnorm((x - c - alpha) / beta))
 
-    jdensup3<-function(X,BLMod,beta0,beta1,beta2,beta3,beta4,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
+        f <- f * pnorm(c, mu, sig)
+        f + (dnorm((x - c), 0, sigh) * (1 - pnorm(c, mu, sig)))
+      }
 
-      x<-X[1]
-      y<-X[2]
+      nllmvn3 <- function(pars) {
+        mux <- pars[1]
+        muy <- pars[2]
+        sdx <- pars[3]
+        sdy <- pars[4]
+        rcorr <- pars[5]
 
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-      bet<-cov/(sdx*sdx)
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
 
-      fx<-dnorm(x,mux,sdx)
-
-      muyc<-muy+((x-mux)*bet)
-      sdyc<-sdy*sqrt(1-(rho*rho))
-
-      c<-BLMod(x,beta0,beta1,beta2,beta3,beta4)
-
-      fy_x<-coffcturb3(y,muyc,sdyc,-Inf,c,sigh)
-
-      fxy<-fy_x*fx
-      return(log(fxy))
-    }
+        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        -sum(lliks)
+      }
 
 
-    ##
+      ## Optimization of the model--------------------------------------------------------
 
-    coffcturb3<-function(x,mu,sig,a,c,sigh=sigh[i]){
+      mlest <- suppressWarnings(optim(theta, nll_mef3, uplo = UpLo, BLMod = BLMod,
+                                      method = optim.method, hessian = TRUE))
 
-      k<-((mu-c)/sig)
-      d<-((mu-a)/sig)
-      alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-      beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-      gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(d)-pnorm(k)))
+      scale <- suppressWarnings(1 / abs(grad(nll_mef3, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-      com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-      com2<-gamma*exp(com1)
-      f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
-
-      f<-f*pnorm(c,mu,sig) # re-scale for censored
-
-      f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))# add contribution at x from mass at c
-
-      return(f)
-    }
-
-  ########### optimization of the model ###################
-
-    mlest<-suppressWarnings(optim(theta,nll_mef3,uplo=UpLo,BLMod=BLMod,
-                                  method=optim.method,
-                                  hessian="T"))
-
-    scale<-suppressWarnings(1/abs(par_nll_mef3(mlest$par,UpLo,BLMod)))
-
-    mlest2<-suppressWarnings(optim(mlest$par,nll_mef3,uplo=UpLo,BLMod=BLMod,
-                                   method=optim.method,
-                                   control = list(parscale = scale),
-                                   hessian="T"))
+      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef3, uplo = UpLo, BLMod = BLMod,
+                                       method = optim.method, control = list(parscale = scale),
+                                       hessian = TRUE))
 
     likelihood[i]<-mlest2$value*-1
     }
 
   }
 
-  ######## Fitting the six parameter double-logistic model #############
+  ### Fitting the six parameter double-logistic model ####################################
 
   if(model=="double-logistic"){
 
-    v<-length(theta)
-    if(v>11) stop("theta has more than eleven values")
-    if(v<11) stop("theta has less than eleven values")
 
+    if (length(theta) != 11) stop("theta must have exactly eleven values")
 
-    double_logistic<-function(x,beta01,beta02,beta1,beta2,beta3,beta4){
-      return((beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x)))))
+    ## Define model functions------------------------------------------------------------
+
+    BLMod <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
+      (beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x))))
     }
-
-    BLMod<-double_logistic
 
     for(i in 1:length(sigh)){
 
@@ -644,10 +492,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       BLMod<-BLMod
       vals<-vals
 
-  ############### Likelihood functions ################
+      ## Define likelihood functions------------------------------------------------------
 
-      nll_mef4<-function(pars,uplo,BLMod){
-
+      nll_mef4 <- function(pars, uplo, BLMod) {
         beta1<-pars[1]
         beta2<-pars[2]
         beta01<-pars[3]
@@ -660,102 +507,73 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         sdy<-pars[10]
         rcorr<-pars[11]
 
-        if(uplo=="U"){
-          nliks<-apply(vals,1,jdensup4,BLMod=BLMod,
-                       beta01=beta01,beta02=beta02,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4,
-                       sigh=sigh[i],mux=mux,muy=muy,
-                       sdx=sdx,sdy=sdy,rcorr=rcorr)
-          nll<--sum(nliks)
-        }else{
-          print("Error, not set up for lower boundary")
-          stop
+        if (uplo == "U") {
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
+          bet <- cov / (sdx^2)
+
+          fx <- dnorm(vals[, x], mux, sdx)
+          muyc <- muy + ((vals[, x] - mux) * bet)
+          sdyc <- sdy * sqrt(1 - rho^2)
+
+          c <- BLMod(vals[, x], beta1, beta2, beta01, beta02, beta3, beta4)
+          fy_x <- coffcturb4(vals[, y], muyc, sdyc, -Inf, c, sigh)
+
+          fxy <- fy_x * fx
+          -sum(log(fxy))
+        } else {
+          stop("Error, not set up for lower boundary")
         }
-        return(nll)
       }
 
-      ##
+      coffcturb4 <- function(x, mu, sig, a, c, sigh=sigh[i]) {
+        k <- (mu - c) / sig
+        d <- (mu - a) / sig
+        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(d) - pnorm(k)))
 
-      par_nll_mef4<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+        com2 <- gamma * exp(com1)
+        f <- com2 * (pnorm((x - a - alpha) / beta) - pnorm((x - c - alpha) / beta))
 
-        eps=1e-4
-
-        nr<-length(x)
-        part<-vector("numeric",nr)
-
-        for (i in 1:nr){
-          del<-rep(0,nr)
-          del[i]<-eps
-          part[i]<-(nll_mef4((x+del),UpLo,BLMod)-nll_mef4((x),UpLo,BLMod))/eps
-        }
-
-        return(part)
+        f <- f * pnorm(c, mu, sig)
+        f + (dnorm((x - c), 0, sigh) * (1 - pnorm(c, mu, sig)))
       }
 
-      ##
+      nllmvn4 <- function(pars) {
+        mux <- pars[1]
+        muy <- pars[2]
+        sdx <- pars[3]
+        sdy <- pars[4]
+        rcorr <- pars[5]
 
-      jdensup4<-function(X,BLMod,beta01,beta02,beta1,beta2,beta3,beta4,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
 
-        x<-X[1]
-        y<-X[2]
-
-        rho<-tanh(rcorr)
-        cov<-rho*sdx*sdy
-        bet<-cov/(sdx*sdx)
-
-        fx<-dnorm(x,mux,sdx)
-
-        muyc<-muy+((x-mux)*bet)
-        sdyc<-sdy*sqrt(1-(rho*rho))
-
-        c<-BLMod(x,beta01,beta02,beta1,beta2,beta3,beta4)
-
-        fy_x<-coffcturb4(y,muyc,sdyc,-Inf,c,sigh)
-
-        fxy<-fy_x*fx
-        return(log(fxy))
-      }
-
-      ##
-
-      coffcturb4<-function(x,mu,sig,a,c,sigh=sigh[i]){
-
-        k<-((mu-c)/sig)
-        d<-((mu-a)/sig)
-        alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-        beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-        gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(d)-pnorm(k)))
-
-        com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-        com2<-gamma*exp(com1)
-        f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
-
-        f<-f*pnorm(c,mu,sig)# re-scale for censored
-
-        f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))# add contribution at x from mass at c
-
-        return(f)
+        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        -sum(lliks)
       }
 
 
-  ########### Optimization of the model ########
+      ## Optimization of the model--------------------------------------------------------
 
-      mlest<-suppressWarnings(optim(theta,nll_mef4,uplo=UpLo,BLMod=BLMod,
-                                    method=optim.method,
-                                    hessian="T"))
+      mlest <- suppressWarnings(optim(theta, nll_mef4, uplo = UpLo, BLMod = BLMod,
+                                      method = optim.method, hessian = TRUE))
 
-      scale<-suppressWarnings(1/abs(par_nll_mef4(mlest$par,UpLo,BLMod)))
+      scale <- suppressWarnings(1 / abs(grad(nll_mef4, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-      mlest2<-suppressWarnings(optim(mlest$par,nll_mef4,uplo=UpLo,BLMod=BLMod,
-                                     method=optim.method,
-                                     control = list(parscale = scale),
-                                     hessian="T"))
+      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef4, uplo = UpLo, BLMod = BLMod,
+                                       method = optim.method, control = list(parscale = scale),
+                                       hessian = TRUE))
 
       likelihood[i]<-mlest2$value*-1
     }
 
   }
 
-  ########### Fitting custom models ######################################################
+  ### Fitting custom models ##############################################################
 
   if(model=="other"){
 
@@ -766,7 +584,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     if(v==8){
 
-      #### The three parameter models #####
+      ### The three parameter models -----------------------------------------------------
 
       BLMod <- equation
 
@@ -777,10 +595,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         BLMod<-BLMod
         vals<-vals
 
-      ######### Likelihood functions #########################
+        ## Define likelihood functions----------------------------------------------------
 
-        nll_mef5<-function(pars,uplo,BLMod){
-
+        nll_mef5 <- function(pars, uplo, BLMod) {
           a<-pars[1]
           b<-pars[2]
           c<-pars[3]
@@ -790,102 +607,73 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           sdy<-pars[7]
           rcorr<-pars[8]
 
-          if(uplo=="U"){
-            nliks<-apply(vals,1,jdensup5,BLMod=BLMod,
-                         a=a,b=b,c=c,sigh=sigh[i],mux=mux,muy=muy,
-                         sdx=sdx,sdy=sdy,rcorr=rcorr)
-            nll<--sum(nliks)
-          }else{
-            print("Error, not set up for lower boundary")
-            stop
+          if (uplo == "U") {
+            rho <- tanh(rcorr)
+            cov <- rho * sdx * sdy
+            bet <- cov / (sdx^2)
+
+            fx <- dnorm(vals[, x], mux, sdx)
+            muyc <- muy + ((vals[, x] - mux) * bet)
+            sdyc <- sdy * sqrt(1 - rho^2)
+
+            C <- BLMod(vals[, x], a,b,c)
+            fy_x <- coffcturb5(vals[, y], muyc, sdyc, -Inf, C, sigh)
+
+            fxy <- fy_x * fx
+            -sum(log(fxy))
+          } else {
+            stop("Error, not set up for lower boundary")
           }
-          return(nll)
         }
 
-        ##
+        coffcturb5 <- function(x, mu, sig, A, C, sigh=sigh[i]) {
+          k <- (mu - C) / sig
+          D <- (mu - A) / sig
+          alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+          beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+          gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
 
-        par_nll_mef5<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+          com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+          com2 <- gamma * exp(com1)
+          f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
 
-          eps=1e-4
-
-          nr<-length(x)
-          part<-vector("numeric",nr)
-
-          for (i in 1:nr){
-            del<-rep(0,nr)
-            del[i]<-eps
-            part[i]<-(nll_mef5((x+del),UpLo,BLMod)-nll_mef5((x),UpLo,BLMod))/eps
-          }
-
-          return(part)
+          f <- f * pnorm(C, mu, sig)
+          f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
         }
 
-        ##
+        nllmvn5 <- function(pars) {
+          mux <- pars[1]
+          muy <- pars[2]
+          sdx <- pars[3]
+          sdy <- pars[4]
+          rcorr <- pars[5]
 
-        jdensup5<-function(X,BLMod,a,b,c,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
 
-          x<-X[1]
-          y<-X[2]
-
-          rho<-tanh(rcorr)
-          cov<-rho*sdx*sdy
-          bet<-cov/(sdx*sdx)
-
-          fx<-dnorm(x,mux,sdx)
-
-          muyc<-muy+((x-mux)*bet)
-          sdyc<-sdy*sqrt(1-(rho*rho))
-
-          C<-BLMod(x,a,b,c)
-
-          fy_x<-coffcturb5(y,muyc,sdyc,-Inf,C,sigh)
-
-          fxy<-fy_x*fx
-          return(log(fxy))
+          Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+          lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+          -sum(lliks)
         }
 
-        ##
 
-        coffcturb5<-function(x,mu,sig,A,C,sigh=sigh[i]){
+        ## Optimization of the model------------------------------------------------------
 
-          k<-((mu-C)/sig)
-          D<-((mu-A)/sig)
-          alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-          beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-          gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(D)-pnorm(k)))
+        mlest <- suppressWarnings(optim(theta, nll_mef5, uplo = UpLo, BLMod = BLMod,
+                                        method = optim.method, hessian = TRUE))
 
-          com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-          com2<-gamma*exp(com1)
-          f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
+        scale <- suppressWarnings(1 / abs(grad(nll_mef5, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-          f<-f*pnorm(C,mu,sig)# re-scale for censored
-
-          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))# add contribution at x from mass at c
-
-          return(f)
-        }
-
-        ##
-
-        ######### Optimization of the model ##########
-
-        mlest<-suppressWarnings(optim(theta,nll_mef5,uplo=UpLo,BLMod=BLMod,
-                                      method=optim.method,
-                                      hessian="T"))
-
-        scale<-suppressWarnings(1/abs(par_nll_mef5(mlest$par,UpLo,BLMod)))
-
-        mlest2<-suppressWarnings(optim(mlest$par,nll_mef5,uplo=UpLo,BLMod=BLMod,
-                                       method=optim.method,
-                                       control = list(parscale = scale),
-                                       hessian="T"))
+        mlest2 <- suppressWarnings(optim(mlest$par, nll_mef5, uplo = UpLo, BLMod = BLMod,
+                                         method = optim.method, control = list(parscale = scale),
+                                         hessian = TRUE))
 
         likelihood[i]<-mlest2$value*-1
 
       }
     }
 
-    ### Fitting the four parameter model #################################################
+    ### Fitting the four parameter model ------------------------------------------------
 
     if(v==9){
 
@@ -897,10 +685,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         BLMod<-BLMod
         vals<-vals
 
-    ######### The likelihood functions #######################
+        ## Define likelihood functions----------------------------------------------------
 
-        nll_mef6<-function(pars,uplo,BLMod){
-
+        nll_mef6 <- function(pars, uplo, BLMod) {
           a<-pars[1]
           b<-pars[2]
           c<-pars[3]
@@ -911,94 +698,66 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           sdy<-pars[8]
           rcorr<-pars[9]
 
-          if(uplo=="U"){
-            nliks<-apply(vals,1,jdensup6,BLMod=BLMod,
-                         a=a,b=b,c=c,d=d,sigh=sigh[i],mux=mux,muy=muy,
-                         sdx=sdx,sdy=sdy,rcorr=rcorr)
-            nll<--sum(nliks)
-          }else{
-            print("Error, not set up for lower boundary")
-            stop
+          if (uplo == "U") {
+            rho <- tanh(rcorr)
+            cov <- rho * sdx * sdy
+            bet <- cov / (sdx^2)
+
+            fx <- dnorm(vals[, x], mux, sdx)
+            muyc <- muy + ((vals[, x] - mux) * bet)
+            sdyc <- sdy * sqrt(1 - rho^2)
+
+            C <- BLMod(vals[, x], a,b,c,d)
+            fy_x <- coffcturb6(vals[, y], muyc, sdyc, -Inf, C, sigh)
+
+            fxy <- fy_x * fx
+            -sum(log(fxy))
+          } else {
+            stop("Error, not set up for lower boundary")
           }
-          return(nll)
         }
 
-        ##
+        coffcturb6 <- function(x, mu, sig, A, C, sigh=sigh[i]) {
+          k <- (mu - C) / sig
+          D <- (mu - A) / sig
+          alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+          beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+          gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
 
-        par_nll_mef6<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+          com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+          com2 <- gamma * exp(com1)
+          f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
 
-          eps=1e-4
-
-          nr<-length(x)
-          part<-vector("numeric",nr)
-
-          for (i in 1:nr){
-            del<-rep(0,nr)
-            del[i]<-eps
-            part[i]<-(nll_mef6((x+del),UpLo,BLMod)-nll_mef6((x),UpLo,BLMod))/eps
-          }
-
-          return(part)
+          f <- f * pnorm(C, mu, sig)
+          f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
         }
 
-        ##
+        nllmvn6 <- function(pars) {
+          mux <- pars[1]
+          muy <- pars[2]
+          sdx <- pars[3]
+          sdy <- pars[4]
+          rcorr <- pars[5]
 
-        jdensup6<-function(X,BLMod,a,b,c,d,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
 
-          x<-X[1]
-          y<-X[2]
-
-          rho<-tanh(rcorr)
-          cov<-rho*sdx*sdy
-          bet<-cov/(sdx*sdx)
-
-          fx<-dnorm(x,mux,sdx)
-
-          muyc<-muy+((x-mux)*bet)
-          sdyc<-sdy*sqrt(1-(rho*rho))
-
-          C<-BLMod(x,a,b,c,d)
-
-          fy_x<-coffcturb6(y,muyc,sdyc,-Inf,C,sigh)
-
-          fxy<-fy_x*fx
-          return(log(fxy))
+          Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+          lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+          -sum(lliks)
         }
 
-        ##
 
-        coffcturb6<-function(x,mu,sig,A,C,sigh=sigh[i]){
+        ## Optimization of the model------------------------------------------------------
 
-          k<-((mu-C)/sig)
-          D<-((mu-A)/sig)
-          alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-          beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-          gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(D)-pnorm(k)))
+        mlest <- suppressWarnings(optim(theta, nll_mef6, uplo = UpLo, BLMod = BLMod,
+                                        method = optim.method, hessian = TRUE))
 
-          com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-          com2<-gamma*exp(com1)
-          f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
+        scale <- suppressWarnings(1 / abs(grad(nll_mef6, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-
-          f<-f*pnorm(C,mu,sig) # re-scale for censored
-
-          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))# add contribution at x from mass at c
-
-          return(f)
-        }
-
-        ############ Optimization of the model ###############################
-
-        mlest<-suppressWarnings(optim(theta,nll_mef6,uplo=UpLo,BLMod=BLMod,
-                                      method=optim.method,
-                                      hessian="T"))
-
-        scale<-suppressWarnings(1/abs(par_nll_mef6(mlest$par,UpLo,BLMod)))
-
-        mlest2<-suppressWarnings(optim(mlest$par,nll_mef6,uplo=UpLo,BLMod=BLMod,
-                                       method=optim.method,
-                                       control = list(parscale = scale),
-                                       hessian="T"))
+        mlest2 <- suppressWarnings(optim(mlest$par, nll_mef6, uplo = UpLo, BLMod = BLMod,
+                                         method = optim.method, control = list(parscale = scale),
+                                         hessian = TRUE))
 
         likelihood[i]<-mlest2$value*-1
 
@@ -1006,7 +765,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     }
 
-    ### Fitting the five parameter model ######################################
+    ### Fitting the five parameter model ------------------------------------------------
 
     if(v==10){
 
@@ -1019,10 +778,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
         BLMod<-BLMod
         vals<-vals
 
-        ########### Likelihood functions ########################
+        ## Define likelihood functions----------------------------------------------------
 
-        nll_mef7<-function(pars,uplo,BLMod){
-
+        nll_mef7 <- function(pars, uplo, BLMod) {
           a<-pars[1]
           b<-pars[2]
           c<-pars[3]
@@ -1034,94 +792,66 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           sdy<-pars[9]
           rcorr<-pars[10]
 
-          if(uplo=="U"){
-            nliks<-apply(vals,1,jdensup7,BLMod=BLMod,
-                         a=a,b=b,c=c,d=d,e=e,sigh=sigh[i],mux=mux,muy=muy,
-                         sdx=sdx,sdy=sdy,rcorr=rcorr)
-            nll<--sum(nliks)
-          }else{
-            print("Error, not set up for lower boundary")
-            stop
+          if (uplo == "U") {
+            rho <- tanh(rcorr)
+            cov <- rho * sdx * sdy
+            bet <- cov / (sdx^2)
+
+            fx <- dnorm(vals[, x], mux, sdx)
+            muyc <- muy + ((vals[, x] - mux) * bet)
+            sdyc <- sdy * sqrt(1 - rho^2)
+
+            C <- BLMod(vals[, x], a,b,c,d,e)
+            fy_x <- coffcturb7(vals[, y], muyc, sdyc, -Inf, C, sigh)
+
+            fxy <- fy_x * fx
+            -sum(log(fxy))
+          } else {
+            stop("Error, not set up for lower boundary")
           }
-          return(nll)
         }
 
-        ##
+        coffcturb7 <- function(x, mu, sig, A, C, sigh=sigh[i]) {
+          k <- (mu - C) / sig
+          D <- (mu - A) / sig
+          alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+          beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+          gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
 
-        par_nll_mef7<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+          com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+          com2 <- gamma * exp(com1)
+          f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
 
-          eps=1e-4
-
-          nr<-length(x)
-          part<-vector("numeric",nr)
-
-          for (i in 1:nr){
-            del<-rep(0,nr)
-            del[i]<-eps
-            part[i]<-(nll_mef7((x+del),UpLo,BLMod)-nll_mef7((x),UpLo,BLMod))/eps
-          }
-
-          return(part)
+          f <- f * pnorm(C, mu, sig)
+          f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
         }
 
-        ##
+        nllmvn7 <- function(pars) {
+          mux <- pars[1]
+          muy <- pars[2]
+          sdx <- pars[3]
+          sdy <- pars[4]
+          rcorr <- pars[5]
 
-        jdensup7<-function(X,BLMod,a,b,c,d,e,sigh=sigh[i],mux,muy,sdx,sdy,rcorr){# joint density
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
 
-          x<-X[1]
-          y<-X[2]
-
-          rho<-tanh(rcorr)
-          cov<-rho*sdx*sdy
-          bet<-cov/(sdx*sdx)
-
-          fx<-dnorm(x,mux,sdx)
-
-          muyc<-muy+((x-mux)*bet)
-          sdyc<-sdy*sqrt(1-(rho*rho))
-
-          C<-BLMod(x,a,b,c,d,e)
-
-          fy_x<-coffcturb7(y,muyc,sdyc,-Inf,C,sigh)
-
-          fxy<-fy_x*fx
-          return(log(fxy))
+          Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+          lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+          -sum(lliks)
         }
 
 
-        ##
+        ## Optimization of the model------------------------------------------------------
 
-        coffcturb7<-function(x,mu,sig,A,C,sigh=sigh[i]){
+        mlest <- suppressWarnings(optim(theta, nll_mef7, uplo = UpLo, BLMod = BLMod,
+                                        method = optim.method, hessian = TRUE))
 
-          k<-((mu-C)/sig)
-          D<-((mu-A)/sig)
-          alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-          beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-          gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(D)-pnorm(k)))
+        scale <- suppressWarnings(1 / abs(grad(nll_mef7, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-          com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-          com2<-gamma*exp(com1)
-          f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
-
-          f<-f*pnorm(C,mu,sig)# re-scale for censored
-
-          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig))) # add contribution at x from mass at c
-
-          return(f)
-        }
-
-        ############ Optimization of the model ###############################
-
-        mlest<-suppressWarnings(optim(theta,nll_mef7,uplo=UpLo,BLMod=BLMod,
-                                      method=optim.method,
-                                      hessian="T"))
-
-        scale<-suppressWarnings(1/abs(par_nll_mef7(mlest$par,UpLo,BLMod)))
-
-        mlest2<-suppressWarnings(optim(mlest$par,nll_mef7,uplo=UpLo,BLMod=BLMod,
-                                       method=optim.method,
-                                       control = list(parscale = scale),
-                                       hessian="T"))
+        mlest2 <- suppressWarnings(optim(mlest$par, nll_mef7, uplo = UpLo, BLMod = BLMod,
+                                         method = optim.method, control = list(parscale = scale),
+                                         hessian = TRUE))
 
         likelihood[i]<-mlest2$value*-1
       }
@@ -1129,11 +859,11 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   }
 
- ################### Output preparation #################################################
+ ### Output preparation ##################################################################
 
   if(plot==TRUE){
     plot(sigh,likelihood, xlab="Measurement error standard deviation",
-       ylab="log-likelihood", main="Profile Likelihood", ...)}
+       ylab="log-likelihood", main="Profile Likelihood")}
 
  x<-list(likelihood=likelihood,Merror=sigh)
  x

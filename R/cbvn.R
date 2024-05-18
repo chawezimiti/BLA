@@ -169,7 +169,7 @@
 #' \item Chawezi Miti \email{chawezi.miti@@nottingham.ac.uk}
 #' \item Richard Murray Lark \email{murray.lark@@nottingham.ac.uk}
 #' }
-#' @import mvtnorm
+#' @import mvtnorm data.table numDeriv
 #' @export
 #'
 #' @rdname cbvn
@@ -186,21 +186,12 @@
 #' cbvn(vals,theta = guess, sigh = 0.4,model= "blm")
 #'
 cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",
-               Hessian=FALSE, plot=TRUE, line_smooth=100, lwd=2, l_col="red",...){
-
-  cat("Note: This function may take a few minutes to run for large datasets.\n\n")
+               Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...){
 
 
-  ########## Initial data preparations #############################################
+  ########## Initial data preparations ##################################################
 
-  data<-data.frame(x=vals[,1],y=vals[,2])
-
-  test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE)                  # Removing NA's
-
-  if(length(test)>0){
-    vals<-data[-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE),]}else{  # Removing NA's
-    vals<-data
-    }
+  vals <- na.omit(as.data.table(vals))
 
   sigh<-sigh # set value for the measurement error
   UpLo<-UpLo # set UpLo to "U" when fitting an upper boundary and "L" for a lower.
@@ -209,328 +200,159 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
   if(model=="lp"|model=="mit"|model=="logistic"|model=="inv-logistic"|model=="schmidt"|model=="qd"|model=="logisticND"){
 
-    v<-length(theta)
-    if(v>8) stop("theta has more than eight values")
-    if(v<8) stop("theta has less than eight values")
+    if (length(theta) != 8) stop("theta must have exactly eight values")
 
-    ## setting the functions for each model type
+    ## Define model functions-------------------------------------------------------------
 
-    if(model=="lp"){
-      lp<-function(x,beta0,beta1,beta2){
-        return(min(beta0,beta1+beta2*x))
+    model_funcs <- list(
+      lp = function(x, beta0, beta1, beta2) pmin(beta0, beta1 + beta2 * x),
+      mit = function(x, beta0, beta1, beta2) beta0 - beta1 * beta2^x,
+      logistic = function(x, beta0, beta1, beta2) beta0 / (1 + exp(beta2 * (beta1 - x))),
+      inv_logistic = function(x, beta0, beta1, beta2) beta0 - (beta0 / (1 + exp(beta2 * (beta1 - x)))),
+      logisticND = function(x, beta0, beta1, beta2) beta0 / (1 + beta1 * exp(-x * beta2)),
+      schmidt = function(x, beta0, beta1, beta2) beta0 - beta2 * (x - beta1)^2,
+      qd = function(x, beta0, beta1, beta2) beta1 + beta2 * x + beta0 * x^2
+    )
+
+    BLMod <- model_funcs[[model]]
+
+    ## Define likelihood functions--------------------------------------------------------
+
+    nll_mef <- function(pars, uplo, BLMod) {
+      beta0 <- pars[3]
+      beta1 <- pars[1]
+      beta2 <- pars[2]
+      mux <- pars[4]
+      muy <- pars[5]
+      sdx <- pars[6]
+      sdy <- pars[7]
+      rcorr <- pars[8]
+
+      if (uplo == "U") {
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
+        bet <- cov / (sdx^2)
+
+        fx <- dnorm(vals[, x], mux, sdx)
+        muyc <- muy + ((vals[, x] - mux) * bet)
+        sdyc <- sdy * sqrt(1 - rho^2)
+
+        c <- BLMod(vals[, x], beta0, beta1, beta2)
+        fy_x <- coffcturb(vals[, y], muyc, sdyc, -Inf, c, sigh)
+
+        fxy <- fy_x * fx
+        -sum(log(fxy))
+      } else {
+        stop("Error, not set up for lower boundary")
       }
-
-      BLMod<-lp
     }
 
+    coffcturb <- function(x, mu, sig, a, c, sigh) {
+      k <- (mu - c) / sig
+      d <- (mu - a) / sig
+      alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+      beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+      gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(d) - pnorm(k)))
 
-    if(model=="mit"){
-      mit<-function(x,beta0,beta1,beta2){
-        return(beta0-beta1*beta2^x)
-      }
+      com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+      com2 <- gamma * exp(com1)
+      f <- com2 * (pnorm((x - a - alpha) / beta) - pnorm((x - c - alpha) / beta))
 
-      BLMod<-mit
+      f <- f * pnorm(c, mu, sig)
+      f + (dnorm((x - c), 0, sigh) * (1 - pnorm(c, mu, sig)))
     }
 
-    if(model=="logistic"){
-      logistic<-function(x,beta0,beta1,beta2){
-        return(beta0/(1+exp(beta2*(beta1-x))))
-      }
+    nllmvn <- function(pars) {
+      mux <- pars[1]
+      muy <- pars[2]
+      sdx <- pars[3]
+      sdy <- pars[4]
+      rcorr <- pars[5]
 
-      BLMod<-logistic
+      rho <- tanh(rcorr)
+      cov <- rho * sdx * sdy
+
+      Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      -sum(lliks)
     }
 
+    ## Optimization of the model----------------------------------------------------------
 
-    if(model=="inv-logistic"){
-      inv_logistic<-function(x,beta0,beta1,beta2){
-        return(beta0-(beta0/(1+exp(beta2*(beta1-x)))))
-      }
+    mlest <- suppressWarnings(optim(theta, nll_mef, uplo = UpLo, BLMod = BLMod,
+                                    method = optim.method, hessian = TRUE))
 
-      BLMod<-inv_logistic
+    scale <- suppressWarnings(1 / abs(grad(nll_mef, mlest$par, uplo = UpLo, BLMod = BLMod)))
+
+    mlest2 <- suppressWarnings(optim(mlest$par, nll_mef, uplo = UpLo, BLMod = BLMod,
+                                     method = optim.method, control = list(parscale = scale),
+                                     hessian = TRUE))
+
+    AICbl <- (2 * 8) + (2 * mlest2$value)
+
+    ## Extract parameters of the boundary line--------------------------------------------
+
+    beta0 <- mlest2$par[3]
+    beta1 <- mlest2$par[1]
+    beta2 <- mlest2$par[2]
+
+    ## Plotting the data for visualization------------------------------------------------
+
+    if (plot) {
+      plot(vals, ...)
+      xdraw <- seq(min(vals$x), max(vals$x), length.out = line_smooth)
+      ydraw <- BLMod(xdraw, beta0, beta1, beta2)
+      lines(xdraw, ydraw, col = l_col, lwd = lwd)
     }
 
-    if(model=="logisticND"){
-      logisticND<-function(x,beta0,beta1,beta2){
-        return(beta0/(1+beta1*exp(-x*beta2)))
-      }
+    ## Determine standard error for parameters--------------------------------------------
 
-      BLMod<-logisticND
-    }
+    estimates <- cbind(
+      Estimate = mlest2$par,
+      `Standard error` = sqrt(diag(solve(mlest2$hessian)))
+    )
 
-    if(model=="schmidt"){
-      schmidt<-function(x,beta0,beta1,beta2){
-        return(beta0-beta2*(x-beta1)*(x-beta1))
-      }
+    rownames(estimates) = c("\u03B2\u2081", "\u03B2\u2082", "\u03B2\u2080", "mux", "muy", "sdx", "sdy", "rcorr")
 
-      BLMod<-schmidt
-    }
 
-    if(model=="qd"){
-      qd<-function(x,beta0,beta1,beta2){
-        return(beta1+beta2*x+beta0*x*x)
-      }
+    ## Fitting the null model and compute its AIC-----------------------------------------
 
-      BLMod<-qd
-    }
+    theta2 <- c(theta[4:8], 0)
+    mvnmlest <- suppressWarnings(optim(theta2, nllmvn, method = optim.method))
+    AImvn <- (2 * 5) + (2 * mvnmlest$value)
 
+    ## Output preparation-----------------------------------------------------------------
 
-    drawBL<-function(x,beta0,beta1,beta2,BLMod){
-      y<-sapply(x,BLMod,beta0=beta0,beta1=beta1,beta2=beta2)
-      return(y)
-    }
+    AikakeIC <- rbind(AImvn,AICbl)
+    rownames(AikakeIC)<-c("mvn", "BL")
+    colnames(AikakeIC)<-c("")
 
+    equations <- list(
+      lp = "y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080)",
+      mit = "y = \u03B2\u2081 + \u03B2\u2080(1-exp(-x/\u03B2\u2081))",
+      logistic = "y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082x)]",
+      inv_logistic = "y = \u03B2\u2080/(1+exp(\u03B2\u2082(\u03B2\u2081-x)))",
+      logisticND = "y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082*x)]",
+      schmidt = "y = \u03B2\u2080 - \u03B2\u2081 (1-\u03B2\u2082)\u00B2)",
+      qd = "y = \u03B2\u2081+\u03B2\u2082x+\u03B2\u2083x\u00B2"
+    )
+    Equation <- noquote(equations[[model]])
 
-    ###################### Setting the likelihood functions ##############################
-
-    nll_mef<-function(pars,uplo,BLMod){
-      beta0<-pars[3]
-      beta1<-pars[1]
-      beta2<-pars[2]
-      mux<-pars[4]
-      muy<-pars[5]
-      sdx<-pars[6]
-      sdy<-pars[7]
-      rcorr<-pars[8]
-
-      if(uplo=="U"){
-        nliks<-apply(vals,1,jdensup,BLMod=BLMod,
-                     beta0=beta0,beta1=beta1,beta2=beta2,sigh=sigh,mux=mux,muy=muy,
-                     sdx=sdx,sdy=sdy,rcorr=rcorr)
-        nll<--sum(nliks)
-      }else{
-        print("Error, not set up for lower boundary")
-        stop
-      }
-      return(nll)
-    }
-
-    ##
-
-    par_nll_mef<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-      eps=1e-4
-      nr<-length(x)
-      part<-vector("numeric",nr)
-
-      for (i in 1:nr){
-        del<-rep(0,nr)
-        del[i]<-eps
-        part[i]<-(nll_mef((x+del),UpLo,BLMod)-nll_mef((x),UpLo,BLMod))/eps
-      }
-
-      return(part)
-    }
-
-    ##
-
-    jdensup<-function(X,BLMod,beta0,beta1,beta2,sigh,mux,muy,sdx,sdy,rcorr){ # joint density
-      x<-X[1]
-      y<-X[2]
-
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-      bet<-cov/(sdx*sdx)
-
-      fx<-dnorm(x,mux,sdx)
-
-      muyc<-muy+((x-mux)*bet)
-      sdyc<-sdy*sqrt(1-(rho*rho))
-
-      c<-BLMod(x,beta0,beta1,beta2)
-
-      fy_x<-coffcturb(y,muyc,sdyc,-Inf,c,sigh)
-
-      fxy<-fy_x*fx
-      return(log(fxy))
-    }
-
-    ##
-
-    coffcturb<-function(x,mu,sig,a,c,sigh){
-      k<-((mu-c)/sig)
-      d<-((mu-a)/sig)
-      alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-      beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-      gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(d)-pnorm(k)))
-
-      com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-      com2<-gamma*exp(com1)
-      f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
-
-      # rescale for censored
-      f<-f*pnorm(c,mu,sig)
-
-      # add contribution at x from mass at c
-
-      f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))
-
-      return(f)
-    }
-
-    ##
-
-    nllmvn<-function(pars){ # multivariate normal
-      mux<-pars[1]
-      muy<-pars[2]
-      sdx<-pars[3]
-      sdy<-pars[4]
-      rcorr<-pars[5]
-
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-
-      Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
-      nllmvn<-0
-
-      lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
-      nllmvn<--sum(lliks)
-
-      return(nllmvn)
-    }
-
-    ##
-
-    nll_mef_maxyield<-function(pars){ # simple flat upper BL model
-
-      ymax<-pars[1]
-      mux<-pars[2]
-      muy<-pars[3]
-      sdx<-pars[4]
-      sdy<-pars[5]
-      rcorr<-pars[6]
-
-      nliks<-apply(vals,1,jdens_maxyield,ymax=ymax,
-                   sigh=sigh,mux=mux,muy=muy,
-                   sdx=sdx,sdy=sdy,rcorr=rcorr)
-
-      nll<--sum(nliks)
-
-      return(nll)
-    }
-
-
-    ##
-
-    jdens_maxyield<-function(X,ymax,sigh,mux,muy,sdx,sdy,rcorr){ # joint density
-
-      x<-X[1]
-      y<-X[2]
-
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-      bet<-cov/(sdx*sdx)
-
-      fx<-dnorm(x,mux,sdx)
-
-      muyc<-muy+((x-mux)*bet)
-      sdyc<-sdy*sqrt(1-(rho*rho))
-
-      c<-ymax
-
-      fy_x<-coffcturb(y,muyc,sdyc,-Inf,c,sigh)
-
-      fxy<-fy_x*fx
-      return(log(fxy))
-    }
-
-
-    ###################### Optimization of the model ###################################
-
-    mlest<-suppressWarnings(optim(theta,nll_mef,uplo=UpLo,BLMod=BLMod,
-                                  method=optim.method,
-                                  hessian="T"))
-
-    scale<-suppressWarnings(1/abs(par_nll_mef(mlest$par,UpLo,BLMod)))
-
-    mlest2<-suppressWarnings(optim(mlest$par,nll_mef,uplo=UpLo,BLMod=BLMod,
-                                   method=optim.method,
-                                   control = list(parscale = scale),
-                                   hessian="T"))
-
-    ## Determine AIC
-    AICbl<-(2*8)+(2*mlest2$value)
-
-
-    ## extract parameters of the boundary line
-    beta0<-mlest2$par[3]
-    beta1<-mlest2$par[1]
-    beta2<-mlest2$par[2]
-
-    ## Plotting the data for visualisation
-
-    if(plot==TRUE){ plot(vals,...)
-
-      x<-vals[,1]
-      y<-vals[,2]
-      xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
-      ydraw<-drawBL((xdraw),beta0,beta1,beta2,BLMod)
-      lines(xdraw,ydraw,col=l_col,lwd=lwd)
-    }
-
-    ## Determine standard error for parameters
-
-    hesmat<-mlest2$hessian
-    estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
-    estimates[,1]<-mlest2$par
-    estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
-
-    if(model=="qd"){rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u2083","mux","muy","sdx","sdy","rcorr")}else{
-
-      rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u2080","mux","muy","sdx","sdy","rcorr")
-    }
-
-    ## Fitting the null model, an unbounded multivariate normal, and compute its AIC.
-
-    theta2<-c(theta[c(4,5,6,7)],0)
-
-    mvnmlest<-suppressWarnings(optim( theta2,nllmvn, method=optim.method))
-
-    AImvn<-(2*5)+(2*mvnmlest$value) #
-
-
-    ## Fitting a model with a constant upper boundary
-
-    ymbest<-mlest2$par[3]+mlest2$par[2]
-    ymax_guess<-c(ymbest,mlest2$par[c(4,5,6,7,8)])
-
-    max_yield<-suppressWarnings(optim(c(ymax_guess),nll_mef_maxyield, method=optim.method))
-    AImax_yield<-(2*6)+(2*max_yield$value)
-
-
-    #### Output preparation ##############
-
-    AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
-    AikakeIC[,1]<-c(AImvn,AICbl)
-    rownames(AikakeIC)<-c("mvn","BL")
-
-
-    if(model=="lp"){ Equation<-noquote("y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080)")}
-    if(model=="mit"){Equation<-noquote("y = \u03B2\u2081 + \u03B2\u2080(1-exp(-x/\u03B2\u2081))")}
-    if(model=="logistic"){ Equation<-noquote("y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082x)]")}
-    if(model=="inv-logistic"){ Equation<-noquote("y = \u03B2\u2080/(1+exp(\u03B2\u2082(\u03B2\u2081-x)))")}
-    if(model=="logisticND"){ Equation<-noquote("y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082*x)]")}
-    if(model=="schmidt"){Equation<-noquote("y = \u03B2\u2080 - \u03B2\u2081 (1-\u03B2\u2082)\u00B2)")}
-    if(model=="qd"){Equation<-noquote("y = \u03B2\u2081+\u03B2\u2082x+\u03B2\u2083x\u00B2")}
-
-    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
-    class(result)<-"cm"
+    result <- list(Model = model, Equation = Equation, Parameters = estimates, AIC = AikakeIC, Hessian = mlest2$hessian)
+    class(result) <- "cm"
     return(result)
-
 
   }
 
-  ################### Fitting the two parameter linear model #######################################################
+  ########## Fitting the two parameter linear model ######################################
 
   if(model=="blm"){
 
-    v<-length(theta)
-    if(v>7) stop("theta has more than seven values")
-    if(v<7) stop("theta has less than seven values")
+    if (length(theta) != 7) stop("theta must have exactly seven values")
 
-    blm<-function(x,beta0,beta1){
-      return(beta0+beta1*x)
-    }
+    ## Define model functions-------------------------------------------------------------
 
-    BLMod <- blm
+    BLMod <- function(x,beta0,beta1) beta0+beta1*x
 
 
     drawBL2<-function(x,beta0,beta1,BLMod){
@@ -539,9 +361,9 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
     }
 
 
-    ###### Likelihood functions #####
+    ## Define likelihood functions--------------------------------------------------------
 
-    nll_mef2<-function(pars,uplo,BLMod){
+    nll_mef2 <- function(pars, uplo, BLMod) {
       beta0<-pars[1]
       beta1<-pars[2]
       mux<-pars[3]
@@ -550,131 +372,77 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
       sdy<-pars[6]
       rcorr<-pars[7]
 
-      if(uplo=="U"){
-        nliks<-apply(vals,1,jdensup2,BLMod=BLMod,
-                     beta0=beta0,beta1=beta1,sigh=sigh,mux=mux,muy=muy,
-                     sdx=sdx,sdy=sdy,rcorr=rcorr)
-        nll<--sum(nliks)
-      }else{
-        print("Error, not set up for lower boundary")
-        stop
+      if (uplo == "U") {
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
+        bet <- cov / (sdx^2)
+
+        fx <- dnorm(vals[, x], mux, sdx)
+        muyc <- muy + ((vals[, x] - mux) * bet)
+        sdyc <- sdy * sqrt(1 - rho^2)
+
+        c <- BLMod(vals[, x], beta0, beta1)
+        fy_x <- coffcturb2(vals[, y], muyc, sdyc, -Inf, c, sigh)
+
+        fxy <- fy_x * fx
+        -sum(log(fxy))
+      } else {
+        stop("Error, not set up for lower boundary")
       }
-      return(nll)
     }
 
-    ##
+    coffcturb2 <- function(x, mu, sig, a, c, sigh) {
+      k <- (mu - c) / sig
+      d <- (mu - a) / sig
+      alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+      beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+      gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(d) - pnorm(k)))
 
-    par_nll_mef2<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+      com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+      com2 <- gamma * exp(com1)
+      f <- com2 * (pnorm((x - a - alpha) / beta) - pnorm((x - c - alpha) / beta))
 
-      eps=1e-4
-
-      nr<-length(x)
-      part<-vector("numeric",nr)
-
-      for (i in 1:nr){
-        del<-rep(0,nr)
-        del[i]<-eps
-        part[i]<-(nll_mef2((x+del),UpLo,BLMod)-nll_mef2((x),UpLo,BLMod))/eps
-      }
-
-      return(part)
+      f <- f * pnorm(c, mu, sig)
+      f + (dnorm((x - c), 0, sigh) * (1 - pnorm(c, mu, sig)))
     }
 
-    ##
+    nllmvn2 <- function(pars) {
+      mux <- pars[1]
+      muy <- pars[2]
+      sdx <- pars[3]
+      sdy <- pars[4]
+      rcorr <- pars[5]
 
-    jdensup2<-function(X,BLMod,beta0,beta1,sigh,mux,muy,sdx,sdy,rcorr){ # joint density
+      rho <- tanh(rcorr)
+      cov <- rho * sdx * sdy
 
-      x<-X[1]
-      y<-X[2]
-
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-      bet<-cov/(sdx*sdx)
-
-      fx<-dnorm(x,mux,sdx)
-
-      muyc<-muy+((x-mux)*bet)
-      sdyc<-sdy*sqrt(1-(rho*rho))
-
-      c<-BLMod(x,beta0,beta1)
-
-      fy_x<-coffcturb(y,muyc,sdyc,-Inf,c,sigh)
-
-      fxy<-fy_x*fx
-      return(log(fxy))
-    }
-
-    ##
-
-    coffcturb<-function(x,mu,sig,a,c,sigh){
-
-      k<-((mu-c)/sig)
-      d<-((mu-a)/sig)
-      alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-      beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-      gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(d)-pnorm(k)))
-
-      com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-      com2<-gamma*exp(com1)
-      f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
-
-      # re-scale for censored
-
-      f<-f*pnorm(c,mu,sig)
-
-      # add contribution at x from mass at c
-
-      f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig)))
-
-      return(f)
-    }
-
-    ###
-
-    nllmvn<-function(pars){
-
-      mux<-pars[1]
-      muy<-pars[2]
-      sdx<-pars[3]
-      sdy<-pars[4]
-      rcorr<-pars[5]
-
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-
-      Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
-      nllmvn<-0
-
-      lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
-      nllmvn<--sum(lliks)
-
-      return(nllmvn)
+      Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      -sum(lliks)
     }
 
 
-    #### Optimization of the linear model ########################
+    ## Optimization of the model----------------------------------------------------------
 
-    mlest<-suppressWarnings(optim(theta,nll_mef2,uplo=UpLo,BLMod=BLMod,
-                                  method=optim.method,
-                                  hessian="T"))
+    mlest <- suppressWarnings(optim(theta, nll_mef2, uplo = UpLo, BLMod = BLMod,
+                                    method = optim.method, hessian = TRUE))
 
-    scale<-suppressWarnings(1/abs(par_nll_mef2(mlest$par,UpLo,BLMod)))
+    scale <- suppressWarnings(1 / abs(grad(nll_mef2, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-    mlest2<-suppressWarnings(optim(mlest$par,nll_mef2,uplo=UpLo,BLMod=BLMod,
-                                   method=optim.method,
-                                   control = list(parscale = scale),
-                                   hessian="T"))
+    mlest2 <- suppressWarnings(optim(mlest$par, nll_mef2, uplo = UpLo, BLMod = BLMod,
+                                     method = optim.method, control = list(parscale = scale),
+                                     hessian = TRUE))
 
-    ## Compute AIC value
+    ## Compute AIC value------------------------------------------------------------------
 
-    AICbl<-(2*8)+(2*mlest2$value)
+    AICbl<-(2*7)+(2*mlest2$value)
 
-    ## Extract parameters of the boundary line
+    ## Extract parameters of the boundary line-------------------------------------------
 
     beta0<-mlest2$par[1]
     beta1<-mlest2$par[2]
 
-    ## Plotting the data for viewing
+    ## Plotting the data for viewing------------------------------------------------------
 
     if(plot==TRUE){ plot(vals,...)
 
@@ -685,48 +453,46 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
       ydraw<-drawBL2((xdraw),beta0,beta1,BLMod)
       lines(xdraw,ydraw,col=l_col,lwd=lwd)}
 
-    ## Determine uncertainty of parameters
+    ## Determine standard error for parameters--------------------------------------------
 
-    hesmat<-mlest2$hessian
-    estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
-    estimates[,1]<-mlest2$par
-    estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
-    rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","mux","muy","sdx","sdy","rcorr")
+    estimates <- cbind(
+      Estimate = mlest2$par,
+      `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
+    )
 
-    ##  Fitting the null model, an unbounded multivariate normal, and compute its AIC
+    rownames(estimates) = c("\u03B2\u2081", "\u03B2\u2082", "mux", "muy", "sdx", "sdy", "rcorr")
+
+
+    ##  Fitting the null model, an unbounded multivariate normal, and compute its AIC-----
 
     theta2<-c(theta[c(3,4,5,6)],0)
-    mvnmlest<- suppressWarnings(optim( theta2,nllmvn, method=optim.method))
+    mvnmlest<- suppressWarnings(optim( theta2,nllmvn2, method=optim.method))
     AImvn<-(2*5)+(2*mvnmlest$value)
 
 
-    ## Output Preparation ##
+    ## Output Preparation-----------------------------------------------------------------
 
     AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
     AikakeIC[,1]<-c(AImvn,AICbl)
     rownames(AikakeIC)<-c("mvn","BL")
 
-    if(model=="blm"){ Equation<-noquote("y = \u03B2\u2081 + \u03B2\u2082x")}
+    Equation<-noquote("y = \u03B2\u2081 + \u03B2\u2082x")
 
-    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=mlest2$hessian)
     class(result)<-"cm"
     return(result)
   }
 
 
-  ######################### Fitting the five parameter trapezium model ###################
+  ########## Fitting the five parameter trapezium model ##################################
 
   if(model=="trapezium"){
 
-    v<-length(theta)
-    if(v>10) stop("theta has more than ten values")
-    if(v<10) stop("theta has less than tenvalues")
+    if (length(theta) != 10) stop("theta must have exactly ten values")
 
-    trapezium<-function(x,beta0,beta1,beta2,beta3,beta4){
-      return(min(beta0,beta1+beta2*x,beta3+beta4*x))
-    }
+    ## Define model functions------------------------------------------------------------
 
-    BLMod <- trapezium
+    BLMod <- function(x,beta0,beta1,beta2,beta3,beta4) pmin(beta0,beta1+beta2*x,beta3+beta4*x)
 
     drawBL3<-function(x,beta0,beta1,beta2,beta3,beta4,BLMod){
       y<-sapply(x,BLMod,beta0=beta0,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4)
@@ -734,10 +500,9 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
     }
 
 
-    ###################### Likelihood functions #########################################
+    ## Define likelihood functions--------------------------------------------------------
 
-    nll_mef3<-function(pars,uplo,BLMod){
-
+    nll_mef3 <- function(pars, uplo, BLMod) {
       beta0<-pars[3]
       beta1<-pars[1]
       beta2<-pars[2]
@@ -749,167 +514,71 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
       sdy<-pars[9]
       rcorr<-pars[10]
 
-      if(uplo=="U"){
-        nliks<-apply(vals,1,jdensup3,BLMod=BLMod,
-                     beta0=beta0,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4,sigh=sigh,mux=mux,muy=muy,
-                     sdx=sdx,sdy=sdy,rcorr=rcorr)
-        nll<--sum(nliks)
-      }else{
-        print("Error, not set up for lower boundary")
-        stop
+      if (uplo == "U") {
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
+        bet <- cov / (sdx^2)
+
+        fx <- dnorm(vals[, x], mux, sdx)
+        muyc <- muy + ((vals[, x] - mux) * bet)
+        sdyc <- sdy * sqrt(1 - rho^2)
+
+        c <- BLMod(vals[, x], beta0, beta1, beta2, beta3, beta4)
+        fy_x <- coffcturb3(vals[, y], muyc, sdyc, -Inf, c, sigh)
+
+        fxy <- fy_x * fx
+        -sum(log(fxy))
+      } else {
+        stop("Error, not set up for lower boundary")
       }
-      return(nll)
     }
 
-    ##
+    coffcturb3 <- function(x, mu, sig, a, c, sigh) {
+      k <- (mu - c) / sig
+      d <- (mu - a) / sig
+      alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+      beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+      gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(d) - pnorm(k)))
 
-    par_nll_mef3<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+      com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+      com2 <- gamma * exp(com1)
+      f <- com2 * (pnorm((x - a - alpha) / beta) - pnorm((x - c - alpha) / beta))
 
-      eps=1e-4
-
-      nr<-length(x)
-      part<-vector("numeric",nr)
-
-      for (i in 1:nr){
-        del<-rep(0,nr)
-        del[i]<-eps
-        part[i]<-(nll_mef3((x+del),UpLo,BLMod)-nll_mef3((x),UpLo,BLMod))/eps
-      }
-
-      return(part)
+      f <- f * pnorm(c, mu, sig)
+      f + (dnorm((x - c), 0, sigh) * (1 - pnorm(c, mu, sig)))
     }
 
-    ##
+    nllmvn3 <- function(pars) {
+      mux <- pars[1]
+      muy <- pars[2]
+      sdx <- pars[3]
+      sdy <- pars[4]
+      rcorr <- pars[5]
 
-    jdensup3<-function(X,BLMod,beta0,beta1,beta2,beta3,beta4,sigh,mux,muy,sdx,sdy,rcorr){ # joint density
+      rho <- tanh(rcorr)
+      cov <- rho * sdx * sdy
 
-      x<-X[1]
-      y<-X[2]
-
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-      bet<-cov/(sdx*sdx)
-
-      fx<-dnorm(x,mux,sdx)
-
-      muyc<-muy+((x-mux)*bet)
-      sdyc<-sdy*sqrt(1-(rho*rho))
-
-      c<-BLMod(x,beta0,beta1,beta2,beta3,beta4)
-
-      fy_x<-coffcturb3(y,muyc,sdyc,-Inf,c,sigh)
-
-      fxy<-fy_x*fx
-      return(log(fxy))
-    }
-
-    ##
-
-    coffcturb3<-function(x,mu,sig,a,c,sigh){
-
-      k<-((mu-c)/sig)
-      d<-((mu-a)/sig)
-      alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-      beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-      gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(d)-pnorm(k)))
-
-      com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-      com2<-gamma*exp(com1)
-      f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
-
-      f<-f*pnorm(c,mu,sig) # re-scale for censored
-
-      f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig))) #add contribution at x from mass at c
-
-      return(f)
-    }
-
-    ##
-
-    nllmvn3<-function(pars){
-
-      mux<-pars[1]
-      muy<-pars[2]
-      sdx<-pars[3]
-      sdy<-pars[4]
-      rcorr<-pars[5]
-
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-
-      Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
-      nllmvn<-0
-
-      lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
-      nllmvn<--sum(lliks)
-
-      return(nllmvn)
-    }
-
-    ##
-
-    nll_mef_maxyield3<-function(pars){ # Returns nll for simple flat upper BL model, parameter in pars.
-
-      ymax<-pars[1]
-      mux<-pars[2]
-      muy<-pars[3]
-      sdx<-pars[4]
-      sdy<-pars[5]
-      rcorr<-pars[6]
-
-      nliks<-apply(vals,1,jdens_maxyield3,ymax=ymax,
-                   sigh=sigh,mux=mux,muy=muy,
-                   sdx=sdx,sdy=sdy,rcorr=rcorr)
-
-      nll<--sum(nliks)
-
-      return(nll)
+      Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      -sum(lliks)
     }
 
 
-    ##
+    ## Optimization of the model---------------------------------------------------------
 
-    jdens_maxyield3<-function(X,ymax,sigh,mux,muy,sdx,sdy,rcorr){ # joint density
+    mlest <- suppressWarnings(optim(theta, nll_mef3, uplo = UpLo, BLMod = BLMod,
+                                    method = optim.method, hessian = TRUE))
 
-      x<-X[1]
-      y<-X[2]
+    scale <- suppressWarnings(1 / abs(grad(nll_mef3, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-      bet<-cov/(sdx*sdx)
+    mlest2 <- suppressWarnings(optim(mlest$par, nll_mef3, uplo = UpLo, BLMod = BLMod,
+                                     method = optim.method, control = list(parscale = scale),
+                                     hessian = TRUE))
+    ## Determine the AIC-----------------------------------------------------------------
 
-      fx<-dnorm(x,mux,sdx)
+    AICbl<-(2*10)+(2*mlest2$value)
 
-      muyc<-muy+((x-mux)*bet)
-      sdyc<-sdy*sqrt(1-(rho*rho))
-
-      c<-ymax
-
-      fy_x<-coffcturb3(y,muyc,sdyc,-Inf,c,sigh)
-
-      fxy<-fy_x*fx
-      return(log(fxy))
-    }
-
-
-    ############ Optimization of the model #################
-
-    mlest<-suppressWarnings(optim(theta,nll_mef3,uplo=UpLo,BLMod=BLMod,
-                                  method=optim.method,
-                                  hessian="T"))
-
-    scale<-suppressWarnings(1/abs(par_nll_mef3(mlest$par,UpLo,BLMod)))
-
-    mlest2<-suppressWarnings(optim(mlest$par,nll_mef3,uplo=UpLo,BLMod=BLMod,
-                                   method=optim.method,
-                                   control = list(parscale = scale),
-                                   hessian="T"))
-
-    ## Determine the AIC
-
-    AICbl<-(2*8)+(2*mlest2$value)
-
-    ## Extract parameters of the boundary line
+    ## Extract parameters of the boundary line-------------------------------------------
 
     beta0<-mlest2$par[3]
     beta1<-mlest2$par[1]
@@ -917,7 +586,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
     beta3<-mlest2$par[4]
     beta4<-mlest2$par[5]
 
-    ## Plotting the data for viewing
+    ## Plotting the data for viewing-----------------------------------------------------
 
     if(plot==TRUE){ plot(vals,...)
 
@@ -928,17 +597,15 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
       lines(xdraw,ydraw,col=l_col,lwd=lwd)
     }
 
-    ## Compute the standard error of parameters
+    ## Determine standard error for parameters--------------------------------------------
+    estimates <- cbind(
+      Estimate = mlest2$par,
+      `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
+    )
 
-    hesmat<-mlest2$hessian
-    estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
-    estimates[,1]<-mlest2$par
-
-    estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u2080","\u03B2\u2083","\u03B2\u2084","mux","muy","sdx","sdy","rcorr")
 
-
-    ## Fitting the null model, an unbounded multivariate normal, and compute its AIC
+    ## Fitting the null model, an unbounded multivariate normal, and compute its AIC------
 
     theta2<-c(theta[c(6,7,8,9)],0)
 
@@ -947,53 +614,40 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
     AImvn<-(2*5)+(2*mvnmlest$value)
 
 
-    ## Fitting a model with a constant upper boundary
-
-    ymbest<-mlest2$par[3]+mlest2$par[2]
-    ymax_guess<-c(ymbest,mlest2$par[c(6,7,8,9,10)])
-
-    max_yield<-suppressWarnings(optim(c(ymax_guess),nll_mef_maxyield3, method=optim.method))
-
-    AImax_yield<-(2*6)+(2*max_yield$value)#
-
-    #### Output preparation ##################################
+    ## Output preparation---------------------------------------------------------------
 
     AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
     AikakeIC[,1]<-c(AImvn,AICbl)
     rownames(AikakeIC)<-c("mvn","BL")
 
-    if(model=="trapezium"){ Equation<-noquote("y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080, \u03B2\u2083 + \u03B2\u2084x)")}
-    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+    Equation<-noquote("y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080, \u03B2\u2083 + \u03B2\u2084x)")
+    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=mlest2$hessian)
     class(result)<-"cm"
     return(result)
 
 
   }
 
-  ##################  Fitting the six parameter model ####################################
+  ########## Fitting the six parameter model #############################################
 
   if(model=="double-logistic"){
 
-    v<-length(theta)
-    if(v>11) stop("theta has more than eleven values")
-    if(v<11) stop("theta has less than eleven values")
+    if (length(theta) != 11) stop("theta must have exactly eleven values")
 
+    ## Define model functions-------------------------------------------------------------
 
-    double_logistic<-function(x,beta01,beta02,beta1,beta2,beta3,beta4){
-      return((beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x)))))
+    BLMod <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
+      (beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x))))
     }
-
-    BLMod <- double_logistic
 
     drawBL4<-function(x,beta01,beta02,beta1,beta2,beta3,beta4,BLMod){
       y<-sapply(x,BLMod,beta01=beta01,beta02=beta02,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4)
       return(y)
     }
 
-    ######## The likelihood functions ########################
+    ## Define likelihood functions-------------------------------------------------------
 
-    nll_mef4<-function(pars,uplo,BLMod){
-
+    nll_mef4 <- function(pars, uplo, BLMod) {
       beta1<-pars[1]
       beta2<-pars[2]
       beta01<-pars[3]
@@ -1006,167 +660,72 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
       sdy<-pars[10]
       rcorr<-pars[11]
 
-      if(uplo=="U"){
-        nliks<-apply(vals,1,jdensup4,BLMod=BLMod,
-                     beta01=beta01,beta02=beta02,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4,
-                     sigh=sigh,mux=mux,muy=muy,
-                     sdx=sdx,sdy=sdy,rcorr=rcorr)
-        nll<--sum(nliks)
-      }else{
-        print("Error, not set up for lower boundary")
-        stop
+      if (uplo == "U") {
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
+        bet <- cov / (sdx^2)
+
+        fx <- dnorm(vals[, x], mux, sdx)
+        muyc <- muy + ((vals[, x] - mux) * bet)
+        sdyc <- sdy * sqrt(1 - rho^2)
+
+        c <- BLMod(vals[, x], beta1, beta2, beta01, beta02, beta3, beta4)
+        fy_x <- coffcturb4(vals[, y], muyc, sdyc, -Inf, c, sigh)
+
+        fxy <- fy_x * fx
+        -sum(log(fxy))
+      } else {
+        stop("Error, not set up for lower boundary")
       }
-      return(nll)
     }
 
-    ##
+    coffcturb4 <- function(x, mu, sig, a, c, sigh) {
+      k <- (mu - c) / sig
+      d <- (mu - a) / sig
+      alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+      beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+      gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(d) - pnorm(k)))
 
-    par_nll_mef4<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
+      com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+      com2 <- gamma * exp(com1)
+      f <- com2 * (pnorm((x - a - alpha) / beta) - pnorm((x - c - alpha) / beta))
 
-      eps=1e-4
-
-      nr<-length(x)
-      part<-vector("numeric",nr)
-
-      for (i in 1:nr){
-        del<-rep(0,nr)
-        del[i]<-eps
-        part[i]<-(nll_mef4((x+del),UpLo,BLMod)-nll_mef4((x),UpLo,BLMod))/eps
-      }
-
-      return(part)
+      f <- f * pnorm(c, mu, sig)
+      f + (dnorm((x - c), 0, sigh) * (1 - pnorm(c, mu, sig)))
     }
 
-    ##
+    nllmvn4 <- function(pars) {
+      mux <- pars[1]
+      muy <- pars[2]
+      sdx <- pars[3]
+      sdy <- pars[4]
+      rcorr <- pars[5]
 
-    jdensup4<-function(X,BLMod,beta01,beta02,beta1,beta2,beta3,beta4,sigh,mux,muy,sdx,sdy,rcorr){# joint density
+      rho <- tanh(rcorr)
+      cov <- rho * sdx * sdy
 
-      x<-X[1]
-      y<-X[2]
-
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-      bet<-cov/(sdx*sdx)
-
-      fx<-dnorm(x,mux,sdx)
-
-      muyc<-muy+((x-mux)*bet)
-      sdyc<-sdy*sqrt(1-(rho*rho))
-
-      c<-BLMod(x,beta01,beta02,beta1,beta2,beta3,beta4)
-
-      fy_x<-coffcturb4(y,muyc,sdyc,-Inf,c,sigh)
-
-      fxy<-fy_x*fx
-      return(log(fxy))
-    }
-
-    ##
-
-    coffcturb4<-function(x,mu,sig,a,c,sigh){
-
-      k<-((mu-c)/sig)
-      d<-((mu-a)/sig)
-      alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-      beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-      gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(d)-pnorm(k)))
-
-      com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-      com2<-gamma*exp(com1)
-      f<-com2*(pnorm((x-a-alpha)/beta)-pnorm((x-c-alpha)/beta))
-
-      f<-f*pnorm(c,mu,sig) #re-scale for censored
-
-      f<-f+(dnorm((x-c),0,sigh)*(1-pnorm(c,mu,sig))) #add contribution at x from mass at c
-
-      return(f)
-    }
-
-    ##
-
-    nllmvn4<-function(pars){
-
-      mux<-pars[1]
-      muy<-pars[2]
-      sdx<-pars[3]
-      sdy<-pars[4]
-      rcorr<-pars[5]
-
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-
-      Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
-      nllmvn<-0
-
-      lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
-      nllmvn<--sum(lliks)
-
-      return(nllmvn)
-    }
-
-    ##
-
-    nll_mef_maxyield4<-function(pars){
-
-      ymax<-pars[1]
-      mux<-pars[2]
-      muy<-pars[3]
-      sdx<-pars[4]
-      sdy<-pars[5]
-      rcorr<-pars[6]
-
-      nliks<-apply(vals,1,jdens_maxyield4,ymax=ymax,
-                   sigh=sigh,mux=mux,muy=muy,
-                   sdx=sdx,sdy=sdy,rcorr=rcorr)
-
-      nll<--sum(nliks)
-
-      return(nll)
+      Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      -sum(lliks)
     }
 
 
-    ##
+    ## Optimization of the model----------------------------------------------------------
 
-    jdens_maxyield4<-function(X,ymax,sigh,mux,muy,sdx,sdy,rcorr){# joint density
+    mlest <- suppressWarnings(optim(theta, nll_mef4, uplo = UpLo, BLMod = BLMod,
+                                    method = optim.method, hessian = TRUE))
 
-      x<-X[1]
-      y<-X[2]
+    scale <- suppressWarnings(1 / abs(grad(nll_mef4, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-      rho<-tanh(rcorr)
-      cov<-rho*sdx*sdy
-      bet<-cov/(sdx*sdx)
+    mlest2 <- suppressWarnings(optim(mlest$par, nll_mef4, uplo = UpLo, BLMod = BLMod,
+                                     method = optim.method, control = list(parscale = scale),
+                                     hessian = TRUE))
 
-      fx<-dnorm(x,mux,sdx)
+    ## Compute the Akaike Information Criterion for the fitted model----------------------
 
-      muyc<-muy+((x-mux)*bet)
-      sdyc<-sdy*sqrt(1-(rho*rho))
+    AICbl<-(2*11)+(2*mlest2$value)
 
-      c<-ymax
-
-      fy_x<-coffcturb4(y,muyc,sdyc,-Inf,c,sigh)
-
-      fxy<-fy_x*fx
-      return(log(fxy))
-    }
-
-    ############ Optimization of the model ###############
-
-    mlest<-suppressWarnings(optim(theta,nll_mef4,uplo=UpLo,BLMod=BLMod,
-                                  method=optim.method,
-                                  hessian="T"))
-
-    scale<-suppressWarnings(1/abs(par_nll_mef4(mlest$par,UpLo,BLMod)))
-
-    mlest2<-suppressWarnings(optim(mlest$par,nll_mef4,uplo=UpLo,BLMod=BLMod,
-                                   method=optim.method,
-                                   control = list(parscale = scale),
-                                   hessian="T"))
-
-    ## Compute the Akaike Information Criterion for the fitted model
-
-    AICbl<-(2*8)+(2*mlest2$value)
-
-    ## Extract parameters of the boundary line
+    ## Extract parameters of the boundary line--------------------------------------------
 
     beta1<-mlest2$par[1]
     beta2<-mlest2$par[2]
@@ -1175,637 +734,475 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
     beta3<-mlest2$par[5]
     beta4<-mlest2$par[6]
 
-    ## Plotting the data for viewing
+    ## Plotting the data for viewing------------------------------------------------------
 
     if(plot==TRUE){ plot(vals,...)
-        x<-vals[,1]
-        y<-vals[,2]
-        xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
-        ydraw<-drawBL4((xdraw),beta01,beta02,beta1,beta2,beta3,beta4,BLMod)
-        lines(xdraw,ydraw,col=l_col,lwd=lwd)
+      x<-vals[,1]
+      y<-vals[,2]
+      xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
+      ydraw<-drawBL4((xdraw),beta01,beta02,beta1,beta2,beta3,beta4,BLMod)
+      lines(xdraw,ydraw,col=l_col,lwd=lwd)
     }
 
-    ## Compute the standard error of the parameters
+    # Determine standard error for parameters---------------------------------------------
 
-    hesmat<-mlest2$hessian
-    estimates<-matrix(NA,length(theta),2,dimnames=list(c(),c("Estimate","Standard error")))
-    estimates[,1]<-mlest2$par
-    estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
+    estimates <- cbind(
+      Estimate = mlest2$par,
+      `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
+    )
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u20801","\u03B2\u20802","\u03B2\u2083","\u03B2\u2084","mux","muy","sdx","sdy","rcorr")
 
 
-    ## fitting the null model, an unbounded multivariate normal, and compute its AIC
+    ## fitting the null model, an unbounded multivariate normal, and compute its AIC-----
 
     theta2<-c(theta[c(7,8,9,10)],0)
     mvnmlest<-suppressWarnings(optim( theta2,nllmvn4, method=optim.method))
     AImvn<-(2*5)+(2*mvnmlest$value)
 
 
-    ## fitting a model with a constant upper boundary
-
-    ymbest<-mlest2$par[3]+mlest2$par[1]
-    ymax_guess<-c(ymbest,mlest2$par[c(7,8,9,10,11)])
-    max_yield<-suppressWarnings(optim(c(ymax_guess),nll_mef_maxyield4,method=optim.method))
-    AImax_yield<-(2*6)+(2*max_yield$value)
-
-    ## Output preparation #######################
+    ## Output preparation ----------------------------------------------------------------
 
     AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
     AikakeIC[,1]<-c(AImvn,AICbl)
     rownames(AikakeIC)<-c("mvn","BL")
 
+    Equation<-noquote("y = {\u03B2\u20801/1+[exp(\u03B2\u2082*(\u03B2\u2081-x))]} - {\u03B2\u20801/1+[exp(\u03B2\u2084*(\u03B2\u2083-x))]} ")
 
-    if(model=="BL_double_logistic"){
-      Equation<-noquote("y = {\u03B2\u20801/1+[exp(\u03B2\u2082*(\u03B2\u2081-x))]} - {\u03B2\u20801/1+[exp(\u03B2\u2084*(\u03B2\u2083-x))]} ")}
-
-    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=hesmat)
+    result<-list(Model=model,Equation=Equation, Parameters=estimates,AIC=AikakeIC, Hessian=mlest2$hessian)
     class(result)<-"cm"
     return(result)
 
 
   }
 
-  ######### CUSTOM MODELS ####################
+  ########## CUSTOM MODELS ###############################################################
 
   if(model=="other"){
 
-      v<-length(theta)
-      if(v>10) stop("Not set up for models with more than 5 parametrs. The argument theta should contain less than 10 values")
-      Equation<-equation # to print equation in output
-      theta<-unname(theta) # removes names from theta
+    v<-length(theta)
+    if(length(theta)>10) stop("Not set up for models with more than 5 parametrs. The argument theta should contain less than 10 values")
+    Equation<-equation # to print equation in output
+    theta<-unname(theta) # removes names from theta
 
-  ### The three parameter models ###########
+    ### The three parameter models ######################################################
 
-      if(v==8){
+    if(v==8){
 
-        BLMod <- equation
+      BLMod <- equation
 
-        drawBL5 <- function(x,a,b,c,BLMod){
-          y<-sapply(x,BLMod,a=a,b=b,c=c)
-          return(y)
+      drawBL5 <- function(x,a,b,c,BLMod){
+        y<-sapply(x,BLMod,a=a,b=b,c=c)
+        return(y)
+      }
+
+      ## Define likelihood functions------------------------------------------------------
+
+      nll_mef5 <- function(pars, uplo, BLMod) {
+        a<-pars[1]
+        b<-pars[2]
+        c<-pars[3]
+        mux<-pars[4]
+        muy<-pars[5]
+        sdx<-pars[6]
+        sdy<-pars[7]
+        rcorr<-pars[8]
+
+        if (uplo == "U") {
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
+          bet <- cov / (sdx^2)
+
+          fx <- dnorm(vals[, x], mux, sdx)
+          muyc <- muy + ((vals[, x] - mux) * bet)
+          sdyc <- sdy * sqrt(1 - rho^2)
+
+          C <- BLMod(vals[, x], a,b,c)
+          fy_x <- coffcturb5(vals[, y], muyc, sdyc, -Inf, C, sigh)
+
+          fxy <- fy_x * fx
+          -sum(log(fxy))
+        } else {
+          stop("Error, not set up for lower boundary")
         }
+      }
 
-        ###################### Likelihood functions #########################
+      coffcturb5 <- function(x, mu, sig, A, C, sigh) {
+        k <- (mu - C) / sig
+        D <- (mu - A) / sig
+        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
 
-        nll_mef5<-function(pars,uplo,BLMod){
+        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+        com2 <- gamma * exp(com1)
+        f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
 
-          a<-pars[1]
-          b<-pars[2]
-          c<-pars[3]
-          mux<-pars[4]
-          muy<-pars[5]
-          sdx<-pars[6]
-          sdy<-pars[7]
-          rcorr<-pars[8]
+        f <- f * pnorm(C, mu, sig)
+        f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
+      }
 
-          if(uplo=="U"){
-            nliks<-apply(vals,1,jdensup5,BLMod=BLMod,
-                         a=a,b=b,c=c,sigh=sigh,mux=mux,muy=muy,
-                         sdx=sdx,sdy=sdy,rcorr=rcorr)
-            nll<--sum(nliks)
-          }else{
-            print("Error, not set up for lower boundary")
-            stop
-          }
-          return(nll)
-        }
+      nllmvn5 <- function(pars) {
+        mux <- pars[1]
+        muy <- pars[2]
+        sdx <- pars[3]
+        sdy <- pars[4]
+        rcorr <- pars[5]
 
-        ##
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
 
-        par_nll_mef5<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-
-          eps=1e-4
-
-          nr<-length(x)
-          part<-vector("numeric",nr)
-
-          for (i in 1:nr){
-            del<-rep(0,nr)
-            del[i]<-eps
-            part[i]<-(nll_mef5((x+del),UpLo,BLMod)-nll_mef5((x),UpLo,BLMod))/eps
-          }
-
-          return(part)
-        }
-
-        ##
-
-        jdensup5<-function(X,BLMod,a,b,c,sigh,mux,muy,sdx,sdy,rcorr){# joint density
-
-          x<-X[1]
-          y<-X[2]
-
-          rho<-tanh(rcorr)
-          cov<-rho*sdx*sdy
-          bet<-cov/(sdx*sdx)
-
-          fx<-dnorm(x,mux,sdx)
-
-          muyc<-muy+((x-mux)*bet)
-          sdyc<-sdy*sqrt(1-(rho*rho))
-
-          C<-BLMod(x,a,b,c)
-
-          fy_x<-coffcturb5(y,muyc,sdyc,-Inf,C,sigh)
-
-          fxy<-fy_x*fx
-          return(log(fxy))
-        }
-
-        ##
-
-        coffcturb5<-function(x,mu,sig,A,C,sigh){
-
-          k<-((mu-C)/sig)
-          D<-((mu-A)/sig)
-          alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-          beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-          gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(D)-pnorm(k)))
-
-          com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-          com2<-gamma*exp(com1)
-          f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
-
-          f<-f*pnorm(C,mu,sig) # re-scale for censored
-
-          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig)))# add contribution at x from mass at c
-
-          return(f)
-        }
-
-        ##
-
-        nllmvn5<-function(pars){
-
-          mux<-pars[1]
-          muy<-pars[2]
-          sdx<-pars[3]
-          sdy<-pars[4]
-          rcorr<-pars[5]
-
-          rho<-tanh(rcorr)
-          cov<-rho*sdx*sdy
-
-          Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
-          nllmvn<-0
-
-          lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
-          nllmvn<--sum(lliks)
-
-          return(nllmvn)
-        }
-
-        ############ Optimization of the model ###############################
-
-        mlest<-suppressWarnings(optim(theta,nll_mef5,uplo=UpLo,BLMod=BLMod,
-                                      method=optim.method,
-                                      hessian="T"))
-
-        scale<-suppressWarnings(1/abs(par_nll_mef5(mlest$par,UpLo,BLMod)))
-
-        mlest2<-suppressWarnings(optim(mlest$par,nll_mef5,uplo=UpLo,BLMod=BLMod,
-                                       method=optim.method,
-                                       control = list(parscale = scale),
-                                       hessian="T"))
-
-        ## Compute the Akaike Information Criterion for the fitted model
-
-        AICbl<-(2*8)+(2*mlest2$value)
-
-        ## Extract parameters of the boundary line
-
-        a<-mlest2$par[1]
-        b<-mlest2$par[2]
-        c<-mlest2$par[3]
-
-
-        ## Plotting the data for viewing
-
-        if(plot==TRUE){ plot(vals,...)
-            x<-vals[,1]
-            y<-vals[,2]
-            xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
-            ydraw<-drawBL5((xdraw),a,b,c,BLMod)
-            lines(xdraw,ydraw,col=l_col,lwd=lwd)
-        }
-
-        ## Compute the standard error of the parameters
-
-        hesmat<-mlest2$hessian
-        estimates<-matrix(NA,length(theta)-5,2,dimnames=list(c(),c("Estimate","Standard error")))
-        estimates[,1]<-mlest2$par[1:3]
-        estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:3]
-        rownames(estimates)<-c("a","b","c")
-
-        distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
-        distribution[,1]<-mlest2$par[4:8]
-        distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[4:8]
-        rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
-        ## Fitting the null model, an unbounded multivariate normal, and compute its AIC
-
-        theta2<-c(theta[c(4,5,6,7)],0)
-        mvnmlest<-suppressWarnings(optim( theta2,nllmvn5, method=optim.method))
-        AImvn<-(2*5)+(2*mvnmlest$value) #
-
-        ######## Output preparation ##################################
-
-        AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
-        AikakeIC[,1]<-c(AImvn,AICbl)
-        rownames(AikakeIC)<-c("mvn","BL")
-
-        result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution=distribution, Hessian=hesmat)
-        class(result)<-"cm"
-        return(result)
-
+        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        -sum(lliks)
       }
 
 
-      #### Fitting the four parameter model #########################
+      ## Optimization of the model--------------------------------------------------------
 
-      if(v==9){
+      mlest <- suppressWarnings(optim(theta, nll_mef5, uplo = UpLo, BLMod = BLMod,
+                                      method = optim.method, hessian = TRUE))
 
-        BLMod <- equation
+      scale <- suppressWarnings(1 / abs(grad(nll_mef5, mlest$par, uplo = UpLo, BLMod = BLMod)))
 
-        drawBL6 <- function(x,a,b,c,d,BLMod){
-          y<-sapply(x,BLMod,a=a,b=b,c=c,d=d)
-          return(y)
-        }
+      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef5, uplo = UpLo, BLMod = BLMod,
+                                       method = optim.method, control = list(parscale = scale),
+                                       hessian = TRUE))
 
-        ### Likelihood functions ###
+      ## Compute the Akaike Information Criterion for the fitted model--------------------
 
-        nll_mef6<-function(pars,uplo,BLMod){
+      AICbl<-(2*8)+(2*mlest2$value)
 
-          a<-pars[1]
-          b<-pars[2]
-          c<-pars[3]
-          d<-pars[4]
-          mux<-pars[5]
-          muy<-pars[6]
-          sdx<-pars[7]
-          sdy<-pars[8]
-          rcorr<-pars[9]
+      ## Extract parameters of the boundary line------------------------------------------
 
-          if(uplo=="U"){
-            nliks<-apply(vals,1,jdensup6,BLMod=BLMod,
-                         a=a,b=b,c=c,d=d,sigh=sigh,mux=mux,muy=muy,
-                         sdx=sdx,sdy=sdy,rcorr=rcorr)
-            nll<--sum(nliks)
-          }else{
-            print("Error, not set up for lower boundary")
-            stop
-          }
-          return(nll)
-        }
-
-        ##
-
-        par_nll_mef6<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-
-          eps=1e-4
-          nr<-length(x)
-          part<-vector("numeric",nr)
-
-          for (i in 1:nr){
-            del<-rep(0,nr)
-            del[i]<-eps
-            part[i]<-(nll_mef6((x+del),UpLo,BLMod)-nll_mef6((x),UpLo,BLMod))/eps
-          }
-
-          return(part)
-        }
-
-        ##
-
-        jdensup6<-function(X,BLMod,a,b,c,d,sigh,mux,muy,sdx,sdy,rcorr){# joint density
-
-          x<-X[1]
-          y<-X[2]
-
-          rho<-tanh(rcorr)
-          cov<-rho*sdx*sdy
-          bet<-cov/(sdx*sdx)
-
-          fx<-dnorm(x,mux,sdx)
-
-          muyc<-muy+((x-mux)*bet)
-          sdyc<-sdy*sqrt(1-(rho*rho))
-
-          C<-BLMod(x,a,b,c,d)
-
-          fy_x<-coffcturb6(y,muyc,sdyc,-Inf,C,sigh)
-
-          fxy<-fy_x*fx
-          return(log(fxy))
-        }
-
-        ##
-
-        coffcturb6<-function(x,mu,sig,A,C,sigh){
-
-          k<-((mu-C)/sig)
-          D<-((mu-A)/sig)
-          alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-          beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-          gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(D)-pnorm(k)))
-
-          com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-          com2<-gamma*exp(com1)
-          f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
+      a<-mlest2$par[1]
+      b<-mlest2$par[2]
+      c<-mlest2$par[3]
 
 
-          f<-f*pnorm(C,mu,sig) # re-scale for censored
+      ## Plotting the data for viewing----------------------------------------------------
 
-          f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig))) # add contribution at x from mass at c
-
-          return(f)
-        }
-
-        ##
-
-        nllmvn6<-function(pars){
-
-          mux<-pars[1]
-          muy<-pars[2]
-          sdx<-pars[3]
-          sdy<-pars[4]
-          rcorr<-pars[5]
-
-          rho<-tanh(rcorr)
-          cov<-rho*sdx*sdy
-
-          Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
-          nllmvn<-0
-
-          lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
-          nllmvn<--sum(lliks)
-
-          return(nllmvn)
-        }
-
-
-        ############ Optimization of the model #######################
-
-        mlest<-suppressWarnings(optim(theta,nll_mef6,uplo=UpLo,BLMod=BLMod,
-                                      method=optim.method,
-                                      hessian="T"))
-
-        scale<-suppressWarnings(1/abs(par_nll_mef6(mlest$par,UpLo,BLMod)))
-
-        mlest2<-suppressWarnings(optim(mlest$par,nll_mef6,uplo=UpLo,BLMod=BLMod,
-                                       method=optim.method,
-                                       control = list(parscale = scale),
-                                       hessian="T"))
-
-        ## Compute the Akaike Information Criterion for the fitted model
-
-        AICbl<-(2*8)+(2*mlest2$value)
-
-        ## Extract parameters of the boundary line
-
-        a<-mlest2$par[1]
-        b<-mlest2$par[2]
-        c<-mlest2$par[3]
-        d<-mlest2$par[4]
-
-
-        ## Plotting the data for viewing
-
-        if(plot==TRUE){ plot(vals,...)
-          x<-vals[,1]
-          y<-vals[,2]
-          xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
-          ydraw<-drawBL6((xdraw),a,b,c,d,BLMod)
-          lines(xdraw,ydraw,col=l_col,lwd=lwd)
-        }
-
-        ## Compute the standard error of the parameters
-
-        hesmat<-mlest2$hessian
-        estimates<-matrix(NA,length(theta)-5,2,dimnames=list(c(),c("Estimate","Standard error")))
-        estimates[,1]<-mlest2$par[1:4]
-        estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:4]
-        rownames(estimates)<-c("a","b","c","d")
-
-        distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
-        distribution[,1]<-mlest2$par[5:9]
-        distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[5:9]
-        rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
-
-        ## Fitting the null model, an unbounded multivariate normal, and compute its AIC
-
-        theta2<-c(theta[c(4,5,6,7)],0)
-        mvnmlest<-suppressWarnings(optim( theta2,nllmvn6, method=optim.method))
-        AImvn<-(2*5)+(2*mvnmlest$value)
-
-
-        ################### Output preparation #############
-
-        AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
-        AikakeIC[,1]<-c(AImvn,AICbl)
-        rownames(AikakeIC)<-c("mvn","BL")
-        result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution= distribution, Hessian=hesmat)
-        class(result)<-"cm"
-        return(result)
-
+      if(plot==TRUE){ plot(vals,...)
+        x<-vals[,1]
+        y<-vals[,2]
+        xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
+        ydraw<-drawBL5((xdraw),a,b,c,BLMod)
+        lines(xdraw,ydraw,col=l_col,lwd=lwd)
       }
 
-      #### Fitting the five parameter model ##############################################
+      ## Determine standard error for parameters------------------------------------------
 
-      if(v==10){
+      estimates <- cbind(
+        Estimate = mlest2$par[1:3],
+        `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:3]
+      )
+      rownames(estimates)<-c("a","b","c")
 
-          BLMod <- equation
-          drawBL7<-function(x,a,b,c,d,e,BLMod){
-            y<-sapply(x,BLMod,a=a,b=b,c=c,d=d,e=e)
-            return(y)
-          }
+      distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
+      distribution[,1]<-mlest2$par[4:8]
+      distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[4:8]
+      rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
 
+      ## Fitting the null model, an unbounded multivariate normal, and compute its AIC---
 
-          ############### Likelihood functions #########################
+      theta2<-c(theta[c(4,5,6,7)],0)
+      mvnmlest<-suppressWarnings(optim( theta2,nllmvn5, method=optim.method))
+      AImvn<-(2*5)+(2*mvnmlest$value) #
 
-          nll_mef7<-function(pars,uplo,BLMod){
+      ## Output preparation --------------------------------------------------------------
 
-            a<-pars[1]
-            b<-pars[2]
-            c<-pars[3]
-            d<-pars[4]
-            e<-pars[5]
-            mux<-pars[6]
-            muy<-pars[7]
-            sdx<-pars[8]
-            sdy<-pars[9]
-            rcorr<-pars[10]
+      AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
+      AikakeIC[,1]<-c(AImvn,AICbl)
+      rownames(AikakeIC)<-c("mvn","BL")
 
-            if(uplo=="U"){
-              nliks<-apply(vals,1,jdensup7,BLMod=BLMod,
-                           a=a,b=b,c=c,d=d,e=e,sigh=sigh,mux=mux,muy=muy,
-                           sdx=sdx,sdy=sdy,rcorr=rcorr)
-              nll<--sum(nliks)
-            }else{
-              print("Error, not set up for lower boundary")
-              stop
-            }
-            return(nll)
-          }
+      result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution=distribution, Hessian=mlest2$hessian)
+      class(result)<-"cm"
+      return(result)
 
-          ##
-
-          par_nll_mef7<-function(x,UpLo,BLMod){# rough partial derivative at x of nll
-
-            eps=1e-4
-
-            nr<-length(x)
-            part<-vector("numeric",nr)
-
-            for (i in 1:nr){
-              del<-rep(0,nr)
-              del[i]<-eps
-              part[i]<-(nll_mef7((x+del),UpLo,BLMod)-nll_mef7((x),UpLo,BLMod))/eps
-            }
-
-            return(part)
-          }
-
-          ##
-
-          jdensup7<-function(X,BLMod,a,b,c,d,e,sigh,mux,muy,sdx,sdy,rcorr){# joint density
-
-            x<-X[1]
-            y<-X[2]
-
-            rho<-tanh(rcorr)
-            cov<-rho*sdx*sdy
-            bet<-cov/(sdx*sdx)
-
-            fx<-dnorm(x,mux,sdx)
-
-            muyc<-muy+((x-mux)*bet)
-            sdyc<-sdy*sqrt(1-(rho*rho))
-
-            C<-BLMod(x,a,b,c,d,e)
-
-            fy_x<-coffcturb7(y,muyc,sdyc,-Inf,C,sigh)
-
-            fxy<-fy_x*fx
-            return(log(fxy))
-          }
-
-          ##
-
-          coffcturb7<-function(x,mu,sig,A,C,sigh){
-
-            k<-((mu-C)/sig)
-            D<-((mu-A)/sig)
-            alpha<-((sigh*sigh)*(x-mu))/((sigh*sigh)+(sig*sig))
-            beta<-sqrt((sigh*sigh*sig*sig)/((sigh*sigh)+(sig*sig)))
-            gamma<-(beta*sqrt(2*pi))/(2*pi*sig*sigh*(pnorm(D)-pnorm(k)))
-
-            com1<--((x-mu)^2)/(2*((sigh*sigh)+(sig*sig)))
-            com2<-gamma*exp(com1)
-            f<-com2*(pnorm((x-A-alpha)/beta)-pnorm((x-C-alpha)/beta))
-
-            f<-f*pnorm(C,mu,sig)# re-scale for censored
-
-            f<-f+(dnorm((x-C),0,sigh)*(1-pnorm(C,mu,sig))) # add contribution at x from mass at c
-
-            return(f)
-          }
-
-          ##
-
-          nllmvn7<-function(pars){
-
-            mux<-pars[1]
-            muy<-pars[2]
-            sdx<-pars[3]
-            sdy<-pars[4]
-            rcorr<-pars[5]
-
-            rho<-tanh(rcorr)
-            cov<-rho*sdx*sdy
-
-            Sigma<-matrix(c((sdx*sdx),cov,cov,(sdy*sdy)),2,2)
-            nllmvn<-0
-
-            lliks<-dmvnorm(vals, mean = c(mux,muy), sigma = Sigma, log = TRUE)
-            nllmvn<--sum(lliks)
-
-            return(nllmvn)
-          }
+    }
 
 
-          ############ Optimization of the model ###############################
+    #### Fitting the four parameter model ###############################################
 
-          mlest<-suppressWarnings(optim(theta,nll_mef7,uplo=UpLo,BLMod=BLMod,
-                                        method=optim.method,
-                                        hessian="T"))
+    if(v==9){
 
-          scale<-suppressWarnings(1/abs(par_nll_mef7(mlest$par,UpLo,BLMod)))
+      BLMod <- equation
 
-          mlest2<-suppressWarnings(optim(mlest$par,nll_mef7,uplo=UpLo,BLMod=BLMod,
-                                         method=optim.method,
-                                         control = list(parscale = scale),
-                                         hessian="T"))
-
-          ## Compute the Akaike Information Criterion for the fitted model
-
-          AICbl<-(2*8)+(2*mlest2$value)
-
-          ## Extract parameters of the boundary line
-
-          a<-mlest2$par[1]
-          b<-mlest2$par[2]
-          c<-mlest2$par[3]
-          d<-mlest2$par[4]
-          e<-mlest2$par[5]
-
-          ## Plotting the data for viewing
-
-          if(plot==TRUE){ plot(vals,...)
-
-            x<-vals[,1]
-            y<-vals[,2]
-            xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
-            ydraw<-drawBL7((xdraw),a,b,c,d,e,BLMod)
-            lines(xdraw,ydraw,col=l_col,lwd=lwd)
-          }
-
-          ## Compute the standard error of the parameters
-
-          hesmat<-mlest2$hessian
-          estimates<-matrix(NA,length(theta)-5,2,dimnames=list(c(),c("Estimate","Standard error")))
-          estimates[,1]<-mlest2$par[1:5]
-          estimates[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:5]
-          rownames(estimates)<-c("a","b","c","d","e")
-
-          distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
-          distribution[,1]<-mlest2$par[6:10]
-          distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[6:10]
-          rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
-
-
-          ## Fitting the null model, an unbounded multivariate normal, and compute its AIC
-
-          theta2<-c(theta[c(6,7,8,9)],0)
-
-          mvnmlest<-suppressWarnings(optim( theta2,nllmvn7,method=optim.method))
-
-          AImvn<-(2*5)+(2*mvnmlest$value)
-
-
-          ##### Preparing the output #####################
-
-          AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
-          AikakeIC[,1]<-c(AImvn,AICbl)
-          rownames(AikakeIC)<-c("mvn","BL")
-
-          result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution=distribution, Hessian=hesmat)
-          class(result)<-"cm"
-          return(result)
-
-
+      drawBL6 <- function(x,a,b,c,d,BLMod){
+        y<-sapply(x,BLMod,a=a,b=b,c=c,d=d)
+        return(y)
       }
 
+      ## Define likelihood functions------------------------------------------------------
+
+      nll_mef6 <- function(pars, uplo, BLMod) {
+        a<-pars[1]
+        b<-pars[2]
+        c<-pars[3]
+        d<-pars[4]
+        mux<-pars[5]
+        muy<-pars[6]
+        sdx<-pars[7]
+        sdy<-pars[8]
+        rcorr<-pars[9]
+
+        if (uplo == "U") {
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
+          bet <- cov / (sdx^2)
+
+          fx <- dnorm(vals[, x], mux, sdx)
+          muyc <- muy + ((vals[, x] - mux) * bet)
+          sdyc <- sdy * sqrt(1 - rho^2)
+
+          C <- BLMod(vals[, x], a,b,c,d)
+          fy_x <- coffcturb6(vals[, y], muyc, sdyc, -Inf, C, sigh)
+
+          fxy <- fy_x * fx
+          -sum(log(fxy))
+        } else {
+          stop("Error, not set up for lower boundary")
+        }
+      }
+
+      coffcturb6 <- function(x, mu, sig, A, C, sigh) {
+        k <- (mu - C) / sig
+        D <- (mu - A) / sig
+        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
+
+        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+        com2 <- gamma * exp(com1)
+        f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
+
+        f <- f * pnorm(C, mu, sig)
+        f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
+      }
+
+      nllmvn6 <- function(pars) {
+        mux <- pars[1]
+        muy <- pars[2]
+        sdx <- pars[3]
+        sdy <- pars[4]
+        rcorr <- pars[5]
+
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
+
+        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        -sum(lliks)
+      }
+
+
+      ## Optimization of the model--------------------------------------------------------
+
+      mlest <- suppressWarnings(optim(theta, nll_mef6, uplo = UpLo, BLMod = BLMod,
+                                      method = optim.method, hessian = TRUE))
+
+      scale <- suppressWarnings(1 / abs(grad(nll_mef6, mlest$par, uplo = UpLo, BLMod = BLMod)))
+
+      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef6, uplo = UpLo, BLMod = BLMod,
+                                       method = optim.method, control = list(parscale = scale),
+                                       hessian = TRUE))
+
+      ## Compute the Akaike Information Criterion for the fitted model--------------------
+
+      AICbl<-(2*9)+(2*mlest2$value)
+
+      ## Extract parameters of the boundary line-----------------------------------------
+
+      a<-mlest2$par[1]
+      b<-mlest2$par[2]
+      c<-mlest2$par[3]
+      d<-mlest2$par[4]
+
+
+      ## Plotting the data for viewing----------------------------------------------------
+
+      if(plot==TRUE){ plot(vals,...)
+        x<-vals[,1]
+        y<-vals[,2]
+        xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
+        ydraw<-drawBL6((xdraw),a,b,c,d,BLMod)
+        lines(xdraw,ydraw,col=l_col,lwd=lwd)
+      }
+
+      ## Compute the standard error of the parameters-------------------------------------
+
+      estimates <- cbind(
+        Estimate = mlest2$par[1:4],
+        `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:4]
+      )
+      rownames(estimates)<-c("a","b","c","d")
+
+      distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
+      distribution[,1]<-mlest2$par[5:9]
+      distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[5:9]
+      rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
+
+      ## Fitting the null model, an unbounded multivariate normal, and compute its AIC---
+
+      theta2<-c(theta[c(4,5,6,7)],0)
+      mvnmlest<-suppressWarnings(optim( theta2,nllmvn6, method=optim.method))
+      AImvn<-(2*5)+(2*mvnmlest$value)
+
+
+      ## Output preparation --------------------------------------------------------------
+
+      AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
+      AikakeIC[,1]<-c(AImvn,AICbl)
+      rownames(AikakeIC)<-c("mvn","BL")
+      result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution= distribution, Hessian=mlest2$hessian)
+      class(result)<-"cm"
+      return(result)
+
+    }
+
+    #### Fitting the five parameter model ################################################
+
+    if(v==10){
+
+      BLMod <- equation
+      drawBL7<-function(x,a,b,c,d,e,BLMod){
+        y<-sapply(x,BLMod,a=a,b=b,c=c,d=d,e=e)
+        return(y)
+      }
+
+
+      ## Define likelihood functions------------------------------------------------------
+
+      nll_mef7 <- function(pars, uplo, BLMod) {
+        a<-pars[1]
+        b<-pars[2]
+        c<-pars[3]
+        d<-pars[4]
+        e<-pars[5]
+        mux<-pars[6]
+        muy<-pars[7]
+        sdx<-pars[8]
+        sdy<-pars[9]
+        rcorr<-pars[10]
+
+        if (uplo == "U") {
+          rho <- tanh(rcorr)
+          cov <- rho * sdx * sdy
+          bet <- cov / (sdx^2)
+
+          fx <- dnorm(vals[, x], mux, sdx)
+          muyc <- muy + ((vals[, x] - mux) * bet)
+          sdyc <- sdy * sqrt(1 - rho^2)
+
+          C <- BLMod(vals[, x], a,b,c,d,e)
+          fy_x <- coffcturb7(vals[, y], muyc, sdyc, -Inf, C, sigh)
+
+          fxy <- fy_x * fx
+          -sum(log(fxy))
+        } else {
+          stop("Error, not set up for lower boundary")
+        }
+      }
+
+      coffcturb7 <- function(x, mu, sig, A, C, sigh) {
+        k <- (mu - C) / sig
+        D <- (mu - A) / sig
+        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
+
+        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+        com2 <- gamma * exp(com1)
+        f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
+
+        f <- f * pnorm(C, mu, sig)
+        f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
+      }
+
+      nllmvn7 <- function(pars) {
+        mux <- pars[1]
+        muy <- pars[2]
+        sdx <- pars[3]
+        sdy <- pars[4]
+        rcorr <- pars[5]
+
+        rho <- tanh(rcorr)
+        cov <- rho * sdx * sdy
+
+        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        -sum(lliks)
+      }
+
+
+      ## Optimization of the model--------------------------------------------------------
+
+      mlest <- suppressWarnings(optim(theta, nll_mef7, uplo = UpLo, BLMod = BLMod,
+                                      method = optim.method, hessian = TRUE))
+
+      scale <- suppressWarnings(1 / abs(grad(nll_mef7, mlest$par, uplo = UpLo, BLMod = BLMod)))
+
+      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef7, uplo = UpLo, BLMod = BLMod,
+                                       method = optim.method, control = list(parscale = scale),
+                                       hessian = TRUE))
+
+      ## Compute the Akaike Information Criterion for the fitted model--------------------
+
+      AICbl<-(2*10)+(2*mlest2$value)
+
+      ## Extract parameters of the boundary line------------------------------------------
+
+      a<-mlest2$par[1]
+      b<-mlest2$par[2]
+      c<-mlest2$par[3]
+      d<-mlest2$par[4]
+      e<-mlest2$par[5]
+
+      ## Plotting the data for viewing----------------------------------------------------
+
+      if(plot==TRUE){ plot(vals,...)
+
+        x<-vals[,1]
+        y<-vals[,2]
+        xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
+        ydraw<-drawBL7((xdraw),a,b,c,d,e,BLMod)
+        lines(xdraw,ydraw,col=l_col,lwd=lwd)
+      }
+
+      ## Determine standard error for parameters------------------------------------------
+
+      estimates <- cbind(
+        Estimate = mlest2$par[1:5],
+        `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:5]
+      )
+
+      rownames(estimates)<-c("a","b","c","d","e")
+
+      distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
+      distribution[,1]<-mlest2$par[6:10]
+      distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[6:10]
+      rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
+
+
+      ## Fitting the null model, an unbounded multivariate normal, and compute its AIC----
+
+      theta2<-c(theta[c(6,7,8,9)],0)
+
+      mvnmlest<-suppressWarnings(optim( theta2,nllmvn7,method=optim.method))
+
+      AImvn<-(2*5)+(2*mvnmlest$value)
+
+
+      ## Preparing the output-------------------------------------------------------------
+
+      AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
+      AikakeIC[,1]<-c(AImvn,AICbl)
+      rownames(AikakeIC)<-c("mvn","BL")
+
+      result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution=distribution, Hessian=mlest2$hessian)
+      class(result)<-"cm"
+      return(result)
+
+
+    }
   }
-
-
 }
