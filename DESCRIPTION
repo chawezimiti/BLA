@@ -28,7 +28,9 @@ Depends:
 Imports: 
     MASS,
     mvtnorm,
-    stats
+    stats,
+    numDeriv,
+    data.table
 Suggests: 
     knitr,
     rmarkdown,

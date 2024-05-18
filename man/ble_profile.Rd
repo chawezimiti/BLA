@@ -5,7 +5,7 @@
 \title{Likelihood profile for various measurement error values}
 \usage{
 ble_profile(vals, sigh, model="lp", equation=NULL,  theta, UpLo="U",
-             optim.method="BFGS", plot=TRUE, ...)
+             optim.method="BFGS", plot=TRUE)
 }
 \arguments{
 \item{vals}{A dataframe with two numeric columns, independent (\code{x}) and
@@ -75,8 +75,6 @@ only when argument \code{model="other"}, else it is \code{NULL}.}
 
 \item{plot}{If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
 is not part of output (default is \code{TRUE}).}
-
-\item{...}{Additional graphical parameters as in the \code{par()} function.}
 }
 \value{
 A list of length 2 containing the suggested standard deviations of

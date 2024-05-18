@@ -51,13 +51,13 @@ startValues<-function(model = "explore", p = NULL, digits = 2, ...) {
               qd = 3,
               trapezium = 4,
               logistic = p,
-              inv_logistic = p,
-              double_logistic = p,
+              `inv-logistic` = p,
+              `double-logistic` = p,
               mit = p,
               schmidt = p,
               explore = 0)
 
-  if (model %in% c("blm", "lp", "qd", "trapezium", "logistic", "inv_logistic", "double_logistic", "mit", "schmidt")) {
+  if (model %in% c("blm", "lp", "qd", "trapezium", "logistic", "inv-logistic", "double-logistic", "mit", "schmidt")) {
     cat(paste("Select", n, "points on the plot that make up the", model, "model in ascending order of x\n\n"))
   } else if (model == "explore") {
     slope <- 0

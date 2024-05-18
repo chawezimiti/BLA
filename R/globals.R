@@ -4,4 +4,4 @@ utils::globalVariables(c("grDevices", "chull","graphics", "abline", "curve", "hi
                          "quantile", "sd","mvrnorm","x",
                          "bagplot","pnorm","dnorm","dmvnorm","tanh","optim",
                          "qqline", "qqnorm", "sigh", "vals", "var", "text","median",
-                         "glm", "layout","getFromNamespace","capture.output","methods"))
+                         "glm", "layout","getFromNamespace","capture.output","methods","y"))
