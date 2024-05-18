@@ -353,8 +353,7 @@ fitted</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>,<span class="fl">3</span>,<span class="fl">9</span>,<span class="fl">0.50</span>,<span class="fl">1.9</span>,<span class="fl">0.05</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">model1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,theta<span class="op">=</span><span class="va">theta</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"P /log ppm"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Note: This function may take a few minutes to run for large datasets.</span></span></code></pre></div>
+<span><span class="va">model1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,theta<span class="op">=</span><span class="va">theta</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"P /log ppm"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -367,14 +366,14 @@ fitted</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;          Estimate Standard error</span></span>
-<span><span class="co">#&gt; β₁     4.06696828    1.066777243</span></span>
-<span><span class="co">#&gt; β₂     3.33394002    0.485261997</span></span>
-<span><span class="co">#&gt; β₀    13.11507868    0.118534298</span></span>
-<span><span class="co">#&gt; mux    3.12596856    0.006451139</span></span>
-<span><span class="co">#&gt; muy    9.29877789    0.022675263</span></span>
-<span><span class="co">#&gt; sdx    0.50053521    0.004561613</span></span>
-<span><span class="co">#&gt; sdy    1.60137488    0.018125430</span></span>
-<span><span class="co">#&gt; rcorr  0.03013864    0.014331202</span></span>
+<span><span class="co">#&gt; β₁     4.06696830    1.062543187</span></span>
+<span><span class="co">#&gt; β₂     3.33394003    0.483101081</span></span>
+<span><span class="co">#&gt; β₀    13.11509466    0.162435745</span></span>
+<span><span class="co">#&gt; mux    3.12596804    0.006451141</span></span>
+<span><span class="co">#&gt; muy    9.29877801    0.022677786</span></span>
+<span><span class="co">#&gt; sdx    0.50053541    0.004550540</span></span>
+<span><span class="co">#&gt; sdy    1.60137534    0.018125877</span></span>
+<span><span class="co">#&gt; rcorr  0.03013859    0.014294338</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $AIC</span></span>
 <span><span class="co">#&gt;             </span></span>
@@ -512,8 +511,7 @@ the arguments required for <code><a href="../reference/cbvn.html">cbvn()</a></co
 boundary line can be fitted</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">model2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,theta<span class="op">=</span><span class="va">theta</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"pH"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Note: This function may take a few minutes to run for large datasets.</span></span></code></pre></div>
+<span><span class="va">model2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,theta<span class="op">=</span><span class="va">theta</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"pH"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-23-1.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -526,14 +524,14 @@ boundary line can be fitted</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;         Estimate Standard error</span></span>
-<span><span class="co">#&gt; β₁    -3.9496797    0.559515105</span></span>
-<span><span class="co">#&gt; β₂     2.5933722    0.095374741</span></span>
-<span><span class="co">#&gt; β₀    13.2047017    0.173490948</span></span>
-<span><span class="co">#&gt; mux    7.5692055    0.008439496</span></span>
-<span><span class="co">#&gt; muy    9.2840069    0.022826758</span></span>
-<span><span class="co">#&gt; sdx    0.6562759    0.005967791</span></span>
-<span><span class="co">#&gt; sdy    1.6239674    0.018079586</span></span>
-<span><span class="co">#&gt; rcorr  0.1233205    0.014184408</span></span>
+<span><span class="co">#&gt; β₁    -3.9496784    0.625843951</span></span>
+<span><span class="co">#&gt; β₂     2.5933540    0.107681571</span></span>
+<span><span class="co">#&gt; β₀    13.2048773    0.173877733</span></span>
+<span><span class="co">#&gt; mux    7.5692058    0.008439500</span></span>
+<span><span class="co">#&gt; muy    9.2839579    0.022826649</span></span>
+<span><span class="co">#&gt; sdx    0.6562763    0.005967654</span></span>
+<span><span class="co">#&gt; sdy    1.6239692    0.018077098</span></span>
+<span><span class="co">#&gt; rcorr  0.1233113    0.014184125</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $AIC</span></span>
 <span><span class="co">#&gt;             </span></span>
