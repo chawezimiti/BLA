@@ -86,7 +86,7 @@ From the results, variable log of soil P can be assumed to be from a normal dist
 
 ### Outlier detection and removal
 
-Outliers are identified using the bagplot method (Rousseeuw *et al*., 1999. A bag plot is a multivariate equivalent of a box plot. We utilise the `bagplop()` function from the `aplpack` package to produce bagplots.The bagplot has three main components. There are
+Outliers are identified using the bagplot method (Rousseeuw *et al*., 1999). A bag plot is a multivariate equivalent of a box plot. We utilise the `bagplop()` function from the `aplpack` package to produce bagplots.The bagplot has three main components. There are
 
 1.  **depth median** which represent the center of the data cloud. This is equivalent to the median in a univariate box-plot
 
@@ -308,7 +308,7 @@ custom_function<-function(x,a,b,c){
 }
 ```
 
-The next step is to suggest the initial start `theta` values. these should be sensible values else the function will not converge. These should be arranges in alphabetical order as `theta=c(a,b,c)`. Replace a, b and c with numeric values of your choice.
+The next step is to suggest the initial start `theta` values. These should be sensible values else the function will not converge. These should be arranges in alphabetical order as `theta=c(a,b,c)`. Replace a, b and c with numeric values of your choice.
 
 The arguments of `bolides()` function can now be added. In this case, the argument model while be set to "other". The arguments equation is now set to your custom function (`equation=custom_function`)
 
