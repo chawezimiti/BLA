@@ -129,7 +129,7 @@
 #'
 #'  \item Schmidt model (\code{"schmidt"})
 #'  \deqn{y= \beta_0 + \beta_1(x-\beta_2)^2}
-#'  where \eqn{\beta_1} is ascaling parameter, \eqn{\beta_2} is a
+#'  where \eqn{\beta_1} is a scaling parameter, \eqn{\beta_2} is a
 #'  shape parameter (x-value at maximum response ) and \eqn{\beta_0} is the
 #'  maximum response .
 #'  }
@@ -208,15 +208,13 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
         lp = function(x, beta0, beta1, beta2) pmin(beta0, beta1 + beta2 * x),
         mit = function(x, beta0, beta1, beta2) beta0 - beta1 * beta2^x,
         logistic = function(x, beta0, beta1, beta2) beta0 / (1 + exp(beta2 * (beta1 - x))),
-        inv_logistic = function(x, beta0, beta1, beta2) beta0 - (beta0 / (1 + exp(beta2 * (beta1 - x)))),
+        `inv-logistic` = function(x, beta0, beta1, beta2) beta0 - (beta0 / (1 + exp(beta2 * (beta1 - x)))),
         logisticND = function(x, beta0, beta1, beta2) beta0 / (1 + beta1 * exp(-x * beta2)),
-        schmidt = function(x, beta0, beta1, beta2) beta0 - beta2 * (x - beta1)^2,
+        schmidt = function(x, beta0, beta1, beta2) beta0 - beta1 * (x - beta2)^2,
         qd = function(x, beta0, beta1, beta2) beta1 + beta2 * x + beta0 * x^2
       )
 
       BLMod <- model_funcs[[model]]
-
-
 
 
 
@@ -313,7 +311,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     estimates <- cbind(
       Estimate = mlest2$par,
-      `Standard error` = sqrt(diag(solve(mlest2$hessian)))
+      `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)
     )
 
     rownames(estimates) = c("\u03B2\u2081", "\u03B2\u2082", "\u03B2\u2080", "mux", "muy", "sdx", "sdy", "rcorr")
@@ -335,7 +333,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
       lp = "y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080)",
       mit = "y = \u03B2\u2081 + \u03B2\u2080(1-exp(-x/\u03B2\u2081))",
       logistic = "y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082x)]",
-      inv_logistic = "y = \u03B2\u2080/(1+exp(\u03B2\u2082(\u03B2\u2081-x)))",
+      `inv-logistic` = "y = \u03B2\u2080/(1+exp(\u03B2\u2082(\u03B2\u2081-x)))",
       logisticND = "y = \u03B2\u2080/1+[\u03B2\u2081exp(-\u03B2\u2082*x)]",
       schmidt = "y = \u03B2\u2080 - \u03B2\u2081 (1-\u03B2\u2082)\u00B2)",
       qd = "y = \u03B2\u2081+\u03B2\u2082x+\u03B2\u2083x\u00B2"
@@ -643,11 +641,11 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Define model functions-------------------------------------------------------------
 
-    double_logistic <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
+    `double-logistic` <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
       (beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x))))
     }
 
-    BLMod <- double_logistic
+    BLMod <- `double-logistic`
 
     drawBL4<-function(x,beta01,beta02,beta1,beta2,beta3,beta4,BLMod){
       y<-sapply(x,BLMod,beta01=beta01,beta02=beta02,beta1=beta1,beta2=beta2,beta3=beta3,beta4=beta4)
