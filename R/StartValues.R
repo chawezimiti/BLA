@@ -70,7 +70,6 @@ startValues<-function(model = "explore", p = NULL, digits = 2, ...) {
   }
 
   if (interactive()) {
-    #cat("Please click on the plot to select the points.\n")
     d <- locator(n)
   } else {
     message("This function requires an interactive session.")

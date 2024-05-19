@@ -51,7 +51,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
   cat("Note: This function may take a few minutes to run for large datasets.\n\n")
 
 
-  ## Selection of the x_min and x_max index values
+  ## Selection of the x_min and x_max index values----------------------------------------
 
    upper.peel<-function(peel){
     min.x.index<-which(peel[,2]==max(peel[,2][which(peel[,1]==min(peel[,1]))]) & peel[,1]==min(peel[,1])) # selection of min
@@ -67,7 +67,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
       return(op)
     }
 
-  ## Removing NA'S from the data ######
+  ## Removing NA'S from the data ---------------------------------------------------------
 
   data<- data.frame(x=x,y=y)
   test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE)
@@ -81,14 +81,14 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
   y<-data1$y
   dat<-cbind(x,y)
 
-  ## setting the output area #######
+  ## setting the output area -------------------------------------------------------------
 
   if(plot==TRUE){
     plot_layout<-rbind(c(1,1,2),c(1,1,3))
     layout(plot_layout)
     plot(dat,...)}
 
-  ## Determination of the convex hull
+  ## Determination of the convex hull-----------------------------------------------------
 
   peels<-list()
   left<-list()
@@ -139,13 +139,13 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     points(df1$x,df1$y,col="red", pch=16)
     points(df2$x,df2$y,col="blue", pch=16)}
 
-  ## Calculating the euclidean distance of vertices to center
+  ## Calculating the euclidean distance of vertices to center-----------------------------
 
   ED1_sd<-sd(sqrt((mean(x)-df1[,1])^2+(mean(y)-df1[,2])^2))
   ED2_sd<-sd(sqrt((mean(x)-df2[,1])^2+(mean(y)-df2[,2])^2))
 
 
-  ######### Monte Carlo simulation for evidence testing  #################################
+  ### Monte Carlo simulation for evidence testing  ---------------------------------------
 
   ED1_sim<-list()
   ED2_sim<-list()
@@ -158,11 +158,11 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     left<-list()
     right<-list()
 
-    # simulation of data using summary statistics of the available data
+    ## simulation of data using summary statistics of the available data------------------
 
     dat<-mvrnorm(n,mu=c(mean(x),mean(y)),Sigma)
 
-    ## Removal of outliers from the simulated data
+    ## Removal of outliers from the simulated data----------------------------------------
 
     cov.robust <- cov.rob(dat)
     md <- mahalanobis(dat, cov.robust$center, cov.robust$cov)
@@ -170,7 +170,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     outliers <- md > threshold
     dat <- dat[!outliers, ]
 
-    ## Determination of convex hull for the simulated data
+    ## Determination of convex hull for the simulated data--------------------------------
 
     for(i in 1:shells){
       ch.index<-chull(dat) # find convex hull (index values for points)
@@ -231,7 +231,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     ED_all_sd_fall[i]<-sd(ED2_sim[[i]])
   }
 
-  ## Calculating the sd test indices
+  ## Calculating the sd test indices------------------------------------------------------
 
   p_sd_rise<-length(which(ED_all_sd_rise<=ED1_sd))/length(ED_all_sd_rise)
   p_sd_fall<-length(which(ED_all_sd_fall<=ED2_sd))/length(ED_all_sd_fall)
@@ -239,13 +239,13 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
   MeanSDr<-mean(ED_all_sd_rise)
   MeanSDf<-mean(ED_all_sd_fall)
 
-  ## Output preparation
+  ## Output preparation-------------------------------------------------------------------
 
   Index<-c("sd","sd","Mean sd","Mean sd","p_value","p_value")
   value<-c(ED1_sd,ED2_sd,MeanSDr,MeanSDf,p_sd_rise, p_sd_fall)
   Section<-c("Left","Right","Left","Right","Left","Right")
 
-  ## Plotting the data points for visualization
+  ## Plotting the data points for visualization-------------------------------------------
 
   if(plot==TRUE){
     hist(ED_all_sd_rise,freq = FALSE, xlab="sd",main = "Left")

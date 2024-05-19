@@ -39,7 +39,7 @@ limfactor<-function(...){
   data<-data.frame(Rs=dat3,Factor=unlist(dat6))
   data2<-data.frame(Rs=data$Rs, Lim_factor=data$Factor)
 
-  ## Determining unidentified yield gap
+  ## Determining unidentified yield gap---------------------------------------------------
 
   test<-apply(dat2,1,max, na.rm=T)
 
@@ -50,8 +50,6 @@ limfactor<-function(...){
   for(i in 1:dim(data2)[1]){
     ifelse(unidentified[i]==TRUE,data2$Lim_factor[i]<-"unidentified",data2$Lim_factor[i]<-data2$Lim_factor[i])
   }
-
-  ##
 
   Largest<-max(dat, na.rm=T)
 

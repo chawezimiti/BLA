@@ -169,7 +169,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
                xmin=min(bound$x),xmax=max(bound$x),
                plot=TRUE,line_col="red",lwd=1,line_smooth=1000,...){
 
-  ################## Data preparation for quantile regression ###########################
+  #### Data preparation for quantile regression ------------------------------------------
 
   BLMod<-model
   if(plot==TRUE){plot(x,y,...)}
@@ -184,7 +184,8 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     }
 
 
-  ## Setting data limits for boundary model fitting ##
+  ## Setting data limits for boundary model fitting --------------------------------------
+
   L<-xmin
   U<-xmax
 
@@ -197,7 +198,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
   x<-data1$x
   y<-data1$y
 
-  ############## Fitting the two parameter Linear model #################################
+  #### Fitting the two parameter Linear model --------------------------------------------
 
   if(model=="blm"){
 
@@ -240,15 +241,14 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       return(part)
     }
 
-    ## Optimization using optim function
+    ## Optimization using optim function--------------------------------------------------
 
     theta=theta[1:2]
     ooo<-optim(theta,rss,x=x,y=y,hessian = T,method=optim.method)  #find LS estimate of theta given data in x,yobs
     scale<-1/abs( parscale(ooo$par,x=x,y=y))
     oo<-optim(ooo$par,rss,x=x,y=y,hessian = T,method=optim.method,control = list(parscale = scale))
 
-    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo.
+    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
     arf=oo$par[1]
     brf=oo$par[2]
@@ -277,7 +277,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     return(Parameters)
   }
 
-  ############# Fitting the three parameter Linear model #################################
+  #### Fitting the three parameter Linear model ------------------------------------------
 
   if(model=="lp"|model=="logistic"|model=="logisticND"|model=="inv-logistic"|model=="qd"|model=="mit"|model=="schmidt"){
 
@@ -285,7 +285,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     if(v>3) stop("theta has more than three values")
     if(v<3) stop("theta has less than three values")
 
-    ## set the function for each method
+    ## set the function for each method---------------------------------------------------
 
     if(model=="lp"){
       Equation<-noquote("y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080)")
@@ -351,7 +351,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       }
     }
 
-    ## Loss function
+    ## Loss function----------------------------------------------------------------------
 
     rss1<-function(theta,x,y){
       ar=theta[1]
@@ -382,15 +382,14 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       return(part)
     }
 
-    ## Optimization using optim function
+    ## Optimization using optim function--------------------------------------------------
 
     theta=theta[1:3]
     ooo<-optim(theta,rss1,x=x,y=y, hessian = T,method=optim.method)
     scale<-1/abs( parscale1(ooo$par,x=x,y=y))
     oo<-optim(ooo$par,rss1,x=x,y=y, hessian = T,method=optim.method,control = list(parscale = scale))
 
-    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo.
+    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
     arf=oo$par[1]
     brf=oo$par[2]
@@ -417,7 +416,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     return(Parameters)
   }
 
-  ################## Fitting the five parameter trapezium model #########################
+  #### Fitting the five parameter trapezium model ----------------------------------------
 
   if(model=="trapezium"){
 
@@ -467,7 +466,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     }
 
 
-    ## Optimization using the optim function
+    ## Optimization using the optim function----------------------------------------------
 
     theta=theta[1:5]
     ooo<-optim(theta,rss2,x=x,y=y, hessian = T,method=optim.method)   #find LS estimate of theta given data in x,yobs
@@ -508,7 +507,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     return(Parameters)
   }
 
-  ################# Fitting the six parameter double-Logistic model ######################
+  #### Fitting the six parameter double-Logistic model -----------------------------------
 
   if(model=="double-logistic"){
 
@@ -556,15 +555,14 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       return(part)
     }
 
-    ## Optimization using optim function
+    ## Optimization using optim function--------------------------------------------------
 
     theta=theta[1:6]
     ooo<-optim(theta,rss3,x=x,y=y, hessian = T,method=optim.method)
     scale<-1/abs( parscale3(ooo$par,x=x,y=y))
     oo<-optim(ooo$par,rss3,x=x,y=y, hessian = T,method=optim.method,control = list(parscale = scale))
 
-    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo.
+    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
     arf=oo$par[1]
     brf=oo$par[2]
@@ -597,14 +595,14 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     return(Parameters)
   }
 
-  ######################### CUSTOM FUNCTIONS ############################################
+  #### CUSTOM FUNCTIONS ------------------------------------------------------------------
 
   if(model=="other"){
     v<-length(theta)
     Equation<-equation   # to print equation in output
     theta<-unname(theta) # removes names from theta
 
-    ### The three parameter model ####
+    ### The three parameter model --------------------------------------------------------
 
     if(v==3){
       rss4<-function(theta,x,y,equation){
@@ -622,7 +620,8 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
         return(errx)
       }
 
-      ## scaling
+      ## scaling--------------------------------------------------------------------------
+
       parscale4<-function(k,x,y,equation){
 
         eps=1e-4
@@ -640,15 +639,14 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       }
 
 
-      ## Optimization using optim function
+      ## Optimization using optim function------------------------------------------------
 
       ooo<-optim(theta,rss4,x=x,y=y,method=optim.method,equation=equation)
       scale<-1/abs( parscale4(ooo$par,x=x,y=y, equation=equation))
       oo<-optim(ooo$par,rss4,x=x,y=y,method=optim.method,
                 control = list(parscale = scale), equation=equation)
 
-      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-      # and hence this make it to use the original values in ooo.
+      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
       af=oo$par[1]
       bf=oo$par[2]
@@ -675,7 +673,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
     }
 
-    ## The four parameter model ##
+    ## The four parameter model ----------------------------------------------------------
 
     if(v==4){
       rss4<-function(theta,x,y,equation){
@@ -694,7 +692,8 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
         return(errx)
       }
 
-      ## scaling
+      ## scaling--------------------------------------------------------------------------
+
       parscale4<-function(k,x,y,equation){
 
         eps=1e-4
@@ -712,15 +711,14 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       }
 
 
-      ## Optimization using optim function
+      ## Optimization using optim function------------------------------------------------
 
       ooo<-optim(theta,rss4,x=x,y=y,method=optim.method,equation=equation)
       scale<-1/abs( parscale4(ooo$par,x=x,y=y, equation=equation))
       oo<-optim(ooo$par,rss4,x=x,y=y,method=optim.method,
                 control = list(parscale = scale), equation=equation)
 
-      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-      # and hence this make it to use the original values in ooo.
+      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
       af=oo$par[1]
       bf=oo$par[2]
@@ -747,7 +745,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       return(Parameters)
     }
 
-    ## The five parameter model ####
+    ## The five parameter model ----------------------------------------------------------
 
     if(v==5){
       rss4<-function(theta,x,y,equation){
@@ -767,7 +765,8 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
         return(errx)
       }
 
-      ## scaling
+      ## scaling--------------------------------------------------------------------------
+
       parscale4<-function(k,x,y,equation){
 
         eps=1e-4
@@ -785,15 +784,14 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       }
 
 
-      ## Optimization using optim function
+      ## Optimization using optim function------------------------------------------------
 
       ooo<-optim(theta,rss4,x=x,y=y,method=optim.method,equation=equation)
       scale<-1/abs( parscale4(ooo$par,x=x,y=y, equation=equation))
       oo<-optim(ooo$par,rss4,x=x,y=y,method=optim.method,
                 control = list(parscale = scale), equation=equation)
 
-      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-      # and hence this make it to use the original values in ooo.
+      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
       af=oo$par[1]
       bf=oo$par[2]

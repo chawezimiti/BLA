@@ -179,7 +179,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
   BLMod<-model
 
-########### CODES TO SECLECT POINTS USING BOLIDES ALGORITHM ##################
+#### CODES TO SECLECT POINTS USING BOLIDES ALGORITHM -------------------------------------
 
   y_max<-numeric()
   dat<-data.frame(x=x,y=y)
@@ -193,7 +193,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       data<-dat
     }
 
-  ############ Selecting maximum y values for each value of x ############################
+  #### Selecting maximum y values for each value of x ------------------------------------
 
   data1<- data[order(data$x),]
 
@@ -205,7 +205,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
   newdata<-data.frame(x=unique(na.omit(data1$x)),y_max)
 
 
-  ## Removing points that have y value smaller than previous ##
+  ## Removing points that have y value smaller than previous ----------------------------
 
   bound<-newdata$y_max
 
@@ -216,7 +216,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
   }
   newdata2<-data.frame(x=unique(na.omit(data1$x)),y=bound)
 
-  ## Removing repeated values ##
+  ## Removing repeated values ------------------------------------------------------------
 
   trim<-newdata2$y
   dummy<-c(min(newdata2$y)*10,newdata2$y)
@@ -232,7 +232,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
   newdata2<-newdata2[-which(newdata2$trim==1),]
 
 
-  ## Selection of points in descending order from xmax ##
+  ## Selection of points in descending order from xmax -----------------------------------
 
   y_max2<-numeric()
   data2<-data
@@ -246,7 +246,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
   newdata3<-data.frame(x=unique(na.omit(data21$x)),y_max2)
 
-  ## Removing points that have y value smaller than previous ##
+  ## Removing points that have y value smaller than previous -----------------------------
 
   bound2<-newdata3$y_max2
 
@@ -257,7 +257,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
   }
   newdata4<-data.frame(x=unique(na.omit(data21$x)),y=bound2)
 
-  ## Removing repeated values ##
+  ## Removing repeated values -----------------------------------------------------------
 
   trim2<-newdata4$y
   dummy2<-c(min(newdata4$y)*10,newdata4$y)
@@ -278,7 +278,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     points(newdata6$x,newdata6$y, col=bp_col, pch=bp_pch)
   }
 
-  ## Setting data limits for boundary model fitting ##
+  ## Setting data limits for boundary model fitting --------------------------------------
 
   bound<-newdata6
   L<-xmin
@@ -290,7 +290,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
   ifelse(L==min(bound$x), bound2<-bound, bound2<-bound[-which(bound$x<L),])
   ifelse(U==max(bound2$x), newdata5<-bound2, newdata5<-bound2[-which(bound2$x>U),])
 
-  ## Exploring data points to choose model ##
+  ## Exploring data points to choose model ----------------------------------------------
 
   if(model=="explore"){
     if(plot==TRUE){
@@ -300,7 +300,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
   }
 
 
-  ########## Fitting the two parameter Linear model #####################################
+  #### Fitting the two parameter Linear model --------------------------------------------
 
   if(model=="blm"){
 
@@ -340,14 +340,13 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     }
 
 
-    # Optimization using optim function
+    ## Optimization using optim function -------------------------------------------------
 
     ooo<-optim(theta,rss,x=newdata5$x,y=newdata5$y,method=optim.method)  # find LS estimate of theta given data in x,yobs
     scale<-1/abs( parscale(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
-    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo.
+    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
 
     arf=oo$par[1]
@@ -375,7 +374,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     return(Parameters)
   }
 
-  ########## Fitting the three parameter model ###########################################
+  #### Fitting the three parameter model -------------------------------------------------
 
   if(model=="lp"|model=="logistic"|model=="logisticND"|model=="inv-logistic"|model=="qd"|model=="mit"|model=="schmidt"){
 
@@ -383,7 +382,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     if(v>3) stop("theta has more than three values")
     if(v<3) stop("theta has less than three values")
 
-    ## set the function for each method
+    ## set the function for each method --------------------------------------------------
 
     if(model=="lp"){
       Equation<-noquote("y = min (\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080)")
@@ -449,7 +448,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       }
     }
 
-   ## Loss function
+   ## Loss function ---------------------------------------------------------------------
 
     rss1<-function(theta,x,y){
       ar=theta[1]
@@ -462,7 +461,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       return(err)
     }
 
-    ## scaling
+    ## scaling ---------------------------------------------------------------------------
     parscale1<-function(a,x,y){
 
       eps=1e-4
@@ -479,14 +478,13 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     }
 
 
-    ## Optimization using optim function
+    ## Optimization using optim function -------------------------------------------------
 
     ooo<-optim(theta,rss1,x=newdata5$x,y=newdata5$y,method=optim.method)
     scale<-1/abs( parscale1(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss1,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
-    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo.
+    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
     arf=oo$par[1]
     brf=oo$par[2]
@@ -517,7 +515,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
   }
 
 
-  ################ Fitting the five parameter trapezium model ############################
+  #### Fitting the five parameter trapezium model ----------------------------------------
 
   if(model=="trapezium"){
 
@@ -568,8 +566,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     scale<-1/abs( parscale2(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss2,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
-    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo.
+    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
     arf=oo$par[1]
     brf=oo$par[2]
@@ -598,7 +595,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     return(Parameters)
   }
 
-  ############## Fitting the six parameter double logistic model #########################
+  ##### Fitting the six parameter double logistic model ----------------------------------
 
   if(model=="double-logistic"){
     v<-length(theta)
@@ -643,14 +640,13 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       return(part)
     }
 
-    ## Optimization using optim function
+    ## Optimization using optim function -------------------------------------------------
 
     ooo<-optim(theta,rss3,x=newdata5$x,y=newdata5$y,method=optim.method)
     scale<-1/abs( parscale3(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss3,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
-    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-    # and hence this make it to use the original values in ooo.
+    ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
     arf=oo$par[1]
     brf=oo$par[2]
@@ -681,14 +677,14 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     return(Parameters)
   }
 
-  ########## OTHER CUSTOM FUNCTIONS #####################################################
+  ##### OTHER CUSTOM FUNCTIONS -----------------------------------------------------------
 
   if(model=="other"){
     v<-length(theta)
     Equation<-equation # to print equation in output
     theta<-unname(theta) # removes names from theta
 
-    ##### The three parameter functions #######
+    ##### The three parameter functions --------------------------------------------------
 
     if(v==3){
       rss4<-function(theta,x,y,equation){
@@ -703,7 +699,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
         return(err)
       }
 
-      ## scaling
+      ## scaling-------------------------------------------------------------------------
       parscale4<-function(k,x,y,equation){
 
         eps=1e-4
@@ -721,15 +717,14 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       }
 
 
-      ## Optimization using optim function
+      ## Optimization using optim function------------------------------------------------
 
       ooo<-optim(theta,rss4,x=newdata5$x,y=newdata5$y,method=optim.method,equation=equation)
       scale<-1/abs( parscale4(ooo$par,x=newdata5$x,y=newdata5$y, equation=equation))
       oo<-optim(ooo$par,rss4,x=newdata5$x,y=newdata5$y,method=optim.method,
                 control = list(parscale = scale), equation=equation)
 
-      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-      # and hence this make it to use the original values in ooo.
+      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
       af=oo$par[1]
       bf=oo$par[2]
@@ -757,7 +752,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
     }
 
-    ##### The four parameter functions #######
+    ##### The four parameter functions ---------------------------------------------------
 
     if(v==4){
       rss4<-function(theta,x,y,equation){
@@ -773,7 +768,8 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
         return(err)
       }
 
-      ## scaling
+      ## scaling -------------------------------------------------------------------------
+
       parscale4<-function(k,x,y,equation){
 
         eps=1e-4
@@ -791,15 +787,14 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       }
 
 
-      ## Optimization using optim function
+      ## Optimization using optim function------------------------------------------------
 
       ooo<-optim(theta,rss4,x=newdata5$x,y=newdata5$y,method=optim.method,equation=equation)
       scale<-1/abs( parscale4(ooo$par,x=newdata5$x,y=newdata5$y, equation=equation))
       oo<-optim(ooo$par,rss4,x=newdata5$x,y=newdata5$y,method=optim.method,
                 control = list(parscale = scale), equation=equation)
 
-      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-      # and hence this make it to use the original values in ooo.
+      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
       af=oo$par[1]
       bf=oo$par[2]
@@ -827,7 +822,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       return(Parameters)
     }
 
-    ##### The five parameter functions #######
+    #### The five parameter functions ----------------------------------------------------
 
     if(v==5){
 
@@ -845,7 +840,8 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
         return(err)
       }
 
-      ## scaling
+      ## scaling--------------------------------------------------------------------------
+
       parscale4<-function(k,x,y,equation){
 
         eps=1e-4
@@ -863,15 +859,14 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       }
 
 
-      ## Optimization using optim function
+      ## Optimization using optim function------------------------------------------------
 
       ooo<-optim(theta,rss4,x=newdata5$x,y=newdata5$y,method=optim.method,equation=equation)
       scale<-1/abs( parscale4(ooo$par,x=newdata5$x,y=newdata5$y, equation=equation))
       oo<-optim(ooo$par,rss4,x=newdata5$x,y=newdata5$y,method=optim.method,
                 control = list(parscale = scale), equation=equation)
 
-      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo) #rescalling sometimes produces NaN
-      # and hence this make it to use the original values in ooo.
+      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
 
       af=oo$par[1]
       bf=oo$par[2]

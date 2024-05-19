@@ -21,7 +21,7 @@
 #'
 summastat<-function(x,sigf, varname, plot=TRUE){
 
-  # compute summary statistics of values in x
+  #### compute summary statistics of values in x------------------------------------------
 
   if(missing(sigf)){rosig<-F}else{rosig<-T}
 
@@ -64,7 +64,8 @@ summastat<-function(x,sigf, varname, plot=TRUE){
                     "No. outliers")
 
 
-################plotting
+### Plotting------------------------------------------------------------------------------
+
   if(plot==TRUE){
     x<-na.drop(x)
     if(missing(varname)){varname<-"x"}
