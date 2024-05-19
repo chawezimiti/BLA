@@ -576,7 +576,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       yfit<-lapply(xfine,FUN=trap3,ar=arf,br=brf,ym=ymf,yn=ynf,af=aff,bf=bff)
       yfit<-unlist(yfit)
 
-      lines(xfine,yfit,lwd=lwd)
+      lines(xfine,yfit,lwd=lwd,col=line_col)
     }
 
     hesmat<-oo$hessian

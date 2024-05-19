@@ -663,7 +663,6 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       lines(xfine,yfit,lwd=lwd,col=bl_col)
     }
 
-
     estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-c(arf,brf,ymf, ynf, aff, bff)
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u20801","\u03B2\u20802","\u03B2\u2083","\u03B2\u2084")
