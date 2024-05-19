@@ -265,7 +265,7 @@ normal distribution.</p>
 <h4 id="outlier-detection-and-removal">Outlier detection and removal<a class="anchor" aria-label="anchor" href="#outlier-detection-and-removal"></a>
 </h4>
 <p>Outliers are identified using the bagplot method (Rousseeuw <em>et
-al</em>., 1999. A bag plot is a multivariate equivalent of a box plot.
+al</em>., 1999). A bag plot is a multivariate equivalent of a box plot.
 We utilise the <code>bagplop()</code> function from the
 <code>aplpack</code> package to produce bagplots.The bagplot has three
 main components. There are</p>
@@ -657,7 +657,7 @@ Currently, this is only set up for upto five parameter models.</p>
 <span>  <span class="va">y</span><span class="op">&lt;-</span> <span class="va">a</span> <span class="op">-</span> <span class="va">b</span><span class="op">*</span><span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">c</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>The next step is to suggest the initial start <code>theta</code>
-values. these should be sensible values else the function will not
+values. These should be sensible values else the function will not
 converge. These should be arranges in alphabetical order as
 <code>theta=c(a,b,c)</code>. Replace a, b and c with numeric values of
 your choice.</p>
@@ -684,7 +684,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; function(x,a,b,c){</span></span>
 <span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55d330ffe6d0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x562d7da85380&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
