@@ -5,8 +5,15 @@
 #' @param hessian If `True`, hessian matrix is used.
 #' @param silent Condition of matrix.
 #' @param a The hessian matrix.
+#' @returns The standard error from hessian matrix
 #' @export
 #' @keywords internal
+#'
+#' @examples
+#'
+#' hessian<-matrix(c(37.45965, 83.0686,83.06863,188.92427),2,2)
+#'
+#' seHessian(hessian) # calculates the standard error
 #'
 seHessian<-function(a, hessian = FALSE, silent = FALSE){
   namesp <- colnames(a)
