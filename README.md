@@ -13,14 +13,16 @@ to a data set as proposed by [Webb
 (1972)](https://doi.org/10.1080/00221589.1972.11514472). It includes a
 suite of methods which have been introduced since the original
 manually-drawn boundary lines were proposed. These include methods based
-on binning the independent variable, the BOLIDES algorithm of Schug *et
-al*. (1995), quantile regression and the censored bivariate normal model
-of Milne *et al*. (2006). It also provides data exploration methods to
-check for outliers and to provide initial evidence for a limiting
-boundary in data sets as initial steps before doing boundary line
-analysis. It includes functions to determine suitable starting values
-for boundary line parameters for estimation by numerical optimization
-procedures. Learn more in `vignette("Introduction_to_BLA")`.
+on binning the independent variable, the BOLIDES algorithm of [Schug *et
+al*. (1995)](https://doi.org/10.2134/1995.site-specificmanagement.c66),
+quantile regression and the censored bivariate normal model of [Milne
+*et al*. (2006)](https://doi.org/10.1111/j.1744-7348.2006.00085.x). It
+also provides data exploration methods to check for outliers and to
+provide initial evidence for a limiting boundary in data sets as initial
+steps before doing boundary line analysis. It includes functions to
+determine suitable starting values for boundary line parameters for
+estimation by numerical optimization procedures. Learn more in
+`vignette("Introduction_to_BLA")`.
 
 ## How can I install the package?
 

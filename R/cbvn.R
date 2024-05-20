@@ -178,12 +178,16 @@
 #'       Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...)
 #'
 #' @examples
-#' x<-evapotranspiration$`ET(mm)`
-#' y<-evapotranspiration$`yield(t/ha)`
-#' vals<-data.frame(x,y)
-#' guess<-c(0.5,0.02,mean(x),mean(y),sd(x),sd(y),cor(x,y))
 #'
-#' cbvn(vals,theta = guess, sigh = 0.4,model= "blm")
+#' x<-log(SoilP$P)
+#' y<-SoilP$yield
+#' vals<-data.frame(x,y)
+#' theta<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
+#'
+#' cbvn(vals,theta=theta,model = "trapezium", sigh = 0.7,
+#'       xlab=expression("Phosphorus/ln(mg L"^-1*")"),
+#'       ylab=expression("Yield/ t ha"^-1), pch=16,
+#'       col="grey")
 #'
 cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",
                Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...){

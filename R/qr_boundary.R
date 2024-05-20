@@ -160,10 +160,14 @@
 #'
 #' @examples
 #'
-#' x<-evapotranspiration$`ET(mm)`
-#' y<-evapotranspiration$`yield(t/ha)`
+#' x<-log(SoilP$P)
+#' y<-SoilP$yield
+#' theta<-c(4,3,13.6, 35, -5)
 #'
-#' blqr(x,y,theta = c(0.5,0.02), model = "blm", tau = 0.95)
+#' blqr(x,y, theta=theta,model = "trapezium", tau=0.99,
+#'       xlab=expression("Phosphorus/ln(mg L"^-1*")"),
+#'       ylab=expression("Yield/ t ha"^-1), pch=16,
+#'       col="grey")
 #'
 blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead",
                xmin=min(bound$x),xmax=max(bound$x),

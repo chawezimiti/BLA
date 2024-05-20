@@ -167,10 +167,15 @@
 #'         bl_col="red" ,lwd=1,line_smooth=1000,...)
 #' @examples
 #'
-#' x<-evapotranspiration$`ET(mm)`
-#' y<-evapotranspiration$`yield(t/ha)`
+#' x<-log(SoilP$P)
+#' y<-SoilP$yield
+#' theta<-c(4,3,13.6,35,-5)
 #'
-#' bolides(x,y, theta = c(0.5,0.02), model= "blm", xmax = 350)
+#' bolides(x,y,theta=theta,model = "trapezium",
+#'         xlab=expression("Phosphorus/ln(mg L"^-1*")"),
+#'         ylab=expression("Yield/ t ha"^-1), pch=16,
+#'         col="grey", bp_col="grey")
+#'
 #'
 #'
 bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",

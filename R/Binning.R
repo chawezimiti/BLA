@@ -175,11 +175,15 @@
 #'       bp_col="red", bp_pch=16, bl_col="red", lwd=1,line_smooth=1000,...)
 #'
 #' @examples
-#' x<-evapotranspiration$`ET(mm)`
-#' y<-evapotranspiration$`yield(t/ha)`
-#' bins = c(100,350,25)
+#' x<-log(SoilP$P)
+#' y<-SoilP$yield
+#' theta<-c(4,3,13.6, 35, -5)
+#' bins<-c(1.6,4.74,0.314)
 #'
-#' blbin(x,y, bins=bins ,theta=c(0.5,0.02), model = "blm", xmax = 250)
+#' blbin(x,y, bins=bins, theta=theta,model = "trapezium", tau=0.99,
+#'        xlab=expression("Phosphorus/ln(mg L"^-1*")"),
+#'        ylab=expression("Yield/ t ha"^-1), pch=16,
+#'        col="grey", bp_col="grey")
 #'
 blbin<-function(x,y,bins,model="explore", equation=NULL,theta, tau=0.95,
                 optim.method="Nelder-Mead", xmin=min(bound$x),

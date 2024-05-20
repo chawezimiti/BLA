@@ -152,7 +152,7 @@ forms are as follows: \enumerate{
 
  \item Schmidt model (\code{"schmidt"})
  \deqn{y= \beta_0 + \beta_1(x-\beta_2)^2}
- where \eqn{\beta_1} is ascaling parameter, \eqn{\beta_2} is a
+ where \eqn{\beta_1} is a scaling parameter, \eqn{\beta_2} is a
  shape parameter (x-value at maximum response ) and \eqn{\beta_0} is the
  maximum response .
  }
@@ -165,12 +165,16 @@ several starting values and the results with the smallest likelihood (or AIC)
 can be taken as a representation of the global optimum.
 }
 \examples{
-x<-evapotranspiration$`ET(mm)`
-y<-evapotranspiration$`yield(t/ha)`
-vals<-data.frame(x,y)
-guess<-c(0.5,0.02,mean(x),mean(y),sd(x),sd(y),cor(x,y))
 
-cbvn(vals,theta = guess, sigh = 0.4,model= "blm")
+x<-log(SoilP$P)
+y<-SoilP$yield
+vals<-data.frame(x,y)
+theta<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
+
+cbvn(vals,theta=theta,model = "trapezium", sigh = 0.7,
+      xlab=expression("Phosphorus/ln(mg L"^-1*")"),
+      ylab=expression("Yield/ t ha"^-1), pch=16,
+      col="grey")
 
 }
 \references{

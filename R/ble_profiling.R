@@ -153,12 +153,13 @@
 #'
 #' @examples
 #'
-#' x<-evapotranspiration$`ET(mm)`
-#' y<-evapotranspiration$`yield(t/ha)`
+#' x<-log(SoilP$P)
+#' y<-SoilP$yield
 #' vals<-data.frame(x,y)
-#' theta<-c(0.5,0.02,289.6,2.39,83.8,1.05,0.295)
-#' sigh<-c(0.08,0.1,0.11,0.13,0.15,0.2,0.3,0.4,0.5)
-#' ble_profile(vals,sigh=sigh,theta=theta,model="blm")
+#' theta<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
+#' sigh = c(0.4,0.5,0.6,0.7)
+#'
+#' ble_profile(vals,theta=theta,model = "trapezium", sigh = sigh)
 #'
 ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", optim.method="BFGS", plot=TRUE){
 
@@ -184,7 +185,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       lp = function(x, beta0, beta1, beta2) pmin(beta0, beta1 + beta2 * x),
       mit = function(x, beta0, beta1, beta2) beta0 - beta1 * beta2^x,
       logistic = function(x, beta0, beta1, beta2) beta0 / (1 + exp(beta2 * (beta1 - x))),
-      inv_logistic = function(x, beta0, beta1, beta2) beta0 - (beta0 / (1 + exp(beta2 * (beta1 - x)))),
+      `inv-logistic` = function(x, beta0, beta1, beta2) beta0 - (beta0 / (1 + exp(beta2 * (beta1 - x)))),
       logisticND = function(x, beta0, beta1, beta2) beta0 / (1 + beta1 * exp(-x * beta2)),
       schmidt = function(x, beta0, beta1, beta2) beta0 - beta2 * (x - beta1)^2,
       qd = function(x, beta0, beta1, beta2) beta1 + beta2 * x + beta0 * x^2
@@ -222,7 +223,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           sdyc <- sdy * sqrt(1 - rho^2)
 
           c <- BLMod(vals[, x], beta0, beta1, beta2)
-          fy_x <- coffcturb(vals[, y], muyc, sdyc, -Inf, c, sigh)
+          fy_x <- coffcturb(vals[, y], muyc, sdyc, -Inf, c, sigh[i])
 
           fxy <- fy_x * fx
           -sum(log(fxy))
@@ -317,7 +318,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           sdyc <- sdy * sqrt(1 - rho^2)
 
           c <- BLMod(vals[, x], beta0, beta1)
-          fy_x <- coffcturb2(vals[, y], muyc, sdyc, -Inf, c, sigh)
+          fy_x <- coffcturb2(vals[, y], muyc, sdyc, -Inf, c, sigh[i])
 
           fxy <- fy_x * fx
           -sum(log(fxy))
@@ -417,7 +418,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           sdyc <- sdy * sqrt(1 - rho^2)
 
           c <- BLMod(vals[, x], beta0, beta1, beta2, beta3, beta4)
-          fy_x <- coffcturb3(vals[, y], muyc, sdyc, -Inf, c, sigh)
+          fy_x <- coffcturb3(vals[, y], muyc, sdyc, -Inf, c, sigh[i])
 
           fxy <- fy_x * fx
           -sum(log(fxy))
@@ -482,11 +483,11 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     ## Define model functions------------------------------------------------------------
 
-    double_logistic <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
+    `double-logistic` <- function(x,beta01,beta02,beta1,beta2,beta3,beta4){
       (beta01/(1 + exp(beta2*(beta1-x)))) - (beta02/(1 + exp(beta4*(beta3-x))))
     }
 
-    BLMod<-double_logistic
+    BLMod<-`double-logistic`
 
 
     for(i in 1:length(sigh)){
@@ -521,7 +522,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
           sdyc <- sdy * sqrt(1 - rho^2)
 
           c <- BLMod(vals[, x], beta1, beta2, beta01, beta02, beta3, beta4)
-          fy_x <- coffcturb4(vals[, y], muyc, sdyc, -Inf, c, sigh)
+          fy_x <- coffcturb4(vals[, y], muyc, sdyc, -Inf, c, sigh[i])
 
           fxy <- fy_x * fx
           -sum(log(fxy))
@@ -621,7 +622,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
             sdyc <- sdy * sqrt(1 - rho^2)
 
             C <- BLMod(vals[, x], a,b,c)
-            fy_x <- coffcturb5(vals[, y], muyc, sdyc, -Inf, C, sigh)
+            fy_x <- coffcturb5(vals[, y], muyc, sdyc, -Inf, C, sigh[i])
 
             fxy <- fy_x * fx
             -sum(log(fxy))
@@ -712,7 +713,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
             sdyc <- sdy * sqrt(1 - rho^2)
 
             C <- BLMod(vals[, x], a,b,c,d)
-            fy_x <- coffcturb6(vals[, y], muyc, sdyc, -Inf, C, sigh)
+            fy_x <- coffcturb6(vals[, y], muyc, sdyc, -Inf, C, sigh[i])
 
             fxy <- fy_x * fx
             -sum(log(fxy))
@@ -806,7 +807,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
             sdyc <- sdy * sqrt(1 - rho^2)
 
             C <- BLMod(vals[, x], a,b,c,d,e)
-            fy_x <- coffcturb7(vals[, y], muyc, sdyc, -Inf, C, sigh)
+            fy_x <- coffcturb7(vals[, y], muyc, sdyc, -Inf, C, sigh[i])
 
             fxy <- fy_x * fx
             -sum(log(fxy))
@@ -867,9 +868,9 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   if(plot==TRUE){
     plot(sigh,likelihood, xlab="Measurement error standard deviation",
-       ylab="log-likelihood", main="Profile Likelihood")}
+       ylab="log-likelihood", main="Profile Likelihood", pch=16)}
 
- x<-list(likelihood=likelihood,Merror=sigh)
+ x<-list(`log-likelihood`=likelihood,Merror=sigh)
  x
 }
 

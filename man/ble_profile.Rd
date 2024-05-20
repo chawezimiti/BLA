@@ -154,12 +154,13 @@ can be taken as a representation of the global optimum.
 }
 \examples{
 
-x<-evapotranspiration$`ET(mm)`
-y<-evapotranspiration$`yield(t/ha)`
+x<-log(SoilP$P)
+y<-SoilP$yield
 vals<-data.frame(x,y)
-theta<-c(0.5,0.02,289.6,2.39,83.8,1.05,0.295)
-sigh<-c(0.08,0.1,0.11,0.13,0.15,0.2,0.3,0.4,0.5)
-ble_profile(vals,sigh=sigh,theta=theta,model="blm")
+theta<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
+sigh = c(0.4,0.5,0.6,0.7)
+
+ble_profile(vals,theta=theta,model = "trapezium", sigh = sigh)
 
 }
 \references{
