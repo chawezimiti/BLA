@@ -300,25 +300,32 @@ to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agro-ecosy
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span><span class="op">&lt;-</span><span class="va">evapotranspiration</span><span class="op">$</span><span class="va">`ET(mm)`</span></span></span>
-<span class="r-in"><span><span class="va">y</span><span class="op">&lt;-</span><span class="va">evapotranspiration</span><span class="op">$</span><span class="va">`yield(t/ha)`</span></span></span>
-<span class="r-in"><span><span class="va">bins</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>,<span class="fl">350</span>,<span class="fl">25</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SoilP</span><span class="op">$</span><span class="va">P</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span><span class="op">&lt;-</span><span class="va">SoilP</span><span class="op">$</span><span class="va">yield</span></span></span>
+<span class="r-in"><span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>, <span class="fl">35</span>, <span class="op">-</span><span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">bins</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.6</span>,<span class="fl">4.74</span>,<span class="fl">0.314</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">blbin</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, bins<span class="op">=</span><span class="va">bins</span> ,theta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.02</span><span class="op">)</span>, model <span class="op">=</span> <span class="st">"blm"</span>, xmax <span class="op">=</span> <span class="fl">250</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">blbin</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, bins<span class="op">=</span><span class="va">bins</span>, theta<span class="op">=</span><span class="va">theta</span>,model <span class="op">=</span> <span class="st">"trapezium"</span>, tau<span class="op">=</span><span class="fl">0.99</span>,</span></span>
+<span class="r-in"><span>       xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>       ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield/ t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>,</span></span>
+<span class="r-in"><span>       col<span class="op">=</span><span class="st">"grey"</span>, bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="blbin-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Model</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "blm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "trapezium"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Equation</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] y = β₁ + β₂x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] y = min(β₁+ β₂x, β₀, β₃ + β₄x)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Parameters</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       Estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> β₁ -0.80317908</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> β₂  0.01967599</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₁  5.039876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₂  3.217493</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₀ 13.240113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₃ 26.566339</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₄ -3.307790</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $RMS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.008735181</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02161631</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

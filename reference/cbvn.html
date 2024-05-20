@@ -254,7 +254,7 @@ forms are as follows:</p><ol><li><p>Linear model (<code>"blm"</code>)
  and \(\beta_0\) is the maximum response.</p></li>
 <li><p>Schmidt model (<code>"schmidt"</code>)
  $$y= \beta_0 + \beta_1(x-\beta_2)^2$$
- where \(\beta_1\) is ascaling parameter, \(\beta_2\) is a
+ where \(\beta_1\) is a scaling parameter, \(\beta_2\) is a
  shape parameter (x-value at maximum response ) and \(\beta_0\) is the
  maximum response .</p></li>
 </ol><p>The function <code>cbvn()</code> utilities the optimization procedure of the
@@ -292,33 +292,40 @@ to analyze N2O flux data from agricultural soils. Nutrient Cycling in Agroecosys
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span><span class="op">&lt;-</span><span class="va">evapotranspiration</span><span class="op">$</span><span class="va">`ET(mm)`</span></span></span>
-<span class="r-in"><span><span class="va">y</span><span class="op">&lt;-</span><span class="va">evapotranspiration</span><span class="op">$</span><span class="va">`yield(t/ha)`</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">SoilP</span><span class="op">$</span><span class="va">P</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span><span class="op">&lt;-</span><span class="va">SoilP</span><span class="op">$</span><span class="va">yield</span></span></span>
 <span class="r-in"><span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">guess</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.02</span>,<span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/sd.html" class="external-link">sd</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>, <span class="fl">35</span>, <span class="op">-</span><span class="fl">5</span>,<span class="fl">3</span>,<span class="fl">9</span>,<span class="fl">0.50</span>,<span class="fl">1.9</span>,<span class="fl">0.05</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">cbvn</span><span class="op">(</span><span class="va">vals</span>,theta <span class="op">=</span> <span class="va">guess</span>, sigh <span class="op">=</span> <span class="fl">0.4</span>,model<span class="op">=</span> <span class="st">"blm"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cbvn</span><span class="op">(</span><span class="va">vals</span>,theta<span class="op">=</span><span class="va">theta</span>,model <span class="op">=</span> <span class="st">"trapezium"</span>, sigh <span class="op">=</span> <span class="fl">0.7</span>,</span></span>
+<span class="r-in"><span>      xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield/ t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>,</span></span>
+<span class="r-in"><span>      col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="cbvn-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Model</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "blm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "trapezium"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Equation</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] y = β₁ + β₂x</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] y = min (β₁ + β₂x, β₀, β₃ + β₄x)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Parameters</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           Estimate Standard error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> β₁     -2.63679805    0.320349390</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> β₂      0.02894668    0.001941843</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mux   289.62801163    3.182151002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> muy     2.45429618    0.042612641</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sdx    83.64881631    2.250419153</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sdy     1.00285820    0.032250279</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rcorr   0.23680566    0.045359049</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          Estimate Standard error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₁     4.29795528    1.035391841</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₂     3.23397372    0.460850824</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₀    13.15187256    0.206656047</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₃    33.17267343    1.693458383</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> β₄    -5.22857492    0.393758850</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mux    3.12597271    0.006451086</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> muy    9.30482617    0.022879294</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sdx    0.50053107    0.004561474</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sdy    1.60754421    0.018448808</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rcorr  0.04150831    0.014806076</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $AIC</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mvn 10092.78</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BL  10059.36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mvn 32429.55</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BL  32391.07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
