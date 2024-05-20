@@ -26,14 +26,11 @@ estimation by numerical optimization procedures. Learn more in
 
 ## How can I install the package?
 
-Install the current version on Github. You will need to install the
-package `devtools` before installing BLA. Also ensure that the dependent
-packages `MASS`, `mvtnorm` and `stats` are installed.
+Install the current version of the package from CRAN.
 
 ``` r
-library(devtools)
 
-install_github("chawezimiti/BLA")
+install.packages("BLA")
 ```
 
 ## What can I use the BLA package for?
@@ -42,7 +39,7 @@ The classical situation in which `BLA` is used is to model the
 relationship between some response variable for a biological system
 (e.g. the yield of a crop) and a variable which is potentially limiting
 on that response (e.g. soil pH). The approach is suitable for large data
-sets from surveys (i.e. cases in which multiple potential limiting
+sets from surveys i.e. cases in which multiple potential limiting
 factors occur but are not controlled experimentally. In the example of
 crop yield and pH, one can determine the largest expected yield for a
 given pH value, also called the boundary pH value. There are various
@@ -52,7 +49,7 @@ below uses the `bolides()` function:
 
 ``` r
 library(BLA)
-library(aplpack)
+library(aplpack)# provides function for outlier detection
 
 # 1. Outlier detection using bagplot() function
 
