@@ -3,8 +3,7 @@ Package: BLA
 Title: Boundary Line Analysis
 Version: 0.0.1
 Authors@R: c(
-    person("Chawezi", "Miti", , "chawezi.miti@nottingham.ac.uk", 
-           role = c("cre", "aut", "cph"),
+    person("Chawezi", "Miti", , "chawezi.miti@nottingham.ac.uk", role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0001-7776-8366")),
     person("Richard M", "Lark", role = "aut",
            comment = c(ORCID = "0000-0003-2571-8521")),
@@ -15,22 +14,22 @@ Authors@R: c(
     person("Victor O", "Sadras", role = "ctb"),
     person("University of Nottingham/Rothamsted Research", role = "fnd")
   )
-Description: Tools to fit a boundary line model to a dataset and 
-    make statistical inferences about its parameters. It tests a dataset for 
-    evidence of boundary presence, fit a boundary line model and conducts post-hoc 
-    analysis e.g. prediction of boundary values and the most limiting factor.
-    See Miti, Milne, Giller, Lark(2024)<doi.org/10.1016/j.fcr.2024.109365>.
+Description: Tools for fitting boundary line models to datasets and make statistical 
+    inferences on their parameters. It tests datasets for evidence of boundary presence, 
+    fit boundary line models and conducts post-hoc analyses e.g. prediction of boundary 
+    values and the most limiting factor. See Miti, Milne, Giller, 
+    Lark(2024)<doi.org/10.1016/j.fcr.2024.109365>.
 License: GPL (>= 3)
 URL: https://chawezimiti.github.io/BLA/
 BugReports: https://github.com/chawezimiti/BLA/issues
 Depends: 
     R (>= 4.0)
 Imports: 
+    data.table,
     MASS,
     mvtnorm,
-    stats,
     numDeriv,
-    data.table
+    stats
 Suggests: 
     knitr,
     rmarkdown,
