@@ -347,7 +347,7 @@ The boundary line fitting methods illustrated here all use the optimization func
 
 7. Rousseeuw, P. J., Ruts, I., & Tukey, J. W. (1999). The bagplot: A bivariate boxplot. The American Statistician, 53, 382–387. https://doi.org/10.1080/00031305.1999.10474494
 
-8. Shatar, T. M., & McBratney, A. B. (2004). Boundary-line analysis of field-scale yield response to soil properties. Journal of Agricultural Science, 142 , 553-560. https://doi:10.1017/S0021859604004642 
+8. Shatar, T. M., & McBratney, A. B. (2004). Boundary-line analysis of field-scale yield response to soil properties. Journal of Agricultural Science, 142 , 553-560.
 
 9. Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line determination technique (bolides). In P. C. Robert, R. H. Rust, & W. E. Larson (Eds.), site specific management for agricultural systems (p. 899-908). Wiley Online Library. https://doi.org/10.2134/1995.site-specificmanagement.c66 
 
