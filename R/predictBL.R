@@ -8,13 +8,9 @@
 #'   the \code{blqr()}, \code{blbin()}, \code{bolides()} or \code{cbvn()} functions.
 #' @param x A numeric vector of values for the factor with which response is
 #'   to be predicted.
-#'
 #' @returns A vector predicted value of response.
-#'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
-#'
 #' @export
-#'
 #' @examples
 #'
 #' x<-evapotranspiration$`ET(mm)`

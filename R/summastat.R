@@ -14,10 +14,12 @@
 #'   the number of probable outliers in a data set. A histogram with a boxplot
 #'   over it and QQ plot of the variable x if \code{plot=TRUE}.
 #' @author Richard Murray Lark <murray.lark@@nottingham.ac.uk>
+#'
+#' @export
 #' @examples
 #' x<-evapotranspiration$`ET(mm)`
 #' summastat(x,2)
-#' @export
+#'
 #'
 summastat<-function(x,sigf, varname, plot=TRUE){
 
