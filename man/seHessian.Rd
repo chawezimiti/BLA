@@ -13,7 +13,17 @@ seHessian(a, hessian = FALSE, silent = FALSE)
 
 \item{silent}{Condition of matrix.}
 }
+\value{
+The standard error from hessian matrix
+}
 \description{
 This is a set of functions that support the censored bivariate normal model.
+}
+\examples{
+
+hessian<-matrix(c(37.45965, 83.0686,83.06863,188.92427),2,2)
+
+seHessian(hessian) # calculates the standard error
+
 }
 \keyword{internal}

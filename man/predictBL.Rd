@@ -24,7 +24,7 @@ This function predicts the most efficient response at a level of factor,
 
 x<-evapotranspiration$`ET(mm)`
 y<-evapotranspiration$`yield(t/ha)`
-z<-bolides(x,y, theta = c(0.5,0.02), model= "blm", xmax = 350)
+z<-bolides(x,y, start = c(0.5,0.02), model= "blm", xmax = 350)
 
 Results<-predictBL(z,x)
 

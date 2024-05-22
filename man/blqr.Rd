@@ -157,6 +157,10 @@ settling for local optimum parameters, it is advised that the function is run
 using several starting values and the results with the smallest error
 (weighted residue sum square) can be taken as a representation of the global
  optimum.
+
+ The common errors encountered due to poor start values \enumerate{
+\item function cannot be evaluated at initial parameters
+\item initial value in 'vmmin' is not finite}
 }
 \examples{
 

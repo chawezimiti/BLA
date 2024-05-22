@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Tools to fit a boundary line model (Webb, 1972) to a data set and make statistical inferences about its parameters. It tests a data set for evidence of boundary presence, fit a boundary line model and conduct post-hoc analysis e.g. prediction of boundary values and the most limiting factor. See Miti, Milne, Giller, Lark(2024)<doi.org/10.1016/j.fcr.2024.109365>.
+Tools for fitting boundary line models to datasets and make statistical inferences about their parameters. Tests datasets for evidence of boundary presence, fits boundary line models, and conducts post-hoc analyses such as predicting boundary values and identifying the most limiting factor (Miti, Milne, Giller, Lark (2024) \doi{10.1016/j.fcr.2024.109365}).
 }
 \references{
 Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the
