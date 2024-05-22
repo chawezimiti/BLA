@@ -10,7 +10,7 @@
 #'
 #' @param vals A dataframe with two numeric columns, independent (\code{x}) and
 #'   dependent (\code{y}) variables respectively.
-#' @param theta A numeric vector of initial starting values for optimization
+#' @param start A numeric vector of initial starting values for optimization
 #'   in fitting the boundary model. Its length and arrangement depend on the
 #'   suggested model: \itemize{
 #'   \item For the \code{"blm"} model, it is a vector of length 7 arranged as the
@@ -134,6 +134,10 @@
 #' using several starting values and the results with the largest likelihood
 #' can be taken as a representation of the global optimum.
 #'
+#' The common errors encountered due to poor start values \enumerate{
+#' \item function cannot be evaluated at initial parameters
+#' \item initial value in 'vmmin' is not finite}
+#'
 #' @references
 #' Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the effect of water
 #' filled pore space on nitrous oxide emission from cores of arable soil. European
@@ -148,7 +152,7 @@
 #' @export
 #' @rdname ble_profile
 #' @usage
-#' ble_profile(vals, sigh, model="lp", equation=NULL,  theta, UpLo="U",
+#' ble_profile(vals, sigh, model="lp", equation=NULL,  start, UpLo="U",
 #'              optim.method="BFGS", plot=TRUE)
 #'
 #' @examples
@@ -156,12 +160,12 @@
 #' x<-log(SoilP$P)
 #' y<-SoilP$yield
 #' vals<-data.frame(x,y)
-#' theta<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
+#' start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
 #' sigh = c(0.4,0.5,0.6,0.7)
 #'
-#' ble_profile(vals,theta=theta,model = "trapezium", sigh = sigh)
+#' ble_profile(vals,start=start,model = "trapezium", sigh = sigh)
 #'
-ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", optim.method="BFGS", plot=TRUE){
+ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", optim.method="BFGS", plot=TRUE){
 
   cat("Note: This function may take longer to run.\n\n")
 
@@ -177,7 +181,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   if(model=="lp"|model=="mit"|model=="logistic"|model=="inv-logistic"|model=="logisticND"|model=="schmidt"|model=="qd"){
 
-    if (length(theta) != 8) stop("theta must have exactly eight values")
+    if (length(start) != 8) stop("start must have exactly eight values")
 
     ## Define model functions-------------------------------------------------------------
 
@@ -196,7 +200,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     for(i in 1:length(sigh)){
 
-      theta<-theta
+      start<-start
       UpLo=UpLo
       BLMod<-BLMod
       vals<-vals
@@ -264,7 +268,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
       ## Optimization of the model-------------------------------------------------------
 
-      mlest <- suppressWarnings(optim(theta, nll_mef, uplo = UpLo, BLMod = BLMod,
+      mlest <- suppressWarnings(optim(start, nll_mef, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
       scale <- suppressWarnings(1 / abs(grad(nll_mef, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -283,7 +287,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   if(model=="blm"){
 
-    if (length(theta) != 7) stop("theta must have exactly seven values")
+    if (length(start) != 7) stop("start must have exactly seven values")
 
     ## Define model functions-------------------------------------------------------------
 
@@ -292,7 +296,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     for(i in 1:length(sigh)){
 
-      theta<-theta
+      start<-start
       UpLo=UpLo
       BLMod<-BLMod
       vals<-vals
@@ -360,7 +364,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
       ## Optimization of the model--------------------------------------------------------
 
-      mlest <- suppressWarnings(optim(theta, nll_mef2, uplo = UpLo, BLMod = BLMod,
+      mlest <- suppressWarnings(optim(start, nll_mef2, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
       scale <- suppressWarnings(1 / abs(grad(nll_mef2, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -379,7 +383,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   if(model=="trapezium"){
 
-    if (length(theta) != 10) stop("theta must have exactly ten values")
+    if (length(start) != 10) stop("start must have exactly ten values")
 
     ## Define model functions-------------------------------------------------------------
 
@@ -388,7 +392,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     for(i in 1:length(sigh)){
 
-      theta<-theta
+      start<-start
       UpLo=UpLo
       BLMod<-BLMod
       vals<-vals
@@ -460,7 +464,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
       ## Optimization of the model--------------------------------------------------------
 
-      mlest <- suppressWarnings(optim(theta, nll_mef3, uplo = UpLo, BLMod = BLMod,
+      mlest <- suppressWarnings(optim(start, nll_mef3, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
       scale <- suppressWarnings(1 / abs(grad(nll_mef3, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -479,7 +483,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
   if(model=="double-logistic"){
 
 
-    if (length(theta) != 11) stop("theta must have exactly eleven values")
+    if (length(start) != 11) stop("start must have exactly eleven values")
 
     ## Define model functions------------------------------------------------------------
 
@@ -492,7 +496,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
     for(i in 1:length(sigh)){
 
-      theta<-theta
+      start<-start
       UpLo=UpLo
       BLMod<-BLMod
       vals<-vals
@@ -564,7 +568,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
       ## Optimization of the model--------------------------------------------------------
 
-      mlest <- suppressWarnings(optim(theta, nll_mef4, uplo = UpLo, BLMod = BLMod,
+      mlest <- suppressWarnings(optim(start, nll_mef4, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
       scale <- suppressWarnings(1 / abs(grad(nll_mef4, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -582,10 +586,10 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
   if(model=="other"){
 
-    v<-length(theta)
-    if(v>10) stop("Not set up for models with more than 5 parametrs. The argument theta should contain less than 10 values")
+    v<-length(start)
+    if(v>10) stop("Not set up for models with more than 5 parametrs. The argument start should contain less than 10 values")
     Equation<-equation # to print equation in output
-    theta<-unname(theta) # removes names from theta
+    start<-unname(start) # removes names from start
 
     if(v==8){
 
@@ -595,7 +599,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
       for(i in 1:length(sigh)){
 
-        theta<-theta
+        start<-start
         UpLo=UpLo
         BLMod<-BLMod
         vals<-vals
@@ -664,7 +668,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
         ## Optimization of the model------------------------------------------------------
 
-        mlest <- suppressWarnings(optim(theta, nll_mef5, uplo = UpLo, BLMod = BLMod,
+        mlest <- suppressWarnings(optim(start, nll_mef5, uplo = UpLo, BLMod = BLMod,
                                         method = optim.method, hessian = TRUE))
 
         scale <- suppressWarnings(1 / abs(grad(nll_mef5, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -685,7 +689,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
       BLMod <- equation
 
       for(i in 1:length(sigh)){
-        theta<-theta
+        start<-start
         UpLo=UpLo
         BLMod<-BLMod
         vals<-vals
@@ -755,7 +759,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
         ## Optimization of the model------------------------------------------------------
 
-        mlest <- suppressWarnings(optim(theta, nll_mef6, uplo = UpLo, BLMod = BLMod,
+        mlest <- suppressWarnings(optim(start, nll_mef6, uplo = UpLo, BLMod = BLMod,
                                         method = optim.method, hessian = TRUE))
 
         scale <- suppressWarnings(1 / abs(grad(nll_mef6, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -778,7 +782,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
       for(i in 1:length(sigh)){
 
-        theta<-theta
+        start<-start
         UpLo=UpLo
         BLMod<-BLMod
         vals<-vals
@@ -849,7 +853,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, theta, UpLo="U", op
 
         ## Optimization of the model------------------------------------------------------
 
-        mlest <- suppressWarnings(optim(theta, nll_mef7, uplo = UpLo, BLMod = BLMod,
+        mlest <- suppressWarnings(optim(start, nll_mef7, uplo = UpLo, BLMod = BLMod,
                                         method = optim.method, hessian = TRUE))
 
         scale <- suppressWarnings(1 / abs(grad(nll_mef7, mlest$par, uplo = UpLo, BLMod = BLMod)))

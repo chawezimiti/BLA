@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-The BLA `R` package provides a set of tools to fit boundary line models to a data set as proposed by [Webb (1972)](https://doi.org/10.1080/00221589.1972.11514472). It includes a suite of methods which have been introduced since the original manually-drawn boundary lines were proposed. These include methods based on binning the independent variable, the BOLIDES algorithm of [Schug *et al*. (1995)](https://doi.org/10.2134/1995.site-specificmanagement.c66), quantile regression and the censored bivariate normal model of [Milne *et al*. (2006)](https://doi.org/10.1111/j.1744-7348.2006.00085.x). It also provides data exploration methods to check for outliers and to provide initial evidence for a limiting boundary in data sets as initial steps before doing boundary line analysis. It includes functions to determine suitable starting values for boundary line parameters for estimation by numerical optimization procedures. Learn more in `vignette("Introduction_to_BLA")`.
+The BLA `R` package provides a set of tools to fit boundary line models to a data set as proposed by Webb (1972). It includes a suite of methods which have been introduced since the original manually-drawn boundary lines were proposed. These include methods based on binning the independent variable, the BOLIDES algorithm of Schug *et al*. (1995), quantile regression and the censored bivariate normal model of Milne *et al*. (2006). It also provides data exploration methods to check for outliers and to provide initial evidence for a limiting boundary in data sets as initial steps before doing boundary line analysis. It includes functions to determine suitable starting values for boundary line parameters for estimation by numerical optimization procedures. Learn more in `vignette("Introduction_to_BLA")`.
 
 ## How can I install the package?
 
@@ -54,9 +54,9 @@ vals<-rbind(bag$pxy.bag,bag$pxy.outer) # new excludes bivariate outliers
 
 x<-vals[,1]
 y<-vals[,2]
-theta =c(-12.99,2,13 ) # initial start values for optimization
+start =c(-12.99,2,13 ) # initial start values for optimization
 
-model<-bolides(x,y, theta = theta,model = "lp",xlab=expression("pH"), 
+model<-bolides(x,y, start = start,model = "lp",xlab=expression("pH"), 
         ylab=expression("Yield/ t ha"^-1), pch=16, plot=TRUE,
        col="grey40", cex=0.8)
 

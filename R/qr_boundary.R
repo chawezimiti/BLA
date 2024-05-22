@@ -20,7 +20,7 @@
 #'   only when argument \code{model="other"}, else it is \code{NULL}.
 #' @param tau The quantile value (0- 1) that represents the boundary
 #'   (\code{default is tau = 0.95}).
-#' @param theta A numeric vector of initial starting values for optimization
+#' @param start A numeric vector of initial starting values for optimization
 #'   in fitting the boundary model. Its length and arrangement depend on the
 #'   suggested model: \itemize{
 #'   \item For the \code{"blm"} model, it is a vector of length 2 arranged as intercept
@@ -133,6 +133,10 @@
 #' (weighted residue sum square) can be taken as a representation of the global
 #'  optimum.
 #'
+#'  The common errors encountered due to poor start values \enumerate{
+#' \item function cannot be evaluated at initial parameters
+#' \item initial value in 'vmmin' is not finite}
+#'
 #' @references
 #'
 #' Cade, B. S., & Noon, B. R. (2003). A gentle introduction to quantile regression
@@ -154,7 +158,7 @@
 #'
 #' @rdname blqr
 #' @usage
-#' blqr(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead",
+#' blqr(x,y,model, equation=NULL,start,tau=0.95,optim.method="Nelder-Mead",
 #'      xmin=min(bound$x),xmax=max(bound$x), plot=TRUE,line_col="red",lwd=1,
 #'      line_smooth=1000,...)
 #'
@@ -162,14 +166,14 @@
 #'
 #' x<-log(SoilP$P)
 #' y<-SoilP$yield
-#' theta<-c(4,3,13.6, 35, -5)
+#' start<-c(4,3,13.6, 35, -5)
 #'
-#' blqr(x,y, theta=theta,model = "trapezium", tau=0.99,
+#' blqr(x,y, start=start,model = "trapezium", tau=0.99,
 #'       xlab=expression("Phosphorus/ln(mg L"^-1*")"),
 #'       ylab=expression("Yield/ t ha"^-1), pch=16,
 #'       col="grey")
 #'
-blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead",
+blqr<-function(x,y,model, equation=NULL,start,tau=0.95,optim.method="Nelder-Mead",
                xmin=min(bound$x),xmax=max(bound$x),
                plot=TRUE,line_col="red",lwd=1,line_smooth=1000,...){
 
@@ -206,9 +210,9 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
   if(model=="blm"){
 
-    v<-length(theta)
-    if(v>2) stop("theta has more than two values")
-    if(v<2) stop("theta has less than two values")
+    v<-length(start)
+    if(v>2) stop("start has more than two values")
+    if(v<2) stop("start has less than two values")
 
     trap<-function(x,ar,br){
       yr<-ar+br*x
@@ -217,9 +221,9 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     }
 
 
-    rss<-function(theta,x,y){
-      ar=theta[1]
-      br=theta[2]
+    rss<-function(start,x,y){
+      ar=start[1]
+      br=start[2]
 
       yf<-unlist(lapply(x,FUN=trap,ar=ar,br=br))
 
@@ -247,8 +251,8 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
     ## Optimization using optim function--------------------------------------------------
 
-    theta=theta[1:2]
-    ooo<-optim(theta,rss,x=x,y=y,hessian = T,method=optim.method)  #find LS estimate of theta given data in x,yobs
+    start=start[1:2]
+    ooo<-optim(start,rss,x=x,y=y,hessian = T,method=optim.method)  #find LS estimate of start given data in x,yobs
     scale<-1/abs( parscale(ooo$par,x=x,y=y))
     oo<-optim(ooo$par,rss,x=x,y=y,hessian = T,method=optim.method,control = list(parscale = scale))
 
@@ -266,7 +270,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     }
 
     hesmat<-oo$hessian
-    estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
+    estimates<-matrix(NA,length(start),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-oo$par
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082")
 
@@ -274,7 +278,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     Equation<-noquote("y = \u03B2\u2081 + \u03B2\u2082x")
 
     Parameters<-list(Model=BLMod,Equation=Equation,Parameters=estimates,RSS= RSS,Hessian= hesmat,
-                       Start=theta,optimMethod=optim.method,data=data1)
+                       Start=start,optimMethod=optim.method,data=data1)
 
     class(Parameters) <- "cm" #necessary for only printing only part of the output
 
@@ -285,9 +289,9 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
   if(model=="lp"|model=="logistic"|model=="logisticND"|model=="inv-logistic"|model=="qd"|model=="mit"|model=="schmidt"){
 
-    v<-length(theta)
-    if(v>3) stop("theta has more than three values")
-    if(v<3) stop("theta has less than three values")
+    v<-length(start)
+    if(v>3) stop("start has more than three values")
+    if(v<3) stop("start has less than three values")
 
     ## set the function for each method---------------------------------------------------
 
@@ -357,10 +361,10 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
     ## Loss function----------------------------------------------------------------------
 
-    rss1<-function(theta,x,y){
-      ar=theta[1]
-      br=theta[2]
-      ym=theta[3]
+    rss1<-function(start,x,y){
+      ar=start[1]
+      br=start[2]
+      ym=start[3]
 
       yf<-unlist(lapply(x,FUN=trap1,ar=ar,br=br,ym=ym))
 
@@ -388,8 +392,8 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
     ## Optimization using optim function--------------------------------------------------
 
-    theta=theta[1:3]
-    ooo<-optim(theta,rss1,x=x,y=y, hessian = T,method=optim.method)
+    start=start[1:3]
+    ooo<-optim(start,rss1,x=x,y=y, hessian = T,method=optim.method)
     scale<-1/abs( parscale1(ooo$par,x=x,y=y))
     oo<-optim(ooo$par,rss1,x=x,y=y, hessian = T,method=optim.method,control = list(parscale = scale))
 
@@ -407,14 +411,14 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       lines(xfine,yfit,lwd=lwd,col=line_col)}
 
     hesmat<-oo$hessian
-    estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
+    estimates<-matrix(NA,length(start),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-oo$par
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u2080")
 
     RSS<-oo$value
 
     Parameters<-structure(list(Model=BLMod,Equation=Equation,Parameters=estimates,RSS= RSS,Hessian= hesmat,
-                     Start=theta,optimMethod=optim.method,data=data1), class = "cm")
+                     Start=start,optimMethod=optim.method,data=data1), class = "cm")
 
     class(Parameters) <- "cm" #necessary for only printing only part of the output
     return(Parameters)
@@ -424,9 +428,9 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
   if(model=="trapezium"){
 
-    v<-length(theta)
-    if(v>5) stop("theta has more than five values")
-    if(v<5) stop("theta has less than five values")
+    v<-length(start)
+    if(v>5) stop("start has more than five values")
+    if(v<5) stop("start has less than five values")
 
     trap2<-function(x,ar,br,ym,af,bf){
       yr<-ar+br*x
@@ -438,12 +442,12 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     }
 
 
-    rss2<-function(theta,x,y){
-      ar=theta[1]
-      br=theta[2]
-      ym=theta[3]
-      af=theta[4]
-      bf=theta[5]
+    rss2<-function(start,x,y){
+      ar=start[1]
+      br=start[2]
+      ym=start[3]
+      af=start[4]
+      bf=start[5]
 
       yf<-unlist(lapply(x,FUN=trap2,ar=ar,br=br,ym=ym,af=af,bf=bf))
 
@@ -472,8 +476,8 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
     ## Optimization using the optim function----------------------------------------------
 
-    theta=theta[1:5]
-    ooo<-optim(theta,rss2,x=x,y=y, hessian = T,method=optim.method)   #find LS estimate of theta given data in x,yobs
+    start=start[1:5]
+    ooo<-optim(start,rss2,x=x,y=y, hessian = T,method=optim.method)   #find LS estimate of start given data in x,yobs
     scale<-1/abs( parscale2(ooo$par,x=x,y=y))
     oo<-optim(ooo$par,rss2,x=x,y=y, hessian = T,method=optim.method,control = list(parscale = scale))
 
@@ -496,7 +500,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       lines(xfine,yfit,lwd=lwd,col=line_col)}
 
     hesmat<-oo$hessian
-    estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
+    estimates<-matrix(NA,length(start),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-oo$par
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u2080","\u03B2\u2083","\u03B2\u2084")
 
@@ -505,7 +509,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     Equation<-noquote("y = min(\u03B2\u2081 + \u03B2\u2082x, \u03B2\u2080, \u03B2\u2083 + \u03B2\u2084x)")
 
     Parameters<-list(Model=BLMod,Equation=Equation,Parameters=estimates,RSS= RSS,Hessian= hesmat,
-                     Start=theta,optimMethod=optim.method,data=data1)
+                     Start=start,optimMethod=optim.method,data=data1)
 
     class(Parameters) <- "cm" #necessary for only printing only part of the output
     return(Parameters)
@@ -515,9 +519,9 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
   if(model=="double-logistic"){
 
-    v<-length(theta)
-    if(v>6) warning("theta has more than six values")
-    if(v<6) stop("theta has less than six values")
+    v<-length(start)
+    if(v>6) warning("start has more than six values")
+    if(v<6) stop("start has less than six values")
 
 
     trap3<-function(x,ar,br,ym,yn, af, bf){
@@ -528,13 +532,13 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       return(yout)
     }
 
-    rss3<-function(theta,x,y){
-      ar=theta[1]
-      br=theta[2]
-      ym=theta[3]
-      yn=theta[4]
-      af=theta[5]
-      bf=theta[6]
+    rss3<-function(start,x,y){
+      ar=start[1]
+      br=start[2]
+      ym=start[3]
+      yn=start[4]
+      af=start[5]
+      bf=start[6]
 
       yf<-unlist(lapply(x,FUN=trap3,ar=ar,br=br,ym=ym, yn=yn, af=af, bf=bf))
       err<-(y-yf)
@@ -561,8 +565,8 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
     ## Optimization using optim function--------------------------------------------------
 
-    theta=theta[1:6]
-    ooo<-optim(theta,rss3,x=x,y=y, hessian = T,method=optim.method)
+    start=start[1:6]
+    ooo<-optim(start,rss3,x=x,y=y, hessian = T,method=optim.method)
     scale<-1/abs( parscale3(ooo$par,x=x,y=y))
     oo<-optim(ooo$par,rss3,x=x,y=y, hessian = T,method=optim.method,control = list(parscale = scale))
 
@@ -584,7 +588,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     }
 
     hesmat<-oo$hessian
-    estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
+    estimates<-matrix(NA,length(start),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-c(arf,brf,ymf, ynf, aff, bff)
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u20801","\u03B2\u20802","\u03B2\u2083","\u03B2\u2084")
 
@@ -593,7 +597,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
     Equation<-noquote("y = {\u03B2\u20801/1+[exp(\u03B2\u2082*(\u03B2\u2081-x))]} - {\u03B2\u20801/1+[exp(\u03B2\u2084*(\u03B2\u2083-x))]} ")
 
     Parameters<-list(Model=BLMod,Equation=Equation,Parameters=estimates,RSS= RSS,Hessian= hesmat,
-                     Start=theta,optimMethod=optim.method,data=data1)
+                     Start=start,optimMethod=optim.method,data=data1)
 
     class(Parameters) <- "cm" #necessary for only printing only part of the output
     return(Parameters)
@@ -603,7 +607,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
   if(model=="other"){
 
-    #### Names in theta and rearranging them  --------------------------------------------
+    #### Names in start and rearranging them  --------------------------------------------
 
     are_entries_named <- function(vec) {
       # Check if names attribute is not NULL
@@ -616,19 +620,19 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
       return(has_valid_names)
     }
 
-    if(are_entries_named(theta)==TRUE){
-      theta<-theta[order(names(theta))]
+    if(are_entries_named(start)==TRUE){
+      start<-start[order(names(start))]
     } else{
-      theta<-theta
+      start<-start
     }
 
-    theta<-unname(theta) # removes names from theta
+    start<-unname(start) # removes names from start
 
     #### Dynamic parameter handling -------------------------------------------------------
 
-    rss4 <- function(theta, x, y, equation) {
-      param_list <- as.list(theta)
-      names(param_list) <- letters[1:length(theta)]
+    rss4 <- function(start, x, y, equation) {
+      param_list <- as.list(start)
+      names(param_list) <- letters[1:length(start)]
       yf <- do.call(equation, c(list(x=x), param_list))
       err<-(y-yf)
       errx<-sum(sum(err[which(err>0|err==0)])*tau +
@@ -652,7 +656,7 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
 
     ## Optimization using optim function -------------------------------------------------
 
-    ooo <- optim(theta, rss4, x=x,y=y, method=optim.method, equation=equation)
+    ooo <- optim(start, rss4, x=x,y=y, method=optim.method, equation=equation)
     scale <- 1 / abs(parscale4(ooo$par, x=x,y=y, equation=equation))
     oo <- optim(ooo$par, rss4, x=x,y=y, method=optim.method, control=list(parscale=scale), equation=equation)
 

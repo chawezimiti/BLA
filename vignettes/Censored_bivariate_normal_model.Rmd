@@ -124,7 +124,7 @@ Argument values for the function `cbvn()` need to be set . Firstly, create a dat
 vals<-data.frame(x,y) #This is an input dataframe containing the variables
 ```
 
-Secondly, the `cbvn()` requires initial starting values, `theta`, which are parameters of the boundary line (the censor) and the bivariate normal distribution. Starting values of the boundary line depend on the model that one wishes to fit to the data (see options in `?cbvn`) . In this case, we shall fit a linear+plateau model (lp) and hence the parameters are the plateau value and the intercept and slope of the linear component. The boundary line start values can be obtained using the function `startValues()`. For more information on the `startValues()` function run the code `?startValues`. With a scatter plot of *`y`* against *`x`* active in the plot window in `R`, run the function `start.values("lp")`, then click on the plot, the point you expect to be the lowest and the largest response of a linear model at the boundary. Note that starting values for other models can be determined by changing the model name from "lp" to the desired models (see `?startValues` help file).
+Secondly, the `cbvn()` requires initial starting values, `start`, which are parameters of the boundary line (the censor) and the bivariate normal distribution. Starting values of the boundary line depend on the model that one wishes to fit to the data (see options in `?cbvn`) . In this case, we shall fit a linear+plateau model (lp) and hence the parameters are the plateau value and the intercept and slope of the linear component. The boundary line start values can be obtained using the function `startValues()`. For more information on the `startValues()` function run the code `?startValues`. With a scatter plot of *`y`* against *`x`* active in the plot window in `R`, run the function `start.values("lp")`, then click on the plot, the point you expect to be the lowest and the largest response of a linear model at the boundary. Note that starting values for other models can be determined by changing the model name from "lp" to the desired models (see `?startValues` help file).
 
 ```{r, eval=FALSE}
 plot(x,y)
@@ -141,8 +141,8 @@ sd(x)
 sd(y) 
 cor(x,y)
 
-#The parameters of the boundary line and the data can be combined in a #vector theta in the order 
-#theta<-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))
+#The parameters of the boundary line and the data can be combined in a #vector start in the order 
+#start<-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))
 ```
 
 Another important argument is the standard deviation of the measurement error, `sigh`, of the response variable `y`. In some cases this might be estimated from observations of analytical duplicates, or experiments to determine measurement error for variables such as crop yield (e.g. Kosmowski *et al*. 2021). However, in cases when this is not available, it can be estimated using different options. One option of estimation is to use a variogram if the location data for samples is available. In that case, nugget variance which is the unexplained short distance variations can be taken as an estimate of the measurement error. If this is not possible, a profiling procedure can be done. This is done by fitting a proposed model using a varied number of `sigh` values while keeping the rest of the model parameters constant. The log-likelihood values of the model for each `sigh` are determined and the value that maximizes the likelihood can be selected from the log-likelihood profile. This can be implemented using the `ble_profile()` function. For more information on this function run
@@ -156,15 +156,15 @@ The possible `sigh` values can be set to 0.5, 0.7 and 0.8 and we can check the l
 ```{r, eval=FALSE,fig.align='center', fig.dim=c(4,4)}
 
 sigh=c(0.5,0.7,0.8)
-ble_profile(vals,theta,sigh,model = "lp") # may take a few minutes to run for large datasets
+ble_profile(vals,start,sigh,model = "lp") # may take a few minutes to run for large datasets
 ```
 
 From the likelihood profile, the `sigh` that maximizes the likelihood is around 0.65. We can use this for the value of `sigh`. Now that all the arguments required for `cbvn()` function are set, the boundary line can be fitted
 
 ```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4) }
-theta<-c(4,3,13.6,3,9,0.50,1.9,0.05)
+start<-c(4,3,13.6,3,9,0.50,1.9,0.05)
 
-model1<-cbvn(vals,theta=theta,sigh=0.7,model = "lp", xlab=expression("P /log ppm"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
+model1<-cbvn(vals,start=start,sigh=0.7,model = "lp", xlab=expression("P /log ppm"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
 
 model1
 ```
@@ -250,7 +250,7 @@ We determine the argument values for the function `cbvn()` as before . Firstly, 
 vals<-data.frame(x,y) #This is an input dataframe containing the variables
 ```
 
-Secondly, the `cbvn()` requires initial starting values, *`theta`*, which are parameters of the boundary line (the censor) and the bivariate normal distribution. In this case, we shall fit a linear+Plateau model (lp) and hence the parameters are the plateau value and the intercept and slope of the linear component. With a scatter plot of *`y`* against *`x`* active in the plot window in `R`, run the function `start.values("lp")`, then click on the plot, the point you expect to be the lowest and the largest response of a linear model at the boundary. Note that starting values for other models can be determined by changing the model name from "lp" to the desired models (see `?startValues` help file)
+Secondly, the `cbvn()` requires initial starting values, *`start`*, which are parameters of the boundary line (the censor) and the bivariate normal distribution. In this case, we shall fit a linear+Plateau model (lp) and hence the parameters are the plateau value and the intercept and slope of the linear component. With a scatter plot of *`y`* against *`x`* active in the plot window in `R`, run the function `start.values("lp")`, then click on the plot, the point you expect to be the lowest and the largest response of a linear model at the boundary. Note that starting values for other models can be determined by changing the model name from "lp" to the desired models (see `?startValues` help file)
 
 ```{r, eval=FALSE}
 plot(x,y)
@@ -267,17 +267,17 @@ sd(x)
 sd(y) 
 cor(x,y)
 
-#The parameters of the boundary line and the data can be combined in a #vector theta in the order 
-#theta<-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))
+#The parameters of the boundary line and the data can be combined in a #vector start in the order 
+#start<-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))
 
-theta<-c(-9,3, 13.5,7.5,9,0.68,2.3,0.12)
+start<-c(-9,3, 13.5,7.5,9,0.68,2.3,0.12)
 ```
 
 The standard deviation of the measurement error, *`sigh`* was already determine as 0.7. Now that all the arguments required for `cbvn()` function are set, the boundary line can be fitted
 
 ```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4) }
 
-model2<-cbvn(vals,theta=theta,sigh=0.7,model = "lp", xlab=expression("pH"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
+model2<-cbvn(vals,start=start,sigh=0.7,model = "lp", xlab=expression("pH"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
 
 model2
 ```

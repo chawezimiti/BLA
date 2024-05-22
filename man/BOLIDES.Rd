@@ -4,7 +4,7 @@
 \alias{bolides}
 \title{Boundary line determination technique}
 \usage{
-bolides(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",
+bolides(x,y,model="explore", equation=NULL, start, optim.method="Nelder-Mead",
         xmin=min(bound$x), xmax=max(bound$x), plot=TRUE,bp_col="red", bp_pch=16,
         bl_col="red" ,lwd=1,line_smooth=1000,...)
 }
@@ -26,7 +26,7 @@ correct \code{model} can be applied. For custom models, set \code{model = "other
 \item{equation}{A custom model function writen in the form of an R function. Applies
 only when argument \code{model="other"}, else it is \code{NULL}.}
 
-\item{theta}{A numeric vector of initial starting values for optimization
+\item{start}{A numeric vector of initial starting values for optimization
 in fitting the boundary model. Its length and arrangement depend on the
 suggested model: \itemize{
 \item For the \code{"blm"} model, it is a vector of length 2 arranged as intercept
@@ -168,9 +168,9 @@ can be taken as a representation of the global optimum.
 
 x<-log(SoilP$P)
 y<-SoilP$yield
-theta<-c(4,3,13.6,35,-5)
+start<-c(4,3,13.6,35,-5)
 
-bolides(x,y,theta=theta,model = "trapezium",
+bolides(x,y,start=start,model = "trapezium",
         xlab=expression("Phosphorus/ln(mg L"^-1*")"),
         ylab=expression("Yield/ t ha"^-1), pch=16,
         col="grey", bp_col="grey")

@@ -21,7 +21,7 @@
 #' @param equation A custom model function writen in the form of an R function. Applies
 #'   only when argument \code{model="other"}, else it is \code{NULL}.
 #'
-#' @param theta A numeric vector of initial starting values for optimization
+#' @param start A numeric vector of initial starting values for optimization
 #'   in fitting the boundary model. Its length and arrangement depend on the
 #'   suggested model: \itemize{
 #'   \item For the \code{"blm"} model, it is a vector of length 2 arranged as intercept
@@ -139,6 +139,10 @@
 #' several starting values and the results with the smallest error (residue mean square)
 #' can be taken as a representation of the global optimum.
 #'
+#' The common errors encountered due to poor start values \enumerate{
+#' \item function cannot be evaluated at initial parameters
+#' \item initial value in 'vmmin' is not finite}
+#'
 #' @references
 #'
 #' Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
@@ -162,23 +166,23 @@
 #' @export
 #' @rdname BOLIDES
 #' @usage
-#' bolides(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",
+#' bolides(x,y,model="explore", equation=NULL, start, optim.method="Nelder-Mead",
 #'         xmin=min(bound$x), xmax=max(bound$x), plot=TRUE,bp_col="red", bp_pch=16,
 #'         bl_col="red" ,lwd=1,line_smooth=1000,...)
 #' @examples
 #'
 #' x<-log(SoilP$P)
 #' y<-SoilP$yield
-#' theta<-c(4,3,13.6,35,-5)
+#' start<-c(4,3,13.6,35,-5)
 #'
-#' bolides(x,y,theta=theta,model = "trapezium",
+#' bolides(x,y,start=start,model = "trapezium",
 #'         xlab=expression("Phosphorus/ln(mg L"^-1*")"),
 #'         ylab=expression("Yield/ t ha"^-1), pch=16,
 #'         col="grey", bp_col="grey")
 #'
 #'
 #'
-bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelder-Mead",
+bolides<-function(x,y,model="explore", equation=NULL, start, optim.method="Nelder-Mead",
                   xmin=min(bound$x), xmax=max(bound$x), plot=TRUE,bp_col="red", bp_pch=16,
                   bl_col="red", lwd=1,line_smooth=1000,...){
 
@@ -309,9 +313,9 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
   if(model=="blm"){
 
-    v<-length(theta)
-    if(v>2) stop("theta has more than two values")
-    if(v<2) stop("theta has less than two values")
+    v<-length(start)
+    if(v>2) stop("start has more than two values")
+    if(v<2) stop("start has less than two values")
 
     trap<-function(x,ar,br){
       yr<-ar+br*x
@@ -319,9 +323,9 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     }
 
 
-    rss<-function(theta,x,y){
-      ar=theta[1]
-      br=theta[2]
+    rss<-function(start,x,y){
+      ar=start[1]
+      br=start[2]
 
       yf<-unlist(lapply(x,FUN=trap,ar=ar,br=br))
 
@@ -347,7 +351,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
     ## Optimization using optim function -------------------------------------------------
 
-    ooo<-optim(theta,rss,x=newdata5$x,y=newdata5$y,method=optim.method)  # find LS estimate of theta given data in x,yobs
+    ooo<-optim(start,rss,x=newdata5$x,y=newdata5$y,method=optim.method)  # find LS estimate of start given data in x,yobs
     scale<-1/abs( parscale(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
@@ -366,7 +370,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     }
 
 
-    estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
+    estimates<-matrix(NA,length(start),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-c(arf,brf)
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082")
 
@@ -383,9 +387,9 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
   if(model=="lp"|model=="logistic"|model=="logisticND"|model=="inv-logistic"|model=="qd"|model=="mit"|model=="schmidt"){
 
-    v<-length(theta)
-    if(v>3) stop("theta has more than three values")
-    if(v<3) stop("theta has less than three values")
+    v<-length(start)
+    if(v>3) stop("start has more than three values")
+    if(v<3) stop("start has less than three values")
 
     ## set the function for each method --------------------------------------------------
 
@@ -455,10 +459,10 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
    ## Loss function ---------------------------------------------------------------------
 
-    rss1<-function(theta,x,y){
-      ar=theta[1]
-      br=theta[2]
-      ym=theta[3]
+    rss1<-function(start,x,y){
+      ar=start[1]
+      br=start[2]
+      ym=start[3]
 
       yf<-unlist(lapply(x,FUN=trap1,ar=ar,br=br,ym=ym))
 
@@ -485,7 +489,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
     ## Optimization using optim function -------------------------------------------------
 
-    ooo<-optim(theta,rss1,x=newdata5$x,y=newdata5$y,method=optim.method)
+    ooo<-optim(start,rss1,x=newdata5$x,y=newdata5$y,method=optim.method)
     scale<-1/abs( parscale1(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss1,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
@@ -504,7 +508,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     }
 
 
-    estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
+    estimates<-matrix(NA,length(start),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-c(arf,brf,ymf)
     if(model=="qd"){
       rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u2083")}else{
@@ -524,9 +528,9 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
   if(model=="trapezium"){
 
-    v<-length(theta)
-    if(v>5) stop("theta has more than five values")
-    if(v<5) stop("theta has less than five values")
+    v<-length(start)
+    if(v>5) stop("start has more than five values")
+    if(v<5) stop("start has less than five values")
 
 
     trap2<-function(x,ar,br,ym,af,bf){
@@ -537,12 +541,12 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     }
 
 
-    rss2<-function(theta,x,y){
-      ar=theta[1]
-      br=theta[2]
-      ym=theta[3]
-      af=theta[4]
-      bf=theta[5]
+    rss2<-function(start,x,y){
+      ar=start[1]
+      br=start[2]
+      ym=start[3]
+      af=start[4]
+      bf=start[5]
 
       yf<-unlist(lapply(x,FUN=trap2,ar=ar,br=br,ym=ym,af=af,bf=bf))
 
@@ -567,7 +571,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
     ## Optimization
 
-    ooo<-optim(theta,rss2,x=newdata5$x,y=newdata5$y,method=optim.method)   #find LS estimate of theta given data in x,yobs
+    ooo<-optim(start,rss2,x=newdata5$x,y=newdata5$y,method=optim.method)   #find LS estimate of start given data in x,yobs
     scale<-1/abs( parscale2(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss2,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
@@ -587,7 +591,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
     if(plot==TRUE){lines(xfine,yfit,lwd=lwd,col=bl_col)}
 
-    estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
+    estimates<-matrix(NA,length(start),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-c(arf,brf,ymf,aff,bff)
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u2080","\u03B2\u2083","\u03B2\u2084")
 
@@ -603,10 +607,10 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
   ##### Fitting the six parameter double logistic model ----------------------------------
 
   if(model=="double-logistic"){
-    v<-length(theta)
+    v<-length(start)
 
-    if(v>6) warning("theta has more than six values")
-    if(v<6) stop("theta has less than six values")
+    if(v>6) warning("start has more than six values")
+    if(v<6) stop("start has less than six values")
 
 
     trap3<-function(x,ar,br,ym,yn, af, bf){
@@ -616,13 +620,13 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
     }
 
 
-    rss3<-function(theta,x,y){
-      ar=theta[1]
-      br=theta[2]
-      ym=theta[3]
-      yn=theta[4]
-      af=theta[5]
-      bf=theta[6]
+    rss3<-function(start,x,y){
+      ar=start[1]
+      br=start[2]
+      ym=start[3]
+      yn=start[4]
+      af=start[5]
+      bf=start[6]
 
       yf<-unlist(lapply(x,FUN=trap3,ar=ar,br=br,ym=ym, yn=yn, af=af, bf=bf))
 
@@ -647,7 +651,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
     ## Optimization using optim function -------------------------------------------------
 
-    ooo<-optim(theta,rss3,x=newdata5$x,y=newdata5$y,method=optim.method)
+    ooo<-optim(start,rss3,x=newdata5$x,y=newdata5$y,method=optim.method)
     scale<-1/abs( parscale3(ooo$par,x=newdata5$x,y=newdata5$y))
     oo<-optim(ooo$par,rss3,x=newdata5$x,y=newdata5$y,method=optim.method,control = list(parscale = scale))
 
@@ -668,7 +672,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       lines(xfine,yfit,lwd=lwd,col=bl_col)
     }
 
-    estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
+    estimates<-matrix(NA,length(start),1,dimnames=list(c(),c("Estimate")))
     estimates[,1]<-c(arf,brf,ymf, ynf, aff, bff)
     rownames(estimates)<-c("\u03B2\u2081","\u03B2\u2082","\u03B2\u20801","\u03B2\u20802","\u03B2\u2083","\u03B2\u2084")
 
@@ -685,7 +689,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
   if(model=="other"){
 
-    #### Names in theta and rearranging them  --------------------------------------------
+    #### Names in start and rearranging them  --------------------------------------------
 
     are_entries_named <- function(vec) {
       # Check if names attribute is not NULL
@@ -698,19 +702,19 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
       return(has_valid_names)
     }
 
-    if(are_entries_named(theta)==TRUE){
-      theta<-theta[order(names(theta))]
+    if(are_entries_named(start)==TRUE){
+      start<-start[order(names(start))]
     } else{
-      theta<-theta
+      start<-start
     }
 
-    theta<-unname(theta) # removes names from theta
+    start<-unname(start) # removes names from start
 
     #### Dynamic parameter handling -------------------------------------------------------
 
-    rss4 <- function(theta, x, y, equation) {
-      param_list <- as.list(theta)
-      names(param_list) <- letters[1:length(theta)]
+    rss4 <- function(start, x, y, equation) {
+      param_list <- as.list(start)
+      names(param_list) <- letters[1:length(start)]
       yf <- do.call(equation, c(list(x=x), param_list))
       err <- sum((y - yf)^2) / length(x)
       return(err)
@@ -732,7 +736,7 @@ bolides<-function(x,y,model="explore", equation=NULL, theta, optim.method="Nelde
 
     ## Optimization using optim function -------------------------------------------------
 
-    ooo <- optim(theta, rss4, x=newdata5$x, y=newdata5$y, method=optim.method, equation=equation)
+    ooo <- optim(start, rss4, x=newdata5$x, y=newdata5$y, method=optim.method, equation=equation)
     scale <- 1 / abs(parscale4(ooo$par, x=newdata5$x, y=newdata5$y, equation=equation))
     oo <- optim(ooo$par, rss4, x=newdata5$x, y=newdata5$y, method=optim.method, control=list(parscale=scale), equation=equation)
 

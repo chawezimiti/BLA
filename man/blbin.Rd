@@ -4,7 +4,7 @@
 \alias{blbin}
 \title{Binning method for determining the boundary line model}
 \usage{
-blbin(x,y,bins, model="explore", equation=NULL, theta, tau=0.95,
+blbin(x,y,bins, model="explore", equation=NULL, start, tau=0.95,
       optim.method="Nelder-Mead", xmin=min(bound$x), xmax=max(bound$x),plot=TRUE,
       bp_col="red", bp_pch=16, bl_col="red", lwd=1,line_smooth=1000,...)
 }
@@ -33,7 +33,7 @@ so that the correct \code{model} can be applied. For custom models, set
 \item{equation}{A custom model function writen in the form of an R function. Applies
 only when argument \code{model="other"}, else it is \code{NULL}.}
 
-\item{theta}{A numeric vector of initial starting values for optimization
+\item{start}{A numeric vector of initial starting values for optimization
 in fitting the boundary model. Its length and arrangement depend on the
 suggested model: \itemize{
 \item For the \code{"blm"} model, it is a vector of length 2 arranged as intercept
@@ -178,10 +178,10 @@ can be taken as a representation of the global optimum.
 \examples{
 x<-log(SoilP$P)
 y<-SoilP$yield
-theta<-c(4,3,13.6, 35, -5)
+start<-c(4,3,13.6, 35, -5)
 bins<-c(1.6,4.74,0.314)
 
-blbin(x,y, bins=bins, theta=theta,model = "trapezium", tau=0.99,
+blbin(x,y, bins=bins, start=start,model = "trapezium", tau=0.99,
        xlab=expression("Phosphorus/ln(mg L"^-1*")"),
        ylab=expression("Yield/ t ha"^-1), pch=16,
        col="grey", bp_col="grey")

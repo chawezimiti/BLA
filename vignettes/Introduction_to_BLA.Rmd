@@ -152,17 +152,17 @@ This method fit the boundary line following the boundary line determination tech
 ?bolides
 ```
 
-The arguments *`x`* and *`y`* are the independent and dependent variable respectively and `theta` is a vector of starting values . The `model` argument is used to specify the model of the boundary line e.g. "blm" for the linear model. The `xmax` is an argument that describes the maximum value of the independent variable beyond which the relation of *`x`* and *`y`* is no longer theoretically feasible. Other arguments relate to the plot parameters as in the `plot()` function.
+The arguments *`x`* and *`y`* are the independent and dependent variable respectively and `start` is a vector of starting values . The `model` argument is used to specify the model of the boundary line e.g. "blm" for the linear model. The `xmax` is an argument that describes the maximum value of the independent variable beyond which the relation of *`x`* and *`y`* is no longer theoretically feasible. Other arguments relate to the plot parameters as in the `plot()` function.
 
 All boundary fitting methods require initial starting values for the parameters of a proposed model. The initial starting values are optimized to find the parameters of the proposed model as in the `optim()` function in base `R`.
 
-To get the theta starting values, the `bolides()` function is run with the argument `model="explore"`. This allows us to view the selected boundary points using the boundary line determination technique.
+To get the start starting values, the `bolides()` function is run with the argument `model="explore"`. This allows us to view the selected boundary points using the boundary line determination technique.
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 bolides(x,y,model = "explore", pch=16, col="grey")
 ```
 
-From the plot, it can be seen that a "trapezium" model will be more appropriate for this data set. The function `startValues()` can be used to determine initial start `theta` values. For more information on `startValues()` function see `?startValues()`.
+From the plot, it can be seen that a "trapezium" model will be more appropriate for this data set. The function `startValues()` can be used to determine initial start values. For more information on `startValues()` function see `?startValues()`.
 
 ```{r, eval=FALSE}
 ?startValues()
@@ -179,9 +179,9 @@ The proposed start values will be produced. Note that this can be done for other
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 
-theta<-c(4,3,14,104,-22) # start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. 
+start<-c(4,3,14,104,-22) # start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. 
 
-model1<-bolides(x,y, theta = theta,model = "trapezium",
+model1<-bolides(x,y, start = start,model = "trapezium",
                 xlab=expression("Phosphorus/ln(mg L"^-1*")"), 
                 ylab=expression("Yield/ t ha"^-1), pch=16, 
                 col="grey", bp_col="grey")
@@ -212,9 +212,9 @@ The binning methodology involves splitting the data into several sections in the
 ?blbin
 ```
 
-The arguments *`x`* and *`y`* are the independent and dependent variable respectively and `theta` is a vector of starting values . The `model` argument is used to specify the model of the boundary line e.g. `model="blm"` for the linear model. The `bins` argument describes the size of the bins with a vector of length 3 containing the minimum and maximum independent variable values, and the size of bins to be used for the data respectively. We assume that the 99$^{\rm th}$ percentile (`tau=0.99`) is the boundary.
+The arguments *`x`* and *`y`* are the independent and dependent variable respectively and `start` is a vector of starting values . The `model` argument is used to specify the model of the boundary line e.g. `model="blm"` for the linear model. The `bins` argument describes the size of the bins with a vector of length 3 containing the minimum and maximum independent variable values, and the size of bins to be used for the data respectively. We assume that the 99$^{\rm th}$ percentile (`tau=0.99`) is the boundary.
 
-The initial start theta values can be determined as previously shown in the previous section
+The initial start start values can be determined as previously shown in the previous section
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 bins<-c(1.61,4.74,0.313) 
@@ -228,13 +228,13 @@ From the plot, it can be seen that a "trapezium" model will be more appropriate 
 startValues("trapezium")
 ```
 
-The values for `theta` can now be obtained and the function can now be run.
+The values for `start` can now be obtained and the function can now be run.
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 
-theta<-c(4.75, 3.23, 13.3, 24.87,-2.95 )
+start<-c(4.75, 3.23, 13.3, 24.87,-2.95 )
 
-model2<-blbin(x,y, bins,theta = theta,model = "trapezium", 
+model2<-blbin(x,y, bins,start = start,model = "trapezium", 
               tau=0.99, 
               ylab=expression("t ha"^-1), 
               xlab=expression("Phosphorus/ln(mg L"^-1*")"), 
@@ -253,9 +253,9 @@ This method fits the boundary line using the principle of quantile regression (C
 ?blqr
 ```
 
-The arguments *`x`* and *`y`* are the independent and dependent variable respectively and `theta` is a vector of starting values . The `model` argument is used to specify the model of the boundary line e.g. "blm" for the linear model. The argument `tau` describes the quantile value described as boundary. We assume that the 99$^{\rm th}$ quantile (`tau=0.99`) value is the boundary. This is an arbitrary assumption, and for this reason we treat the method as heuristic.
+The arguments *`x`* and *`y`* are the independent and dependent variable respectively and `start` is a vector of starting values . The `model` argument is used to specify the model of the boundary line e.g. "blm" for the linear model. The argument `tau` describes the quantile value described as boundary. We assume that the 99$^{\rm th}$ quantile (`tau=0.99`) value is the boundary. This is an arbitrary assumption, and for this reason we treat the method as heuristic.
 
-The initial start theta values can be determined as previously shown in the previous section. however, the `blqr()` function does not have the explore option and hence the `startValues()` function is used just on the plot of *`x`* and *`y`* directly according to the suggested model from the structure at the upper edge of the data. The trapezium model will be used for this data.
+The initial start start values can be determined as previously shown in the previous section. however, the `blqr()` function does not have the explore option and hence the `startValues()` function is used just on the plot of *`x`* and *`y`* directly according to the suggested model from the structure at the upper edge of the data. The trapezium model will be used for this data.
 
 ```{r,fig.align='center', fig.dim=c(4,4), eval=FALSE}
 
@@ -264,13 +264,13 @@ plot(x,y)
 startValues("trapezium")
 ```
 
-The `theta `values can now be used in the `blqr()` function.
+The `start `values can now be used in the `blqr()` function.
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 
-theta<-c(4,3,13.5,31,-4.5)
+start<-c(4,3,13.5,31,-4.5)
 
-model3<-blqr(x,y, theta = theta, model = "trapezium",
+model3<-blqr(x,y, start = start, model = "trapezium",
              xlab=expression("Phosphorus/ mg L"^-1), 
              ylab=expression("Phosphorus/ln(mg L"^-1*")"),
              pch=16,tau=0.99, col="grey") # may take a few seconds to ran
@@ -300,7 +300,7 @@ $$
 y=\beta_0 - \beta_1(x-\beta_2)^2
 $$
 
-The model is written in form of an `R` function and the parameters should always be written in alphabetical order as ***a**, **b*** and ***c*** for a three parameter function, ***a**, **b**,**c*** and ***d*** for four parameter function and so on. Currently, this is only set up for upto five parameter models.
+The model is written in form of an `R` function and the parameters should always be written in alphabetical order as ***a**, **b*** and ***c*** for a three parameter function, ***a**, **b**,**c*** and ***d*** for four parameter function and so on.
 
 ```{r}
 custom_function<-function(x,a,b,c){
@@ -308,14 +308,14 @@ custom_function<-function(x,a,b,c){
 }
 ```
 
-The next step is to suggest the initial start `theta` values. These should be sensible values else the function will not converge. These should be arranges in alphabetical order as `theta=c(a,b,c)`. Replace a, b and c with numeric values of your choice.
+The next step is to suggest the initial start `start` values. These should be sensible values else the function will not converge. These should be arranges in alphabetical order as `start=c(a,b,c)`. Replace a, b and c with numeric values of your choice.
 
 The arguments of `bolides()` function can now be added. In this case, the argument model while be set to "other". The arguments equation is now set to your custom function (`equation=custom_function`)
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
-theta<-c(13.5,3,3.3)  
+start<-c(13.5,3,3.3)  
 
-model4<-bolides(x,y, theta = theta,model = "other",
+model4<-bolides(x,y, start = start,model = "other",
                 equation=custom_function,
                 xlab=expression("Phosphorus/mg L"^-1), 
                 ylab=expression("Phosphorus/ln(mg L"^-1*")"), 

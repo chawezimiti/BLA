@@ -11,7 +11,7 @@
 #'
 #' @param vals A dataframe with two numeric columns, independent (\code{x}) and
 #'   dependent (\code{y}) variables respectively.
-#' @param theta A numeric vector of initial starting values for optimization
+#' @param start A numeric vector of initial starting values for optimization
 #'   in fitting the boundary model. Its length and arrangement depend on the
 #'   suggested model: \itemize{
 #'   \item For the \code{"blm"} model, it is a vector of length 7 arranged as the
@@ -141,6 +141,11 @@
 #' several starting values and the results with the smallest likelihood (or AIC)
 #' can be taken as a representation of the global optimum.
 #'
+#' The common errors encountered due to poor start values \enumerate{
+#' \item function cannot be evaluated at initial parameters
+#' \item initial value in 'vmmin' is not finite}
+#'
+#'
 #' @references
 #'
 #' Nelder, J.A. 1961. The fitting of a generalization of the logistic curve.
@@ -174,7 +179,7 @@
 #'
 #' @rdname cbvn
 #' @usage
-#' cbvn(vals,model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",
+#' cbvn(vals,model="lp", equation=NULL, start, sigh, UpLo="U", optim.method="BFGS",
 #'       Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...)
 #'
 #' @examples
@@ -182,14 +187,14 @@
 #' x<-log(SoilP$P)
 #' y<-SoilP$yield
 #' vals<-data.frame(x,y)
-#' theta<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
+#' start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
 #'
-#' cbvn(vals,theta=theta,model = "trapezium", sigh = 0.7,
+#' cbvn(vals,start=start,model = "trapezium", sigh = 0.7,
 #'       xlab=expression("Phosphorus/ln(mg L"^-1*")"),
 #'       ylab=expression("Yield/ t ha"^-1), pch=16,
 #'       col="grey")
 #'
-cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",
+cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.method="BFGS",
                Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...){
 
 
@@ -204,7 +209,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
   if(model=="lp"|model=="mit"|model=="logistic"|model=="inv-logistic"|model=="schmidt"|model=="qd"|model=="logisticND"){
 
-    if (length(theta) != 8) stop("theta must have exactly eight values")
+    if (length(start) != 8) stop("start must have exactly eight values")
 
     ## Define model functions-------------------------------------------------------------
 
@@ -285,7 +290,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Optimization of the model----------------------------------------------------------
 
-    mlest <- suppressWarnings(optim(theta, nll_mef, uplo = UpLo, BLMod = BLMod,
+    mlest <- suppressWarnings(optim(start, nll_mef, uplo = UpLo, BLMod = BLMod,
                                     method = optim.method, hessian = TRUE))
 
     scale <- suppressWarnings(1 / abs(grad(nll_mef, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -323,8 +328,8 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Fitting the null model and compute its AIC-----------------------------------------
 
-    theta2 <- c(theta[4:8], 0)
-    mvnmlest <- suppressWarnings(optim(theta2, nllmvn, method = optim.method))
+    start2 <- c(start[4:8], 0)
+    mvnmlest <- suppressWarnings(optim(start2, nllmvn, method = optim.method))
     AImvn <- (2 * 5) + (2 * mvnmlest$value)
 
     ## Output preparation-----------------------------------------------------------------
@@ -354,7 +359,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
   if(model=="blm"){
 
-    if (length(theta) != 7) stop("theta must have exactly seven values")
+    if (length(start) != 7) stop("start must have exactly seven values")
 
     ## Define model functions-------------------------------------------------------------
 
@@ -432,7 +437,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Optimization of the model----------------------------------------------------------
 
-    mlest <- suppressWarnings(optim(theta, nll_mef2, uplo = UpLo, BLMod = BLMod,
+    mlest <- suppressWarnings(optim(start, nll_mef2, uplo = UpLo, BLMod = BLMod,
                                     method = optim.method, hessian = TRUE))
 
     scale <- suppressWarnings(1 / abs(grad(nll_mef2, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -473,8 +478,8 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ##  Fitting the null model, an unbounded multivariate normal, and compute its AIC-----
 
-    theta2<-c(theta[c(3,4,5,6)],0)
-    mvnmlest<- suppressWarnings(optim( theta2,nllmvn2, method=optim.method))
+    start2<-c(start[c(3,4,5,6)],0)
+    mvnmlest<- suppressWarnings(optim( start2,nllmvn2, method=optim.method))
     AImvn<-(2*5)+(2*mvnmlest$value)
 
 
@@ -496,7 +501,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
   if(model=="trapezium"){
 
-    if (length(theta) != 10) stop("theta must have exactly ten values")
+    if (length(start) != 10) stop("start must have exactly ten values")
 
     ## Define model functions------------------------------------------------------------
 
@@ -575,7 +580,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Optimization of the model---------------------------------------------------------
 
-    mlest <- suppressWarnings(optim(theta, nll_mef3, uplo = UpLo, BLMod = BLMod,
+    mlest <- suppressWarnings(optim(start, nll_mef3, uplo = UpLo, BLMod = BLMod,
                                     method = optim.method, hessian = TRUE))
 
     scale <- suppressWarnings(1 / abs(grad(nll_mef3, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -616,9 +621,9 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Fitting the null model, an unbounded multivariate normal, and compute its AIC------
 
-    theta2<-c(theta[c(6,7,8,9)],0)
+    start2<-c(start[c(6,7,8,9)],0)
 
-    mvnmlest<-suppressWarnings(optim( theta2,nllmvn3, method=optim.method))
+    mvnmlest<-suppressWarnings(optim( start2,nllmvn3, method=optim.method))
 
     AImvn<-(2*5)+(2*mvnmlest$value)
 
@@ -641,7 +646,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
   if(model=="double-logistic"){
 
-    if (length(theta) != 11) stop("theta must have exactly eleven values")
+    if (length(start) != 11) stop("start must have exactly eleven values")
 
     ## Define model functions-------------------------------------------------------------
 
@@ -723,7 +728,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## Optimization of the model----------------------------------------------------------
 
-    mlest <- suppressWarnings(optim(theta, nll_mef4, uplo = UpLo, BLMod = BLMod,
+    mlest <- suppressWarnings(optim(start, nll_mef4, uplo = UpLo, BLMod = BLMod,
                                     method = optim.method, hessian = TRUE))
 
     scale <- suppressWarnings(1 / abs(grad(nll_mef4, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -766,8 +771,8 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
     ## fitting the null model, an unbounded multivariate normal, and compute its AIC-----
 
-    theta2<-c(theta[c(7,8,9,10)],0)
-    mvnmlest<-suppressWarnings(optim( theta2,nllmvn4, method=optim.method))
+    start2<-c(start[c(7,8,9,10)],0)
+    mvnmlest<-suppressWarnings(optim( start2,nllmvn4, method=optim.method))
     AImvn<-(2*5)+(2*mvnmlest$value)
 
 
@@ -790,10 +795,10 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
   if(model=="other"){
 
-    v<-length(theta)
-    if(length(theta)>10) stop("Not set up for models with more than 5 parametrs. The argument theta should contain less than 10 values")
+    v<-length(start)
+    if(length(start)>10) stop("Not set up for models with more than 5 parametrs. The argument start should contain less than 10 values")
     Equation<-equation # to print equation in output
-    theta<-unname(theta) # removes names from theta
+    start<-unname(start) # removes names from start
 
     ### The three parameter models ######################################################
 
@@ -870,7 +875,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
       ## Optimization of the model--------------------------------------------------------
 
-      mlest <- suppressWarnings(optim(theta, nll_mef5, uplo = UpLo, BLMod = BLMod,
+      mlest <- suppressWarnings(optim(start, nll_mef5, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
       scale <- suppressWarnings(1 / abs(grad(nll_mef5, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -915,8 +920,8 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
       ## Fitting the null model, an unbounded multivariate normal, and compute its AIC---
 
-      theta2<-c(theta[c(4,5,6,7)],0)
-      mvnmlest<-suppressWarnings(optim( theta2,nllmvn5, method=optim.method))
+      start2<-c(start[c(4,5,6,7)],0)
+      mvnmlest<-suppressWarnings(optim( start2,nllmvn5, method=optim.method))
       AImvn<-(2*5)+(2*mvnmlest$value) #
 
       ## Output preparation --------------------------------------------------------------
@@ -1008,7 +1013,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
       ## Optimization of the model--------------------------------------------------------
 
-      mlest <- suppressWarnings(optim(theta, nll_mef6, uplo = UpLo, BLMod = BLMod,
+      mlest <- suppressWarnings(optim(start, nll_mef6, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
       scale <- suppressWarnings(1 / abs(grad(nll_mef6, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -1054,8 +1059,8 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
       ## Fitting the null model, an unbounded multivariate normal, and compute its AIC---
 
-      theta2<-c(theta[c(4,5,6,7)],0)
-      mvnmlest<-suppressWarnings(optim( theta2,nllmvn6, method=optim.method))
+      start2<-c(start[c(4,5,6,7)],0)
+      mvnmlest<-suppressWarnings(optim( start2,nllmvn6, method=optim.method))
       AImvn<-(2*5)+(2*mvnmlest$value)
 
 
@@ -1147,7 +1152,7 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
       ## Optimization of the model--------------------------------------------------------
 
-      mlest <- suppressWarnings(optim(theta, nll_mef7, uplo = UpLo, BLMod = BLMod,
+      mlest <- suppressWarnings(optim(start, nll_mef7, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
       scale <- suppressWarnings(1 / abs(grad(nll_mef7, mlest$par, uplo = UpLo, BLMod = BLMod)))
@@ -1196,9 +1201,9 @@ cbvn<-function(vals, model="lp", equation=NULL, theta, sigh, UpLo="U", optim.met
 
       ## Fitting the null model, an unbounded multivariate normal, and compute its AIC----
 
-      theta2<-c(theta[c(6,7,8,9)],0)
+      start2<-c(start[c(6,7,8,9)],0)
 
-      mvnmlest<-suppressWarnings(optim( theta2,nllmvn7,method=optim.method))
+      mvnmlest<-suppressWarnings(optim( start2,nllmvn7,method=optim.method))
 
       AImvn<-(2*5)+(2*mvnmlest$value)
 

@@ -4,7 +4,7 @@
 \alias{cbvn}
 \title{Fitting boundary line using censored bivariate normal model}
 \usage{
-cbvn(vals,model="lp", equation=NULL, theta, sigh, UpLo="U", optim.method="BFGS",
+cbvn(vals,model="lp", equation=NULL, start, sigh, UpLo="U", optim.method="BFGS",
       Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...)
 }
 \arguments{
@@ -23,7 +23,7 @@ models, set \code{model = "other"}.}
 \item{equation}{A custom model function writen in the form of an R function. Applies
 only when argument \code{model="other"}, else it is \code{NULL}.}
 
-\item{theta}{A numeric vector of initial starting values for optimization
+\item{start}{A numeric vector of initial starting values for optimization
   in fitting the boundary model. Its length and arrangement depend on the
   suggested model: \itemize{
   \item For the \code{"blm"} model, it is a vector of length 7 arranged as the
@@ -169,9 +169,9 @@ can be taken as a representation of the global optimum.
 x<-log(SoilP$P)
 y<-SoilP$yield
 vals<-data.frame(x,y)
-theta<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
+start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
 
-cbvn(vals,theta=theta,model = "trapezium", sigh = 0.7,
+cbvn(vals,start=start,model = "trapezium", sigh = 0.7,
       xlab=expression("Phosphorus/ln(mg L"^-1*")"),
       ylab=expression("Yield/ t ha"^-1), pch=16,
       col="grey")

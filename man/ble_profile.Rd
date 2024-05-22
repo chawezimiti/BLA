@@ -4,7 +4,7 @@
 \alias{ble_profile}
 \title{Likelihood profile for various measurement error values}
 \usage{
-ble_profile(vals, sigh, model="lp", equation=NULL,  theta, UpLo="U",
+ble_profile(vals, sigh, model="lp", equation=NULL,  start, UpLo="U",
              optim.method="BFGS", plot=TRUE)
 }
 \arguments{
@@ -26,7 +26,7 @@ models, set \code{model = "other"}.}
 \item{equation}{A custom model function writen in the form of an R function. Applies
 only when argument \code{model="other"}, else it is \code{NULL}.}
 
-\item{theta}{A numeric vector of initial starting values for optimization
+\item{start}{A numeric vector of initial starting values for optimization
   in fitting the boundary model. Its length and arrangement depend on the
   suggested model: \itemize{
   \item For the \code{"blm"} model, it is a vector of length 7 arranged as the
@@ -157,10 +157,10 @@ can be taken as a representation of the global optimum.
 x<-log(SoilP$P)
 y<-SoilP$yield
 vals<-data.frame(x,y)
-theta<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
+start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
 sigh = c(0.4,0.5,0.6,0.7)
 
-ble_profile(vals,theta=theta,model = "trapezium", sigh = sigh)
+ble_profile(vals,start=start,model = "trapezium", sigh = sigh)
 
 }
 \references{
