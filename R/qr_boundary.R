@@ -602,224 +602,86 @@ blqr<-function(x,y,model, equation=NULL,theta,tau=0.95,optim.method="Nelder-Mead
   #### CUSTOM FUNCTIONS ------------------------------------------------------------------
 
   if(model=="other"){
-    v<-length(theta)
-    Equation<-equation   # to print equation in output
+
+    #### Names in theta and rearranging them  --------------------------------------------
+
+    are_entries_named <- function(vec) {
+      # Check if names attribute is not NULL
+      if (is.null(names(vec))) {
+        return(FALSE)
+      }
+
+      # Check if all entries have non-NA and non-empty names
+      has_valid_names <- all(!is.na(names(vec))) && all(names(vec) != "")
+      return(has_valid_names)
+    }
+
+    if(are_entries_named(theta)==TRUE){
+      theta<-theta[order(names(theta))]
+    } else{
+      theta<-theta
+    }
+
     theta<-unname(theta) # removes names from theta
 
-    ### The three parameter model --------------------------------------------------------
+    #### Dynamic parameter handling -------------------------------------------------------
 
-    if(v==3){
-      rss4<-function(theta,x,y,equation){
-        a=theta[1]
-        b=theta[2]
-        c=theta[3]
-        equation=equation
-
-        yf<-do.call(equation, c(list(x=x),list(a,b,c)))
-
-        err<-(y-yf)
-        errx<-sum(sum(err[which(err>0|err==0)])*tau +
-                    sum(abs(err[which(err<0)]))*(1-tau))
-
-        return(errx)
-      }
-
-      ## scaling--------------------------------------------------------------------------
-
-      parscale4<-function(k,x,y,equation){
-
-        eps=1e-4
-        nr<-length(k)
-        part<-vector("numeric",nr)
-        equation=equation
-
-        for (i in 1:nr){
-          del<-rep(0,nr)
-          del[i]<-eps
-          part[i]<-(rss4((k+del),x,y,equation)-rss4((k),x,y,equation))/eps
-        }
-
-        return(part)
-      }
-
-
-      ## Optimization using optim function------------------------------------------------
-
-      ooo<-optim(theta,rss4,x=x,y=y,method=optim.method,equation=equation)
-      scale<-1/abs( parscale4(ooo$par,x=x,y=y, equation=equation))
-      oo<-optim(ooo$par,rss4,x=x,y=y,method=optim.method,
-                control = list(parscale = scale), equation=equation)
-
-      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
-
-      af=oo$par[1]
-      bf=oo$par[2]
-      cf=oo$par[3]
-
-      if(plot==TRUE){
-        xfine<-seq(min(x,na.rm = T),max(x,na.rm = T),(max(x,na.rm = T)-min(x,na.rm = T))/((max(x,na.rm = T)-min(x,na.rm = T))*line_smooth))
-        yfit<-do.call(equation, c(list(x=xfine),list(a=af,b=bf,c=cf)))
-        yfit<-unlist(yfit)
-
-        lines(xfine,yfit,lwd=lwd,col=line_col)
-      }
-
-
-      estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
-      estimates[,1]<-c(af,bf,cf)
-      rownames(estimates)<-c("a","b","c")
-
-      RSS<-oo$value
-
-      Parameters<-structure(list(Model=BLMod,Equation=equation,Parameters=estimates,RSS= RSS), class = "cm")
-
-      return(Parameters)
-
+    rss4 <- function(theta, x, y, equation) {
+      param_list <- as.list(theta)
+      names(param_list) <- letters[1:length(theta)]
+      yf <- do.call(equation, c(list(x=x), param_list))
+      err<-(y-yf)
+      errx<-sum(sum(err[which(err>0|err==0)])*tau +
+                  sum(abs(err[which(err<0)]))*(1-tau))
+      return(errx)
     }
 
-    ## The four parameter model ----------------------------------------------------------
+    ## Scaling function for dynamic parameters --------------------------------------------
 
-    if(v==4){
-      rss4<-function(theta,x,y,equation){
-        a=theta[1]
-        b=theta[2]
-        c=theta[3]
-        d=theta[4]
-        equation=equation
-
-        yf<-do.call(equation, c(list(x=x),list(a,b,c,d)))
-
-        err<-(y-yf)
-        errx<-sum(sum(err[which(err>0|err==0)])*tau +
-                    sum(abs(err[which(err<0)]))*(1-tau))
-
-        return(errx)
+    parscale4 <- function(k, x, y, equation) {
+      eps <- 1e-4
+      nr <- length(k)
+      part <- vector("numeric", nr)
+      for (i in 1:nr) {
+        del <- rep(0, nr)
+        del[i] <- eps
+        part[i] <- (rss4((k + del), x, y, equation) - rss4(k, x, y, equation)) / eps
       }
-
-      ## scaling--------------------------------------------------------------------------
-
-      parscale4<-function(k,x,y,equation){
-
-        eps=1e-4
-        nr<-length(k)
-        part<-vector("numeric",nr)
-        equation=equation
-
-        for (i in 1:nr){
-          del<-rep(0,nr)
-          del[i]<-eps
-          part[i]<-(rss4((k+del),x,y,equation)-rss4((k),x,y,equation))/eps
-        }
-
-        return(part)
-      }
-
-
-      ## Optimization using optim function------------------------------------------------
-
-      ooo<-optim(theta,rss4,x=x,y=y,method=optim.method,equation=equation)
-      scale<-1/abs( parscale4(ooo$par,x=x,y=y, equation=equation))
-      oo<-optim(ooo$par,rss4,x=x,y=y,method=optim.method,
-                control = list(parscale = scale), equation=equation)
-
-      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
-
-      af=oo$par[1]
-      bf=oo$par[2]
-      cf=oo$par[3]
-      df=oo$par[4]
-
-      if(plot==TRUE){
-        xfine<-seq(min(x,na.rm = T),max(x,na.rm = T),(max(x,na.rm = T)-min(x,na.rm = T))/((max(x,na.rm = T)-min(x,na.rm = T))*line_smooth))
-        yfit<-do.call(equation, c(list(x=xfine),list(a=af,b=bf,c=cf, d=df)))
-        yfit<-unlist(yfit)
-
-        lines(xfine,yfit,lwd=lwd,col=line_col)
-      }
-
-
-      estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
-      estimates[,1]<-c(af,bf,cf,df)
-      rownames(estimates)<-c("a","b","c","d")
-
-      RSS<-oo$value
-
-      Parameters<-structure(list(Model=BLMod,Equation=equation,Parameters=estimates,RSS= RSS), class = "cm")
-
-      return(Parameters)
+      return(part)
     }
 
-    ## The five parameter model ----------------------------------------------------------
+    ## Optimization using optim function -------------------------------------------------
 
-    if(v==5){
-      rss4<-function(theta,x,y,equation){
-        a=theta[1]
-        b=theta[2]
-        c=theta[3]
-        d=theta[4]
-        e=theta[5]
-        equation=equation
+    ooo <- optim(theta, rss4, x=x,y=y, method=optim.method, equation=equation)
+    scale <- 1 / abs(parscale4(ooo$par, x=x,y=y, equation=equation))
+    oo <- optim(ooo$par, rss4, x=x,y=y, method=optim.method, control=list(parscale=scale), equation=equation)
 
-        yf<-do.call(equation, c(list(x=x),list(a,b,c,d,e)))
+    if (any(is.nan(oo$par))) {
+      oo <- ooo
+    }
 
-        err<-(y-yf)
-        errx<-sum(sum(err[which(err>0|err==0)])*tau +
-                    sum(abs(err[which(err<0)]))*(1-tau))
+    param_values <- oo$par
+    names(param_values) <- letters[1:length(param_values)]
 
-        return(errx)
-      }
+    if (plot == TRUE) {
+      xfine <- seq(min(x, na.rm = TRUE), max(x, na.rm = TRUE), length.out = line_smooth)
+      yfit <- do.call(equation, c(list(x=xfine), as.list(param_values)))
+      lines(xfine, yfit, lwd=lwd, col=line_col)
+    }
 
-      ## scaling--------------------------------------------------------------------------
+    estimates <- matrix(param_values, nrow=length(param_values), ncol=1)
+    rownames(estimates) <- names(param_values)
+    colnames(estimates) <- "Estimate"
 
-      parscale4<-function(k,x,y,equation){
+    RSS <- oo$value
+    Equation<-equation # to print equation in output
 
-        eps=1e-4
-        nr<-length(k)
-        part<-vector("numeric",nr)
-        equation=equation
+    RSS<-oo$value
 
-        for (i in 1:nr){
-          del<-rep(0,nr)
-          del[i]<-eps
-          part[i]<-(rss4((k+del),x,y,equation)-rss4((k),x,y,equation))/eps
-        }
+    Parameters<-structure(list(Model=BLMod,Equation=equation,Parameters=estimates,RSS= RSS), class = "cm")
 
-        return(part)
-      }
+    return(Parameters)
 
-
-      ## Optimization using optim function------------------------------------------------
-
-      ooo<-optim(theta,rss4,x=x,y=y,method=optim.method,equation=equation)
-      scale<-1/abs( parscale4(ooo$par,x=x,y=y, equation=equation))
-      oo<-optim(ooo$par,rss4,x=x,y=y,method=optim.method,
-                control = list(parscale = scale), equation=equation)
-
-      ifelse(any(is.nan(oo$par))==T, oo<-ooo, oo<-oo)
-
-      af=oo$par[1]
-      bf=oo$par[2]
-      cf=oo$par[3]
-      df=oo$par[4]
-      ef=oo$par[5]
-
-      if(plot==TRUE){
-        xfine<-seq(min(x,na.rm = T),max(x,na.rm = T),(max(x,na.rm = T)-min(x,na.rm = T))/((max(x,na.rm = T)-min(x,na.rm = T))*line_smooth))
-        yfit<-do.call(equation, c(list(x=xfine),list(a=af,b=bf,c=cf, d=df, e=ef)))
-        yfit<-unlist(yfit)
-
-        lines(xfine,yfit,lwd=lwd,col=line_col)
-      }
-
-      estimates<-matrix(NA,length(theta),1,dimnames=list(c(),c("Estimate")))
-      estimates[,1]<-c(af,bf,cf, df,ef)
-      rownames(estimates)<-c("a","b","c","d","e")
-
-      RSS<-oo$value
-
-      Parameters<-structure(list(Model=BLMod,Equation=equation,Parameters=estimates,RSS= RSS), class = "cm")
-
-      return(Parameters)}
   }
 
 }
