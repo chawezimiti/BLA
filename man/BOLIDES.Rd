@@ -93,7 +93,7 @@ hence requires some starting values for the model parameters for the proposed
 model.
 }
 \details{
-Some inbuilt models are available for the \code{BOLIDES()} function. The
+Some inbuilt models are available for the \code{bolides()} function. The
 \code{"explore"} option for the argument \code{model} generates a plot showing the
 ocation of the boundary points selected by the binning procedure. This helps to
 identify which model type is suitable to fit as a boundary line. The suggest model

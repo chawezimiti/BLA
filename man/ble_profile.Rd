@@ -162,7 +162,7 @@ x<-log(SoilP$P)
 y<-SoilP$yield
 vals<-data.frame(x,y)
 start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
-sigh = c(0.4,0.5,0.6,0.7)
+sigh = c(0.4,0.6,0.7)
 
 ble_profile(vals,start=start,model = "trapezium", sigh = sigh)
 

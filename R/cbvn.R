@@ -496,7 +496,6 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
     return(result)
   }
 
-
   ########## Fitting the five parameter trapezium model ##################################
 
   if(model=="trapezium"){
@@ -793,432 +792,162 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
 
   ########## CUSTOM MODELS ###############################################################
 
-  if(model=="other"){
+  if(model == "other") {
 
-    v<-length(start)
-    if(length(start)>10) stop("Not set up for models with more than 5 parametrs. The argument start should contain less than 10 values")
-    Equation<-equation # to print equation in output
+    #### Names in start and rearranging them  --------------------------------------------
+
+    are_entries_named <- function(vec) {
+      # Check if names attribute is not NULL
+      if (is.null(names(vec))) {
+        return(FALSE)
+      }
+
+      # Check if all entries have non-NA and non-empty names
+      has_valid_names <- all(!is.na(names(vec))) && all(names(vec) != "")
+      return(has_valid_names)
+    }
+
+    if(are_entries_named(start)==TRUE){
+      start<-start[order(names(start))]
+    } else{
+      start<-start
+    }
+
     start<-unname(start) # removes names from start
 
-    ### The three parameter models ######################################################
+    ########## Dynamic parameter handling ------------------------------------------------
 
-    if(v==8){
+    BLMod <- equation
 
-      BLMod <- equation
-
-      drawBL5 <- function(x,a,b,c,BLMod){
-        y<-sapply(x,BLMod,a=a,b=b,c=c)
-        return(y)
-      }
-
-      ## Define likelihood functions------------------------------------------------------
-
-      nll_mef5 <- function(pars, uplo, BLMod) {
-        a<-pars[1]
-        b<-pars[2]
-        c<-pars[3]
-        mux<-pars[4]
-        muy<-pars[5]
-        sdx<-pars[6]
-        sdy<-pars[7]
-        rcorr<-pars[8]
-
-        if (uplo == "U") {
-          rho <- tanh(rcorr)
-          cov <- rho * sdx * sdy
-          bet <- cov / (sdx^2)
-
-          fx <- dnorm(vals[, x], mux, sdx)
-          muyc <- muy + ((vals[, x] - mux) * bet)
-          sdyc <- sdy * sqrt(1 - rho^2)
-
-          C <- BLMod(vals[, x], a,b,c)
-          fy_x <- coffcturb5(vals[, y], muyc, sdyc, -Inf, C, sigh)
-
-          fxy <- fy_x * fx
-          -sum(log(fxy))
-        } else {
-          stop("Error, not set up for lower boundary")
-        }
-      }
-
-      coffcturb5 <- function(x, mu, sig, A, C, sigh) {
-        k <- (mu - C) / sig
-        D <- (mu - A) / sig
-        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
-        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
-        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
-
-        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
-        com2 <- gamma * exp(com1)
-        f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
-
-        f <- f * pnorm(C, mu, sig)
-        f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
-      }
-
-      nllmvn5 <- function(pars) {
-        mux <- pars[1]
-        muy <- pars[2]
-        sdx <- pars[3]
-        sdy <- pars[4]
-        rcorr <- pars[5]
-
-        rho <- tanh(rcorr)
-        cov <- rho * sdx * sdy
-
-        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
-        -sum(lliks)
-      }
-
-
-      ## Optimization of the model--------------------------------------------------------
-
-      mlest <- suppressWarnings(optim(start, nll_mef5, uplo = UpLo, BLMod = BLMod,
-                                      method = optim.method, hessian = TRUE))
-
-      scale <- suppressWarnings(1 / abs(grad(nll_mef5, mlest$par, uplo = UpLo, BLMod = BLMod)))
-
-      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef5, uplo = UpLo, BLMod = BLMod,
-                                       method = optim.method, control = list(parscale = scale),
-                                       hessian = TRUE))
-
-      ## Compute the Akaike Information Criterion for the fitted model--------------------
-
-      AICbl<-(2*8)+(2*mlest2$value)
-
-      ## Extract parameters of the boundary line------------------------------------------
-
-      a<-mlest2$par[1]
-      b<-mlest2$par[2]
-      c<-mlest2$par[3]
-
-
-      ## Plotting the data for viewing----------------------------------------------------
-
-      if(plot==TRUE){ plot(vals,...)
-        x<-vals[,1]
-        y<-vals[,2]
-        xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
-        ydraw<-drawBL5((xdraw),a,b,c,BLMod)
-        lines(xdraw,ydraw,col=l_col,lwd=lwd)
-      }
-
-      ## Determine standard error for parameters------------------------------------------
-
-      estimates <- cbind(
-        Estimate = mlest2$par[1:3],
-        `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:3]
-      )
-      rownames(estimates)<-c("a","b","c")
-
-      distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
-      distribution[,1]<-mlest2$par[4:8]
-      distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[4:8]
-      rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
-
-      ## Fitting the null model, an unbounded multivariate normal, and compute its AIC---
-
-      start2<-c(start[c(4,5,6,7)],0)
-      mvnmlest<-suppressWarnings(optim( start2,nllmvn5, method=optim.method))
-      AImvn<-(2*5)+(2*mvnmlest$value) #
-
-      ## Output preparation --------------------------------------------------------------
-
-      AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
-      AikakeIC[,1]<-c(AImvn,AICbl)
-      rownames(AikakeIC)<-c("mvn","BL")
-
-      result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution=distribution, Hessian=mlest2$hessian)
-      class(result)<-"cm"
-      return(result)
-
+    drawBL5 <- function(x, params, BLMod) {
+      param_list <- as.list(params)
+      y <- sapply(x, function(x_val) do.call(BLMod, c(list(x=x_val), param_list)))
+      return(y)
     }
 
+    ## Define likelihood functions--------------------------------------------------------
 
-    #### Fitting the four parameter model ###############################################
+    nll_mef5 <- function(pars, uplo, BLMod) {
+      param_list <- as.list(pars[1:(length(pars) - 5)])
+      names(param_list) <- names(start)[1:(length(pars) - 5)]
 
-    if(v==9){
+      mux <- pars[length(pars) - 4]
+      muy <- pars[length(pars) - 3]
+      sdx <- pars[length(pars) - 2]
+      sdy <- pars[length(pars) - 1]
+      rcorr <- pars[length(pars)]
 
-      BLMod <- equation
-
-      drawBL6 <- function(x,a,b,c,d,BLMod){
-        y<-sapply(x,BLMod,a=a,b=b,c=c,d=d)
-        return(y)
-      }
-
-      ## Define likelihood functions------------------------------------------------------
-
-      nll_mef6 <- function(pars, uplo, BLMod) {
-        a<-pars[1]
-        b<-pars[2]
-        c<-pars[3]
-        d<-pars[4]
-        mux<-pars[5]
-        muy<-pars[6]
-        sdx<-pars[7]
-        sdy<-pars[8]
-        rcorr<-pars[9]
-
-        if (uplo == "U") {
-          rho <- tanh(rcorr)
-          cov <- rho * sdx * sdy
-          bet <- cov / (sdx^2)
-
-          fx <- dnorm(vals[, x], mux, sdx)
-          muyc <- muy + ((vals[, x] - mux) * bet)
-          sdyc <- sdy * sqrt(1 - rho^2)
-
-          C <- BLMod(vals[, x], a,b,c,d)
-          fy_x <- coffcturb6(vals[, y], muyc, sdyc, -Inf, C, sigh)
-
-          fxy <- fy_x * fx
-          -sum(log(fxy))
-        } else {
-          stop("Error, not set up for lower boundary")
-        }
-      }
-
-      coffcturb6 <- function(x, mu, sig, A, C, sigh) {
-        k <- (mu - C) / sig
-        D <- (mu - A) / sig
-        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
-        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
-        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
-
-        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
-        com2 <- gamma * exp(com1)
-        f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
-
-        f <- f * pnorm(C, mu, sig)
-        f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
-      }
-
-      nllmvn6 <- function(pars) {
-        mux <- pars[1]
-        muy <- pars[2]
-        sdx <- pars[3]
-        sdy <- pars[4]
-        rcorr <- pars[5]
-
+      if (uplo == "U") {
         rho <- tanh(rcorr)
         cov <- rho * sdx * sdy
+        bet <- cov / (sdx^2)
 
-        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
-        -sum(lliks)
+        fx <- dnorm(vals[, x], mux, sdx)
+        muyc <- muy + ((vals[, x] - mux) * bet)
+        sdyc <- sdy * sqrt(1 - rho^2)
+
+        C <- do.call(BLMod, c(list(x=vals[, x]), param_list))
+        fy_x <- coffcturb5(vals[, y], muyc, sdyc, -Inf, C, sigh)
+
+        fxy <- fy_x * fx
+        -sum(log(fxy))
+      } else {
+        stop("Error, not set up for lower boundary")
       }
-
-
-      ## Optimization of the model--------------------------------------------------------
-
-      mlest <- suppressWarnings(optim(start, nll_mef6, uplo = UpLo, BLMod = BLMod,
-                                      method = optim.method, hessian = TRUE))
-
-      scale <- suppressWarnings(1 / abs(grad(nll_mef6, mlest$par, uplo = UpLo, BLMod = BLMod)))
-
-      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef6, uplo = UpLo, BLMod = BLMod,
-                                       method = optim.method, control = list(parscale = scale),
-                                       hessian = TRUE))
-
-      ## Compute the Akaike Information Criterion for the fitted model--------------------
-
-      AICbl<-(2*9)+(2*mlest2$value)
-
-      ## Extract parameters of the boundary line-----------------------------------------
-
-      a<-mlest2$par[1]
-      b<-mlest2$par[2]
-      c<-mlest2$par[3]
-      d<-mlest2$par[4]
-
-
-      ## Plotting the data for viewing----------------------------------------------------
-
-      if(plot==TRUE){ plot(vals,...)
-        x<-vals[,1]
-        y<-vals[,2]
-        xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
-        ydraw<-drawBL6((xdraw),a,b,c,d,BLMod)
-        lines(xdraw,ydraw,col=l_col,lwd=lwd)
-      }
-
-      ## Compute the standard error of the parameters-------------------------------------
-
-      estimates <- cbind(
-        Estimate = mlest2$par[1:4],
-        `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:4]
-      )
-      rownames(estimates)<-c("a","b","c","d")
-
-      distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
-      distribution[,1]<-mlest2$par[5:9]
-      distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[5:9]
-      rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
-
-      ## Fitting the null model, an unbounded multivariate normal, and compute its AIC---
-
-      start2<-c(start[c(4,5,6,7)],0)
-      mvnmlest<-suppressWarnings(optim( start2,nllmvn6, method=optim.method))
-      AImvn<-(2*5)+(2*mvnmlest$value)
-
-
-      ## Output preparation --------------------------------------------------------------
-
-      AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
-      AikakeIC[,1]<-c(AImvn,AICbl)
-      rownames(AikakeIC)<-c("mvn","BL")
-      result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution= distribution, Hessian=mlest2$hessian)
-      class(result)<-"cm"
-      return(result)
-
     }
 
-    #### Fitting the five parameter model ################################################
+    coffcturb5 <- function(x, mu, sig, A, C, sigh) {
+      k <- (mu - C) / sig
+      D <- (mu - A) / sig
+      alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
+      beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
+      gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
 
-    if(v==10){
+      com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
+      com2 <- gamma * exp(com1)
+      f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
 
-      BLMod <- equation
-      drawBL7<-function(x,a,b,c,d,e,BLMod){
-        y<-sapply(x,BLMod,a=a,b=b,c=c,d=d,e=e)
-        return(y)
-      }
-
-
-      ## Define likelihood functions------------------------------------------------------
-
-      nll_mef7 <- function(pars, uplo, BLMod) {
-        a<-pars[1]
-        b<-pars[2]
-        c<-pars[3]
-        d<-pars[4]
-        e<-pars[5]
-        mux<-pars[6]
-        muy<-pars[7]
-        sdx<-pars[8]
-        sdy<-pars[9]
-        rcorr<-pars[10]
-
-        if (uplo == "U") {
-          rho <- tanh(rcorr)
-          cov <- rho * sdx * sdy
-          bet <- cov / (sdx^2)
-
-          fx <- dnorm(vals[, x], mux, sdx)
-          muyc <- muy + ((vals[, x] - mux) * bet)
-          sdyc <- sdy * sqrt(1 - rho^2)
-
-          C <- BLMod(vals[, x], a,b,c,d,e)
-          fy_x <- coffcturb7(vals[, y], muyc, sdyc, -Inf, C, sigh)
-
-          fxy <- fy_x * fx
-          -sum(log(fxy))
-        } else {
-          stop("Error, not set up for lower boundary")
-        }
-      }
-
-      coffcturb7 <- function(x, mu, sig, A, C, sigh) {
-        k <- (mu - C) / sig
-        D <- (mu - A) / sig
-        alpha <- (sigh^2 * (x - mu)) / (sigh^2 + sig^2)
-        beta <- sqrt((sigh^2 * sig^2) / (sigh^2 + sig^2))
-        gamma <- (beta * sqrt(2 * pi)) / (2 * pi * sig * sigh * (pnorm(D) - pnorm(k)))
-
-        com1 <- -((x - mu)^2) / (2 * (sigh^2 + sig^2))
-        com2 <- gamma * exp(com1)
-        f <- com2 * (pnorm((x - A - alpha) / beta) - pnorm((x - C - alpha) / beta))
-
-        f <- f * pnorm(C, mu, sig)
-        f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
-      }
-
-      nllmvn7 <- function(pars) {
-        mux <- pars[1]
-        muy <- pars[2]
-        sdx <- pars[3]
-        sdy <- pars[4]
-        rcorr <- pars[5]
-
-        rho <- tanh(rcorr)
-        cov <- rho * sdx * sdy
-
-        Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
-        -sum(lliks)
-      }
-
-
-      ## Optimization of the model--------------------------------------------------------
-
-      mlest <- suppressWarnings(optim(start, nll_mef7, uplo = UpLo, BLMod = BLMod,
-                                      method = optim.method, hessian = TRUE))
-
-      scale <- suppressWarnings(1 / abs(grad(nll_mef7, mlest$par, uplo = UpLo, BLMod = BLMod)))
-
-      mlest2 <- suppressWarnings(optim(mlest$par, nll_mef7, uplo = UpLo, BLMod = BLMod,
-                                       method = optim.method, control = list(parscale = scale),
-                                       hessian = TRUE))
-
-      ## Compute the Akaike Information Criterion for the fitted model--------------------
-
-      AICbl<-(2*10)+(2*mlest2$value)
-
-      ## Extract parameters of the boundary line------------------------------------------
-
-      a<-mlest2$par[1]
-      b<-mlest2$par[2]
-      c<-mlest2$par[3]
-      d<-mlest2$par[4]
-      e<-mlest2$par[5]
-
-      ## Plotting the data for viewing----------------------------------------------------
-
-      if(plot==TRUE){ plot(vals,...)
-
-        x<-vals[,1]
-        y<-vals[,2]
-        xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
-        ydraw<-drawBL7((xdraw),a,b,c,d,e,BLMod)
-        lines(xdraw,ydraw,col=l_col,lwd=lwd)
-      }
-
-      ## Determine standard error for parameters------------------------------------------
-
-      estimates <- cbind(
-        Estimate = mlest2$par[1:5],
-        `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:5]
-      )
-
-      rownames(estimates)<-c("a","b","c","d","e")
-
-      distribution<-matrix(NA,5,2,dimnames=list(c(),c("Estimate","Standard error")))
-      distribution[,1]<-mlest2$par[6:10]
-      distribution[,2]<-seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[6:10]
-      rownames(distribution)<-c("mux","muy","sdx","sdy","rcorr")
-
-
-      ## Fitting the null model, an unbounded multivariate normal, and compute its AIC----
-
-      start2<-c(start[c(6,7,8,9)],0)
-
-      mvnmlest<-suppressWarnings(optim( start2,nllmvn7,method=optim.method))
-
-      AImvn<-(2*5)+(2*mvnmlest$value)
-
-
-      ## Preparing the output-------------------------------------------------------------
-
-      AikakeIC<-matrix(NA,2,1,dimnames=list(c(),c("")))
-      AikakeIC[,1]<-c(AImvn,AICbl)
-      rownames(AikakeIC)<-c("mvn","BL")
-
-      result<-list(Model=model,Equation=equation, Parameters=estimates,AIC=AikakeIC, Distribution=distribution, Hessian=mlest2$hessian)
-      class(result)<-"cm"
-      return(result)
-
-
+      f <- f * pnorm(C, mu, sig)
+      f + (dnorm((x - C), 0, sigh) * (1 - pnorm(C, mu, sig)))
     }
+
+    nllmvn5 <- function(pars) {
+      mux <- pars[1]
+      muy <- pars[2]
+      sdx <- pars[3]
+      sdy <- pars[4]
+      rcorr <- pars[5]
+
+      rho <- tanh(rcorr)
+      cov <- rho * sdx * sdy
+
+      Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
+      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      -sum(lliks)
+    }
+
+    ## Optimization of the model--------------------------------------------------------
+
+    mlest <- suppressWarnings(optim(start, nll_mef5, uplo = UpLo, BLMod = BLMod,
+                                    method = optim.method, hessian = TRUE))
+
+    scale <- suppressWarnings(1 / abs(grad(nll_mef5, mlest$par, uplo = UpLo, BLMod = BLMod)))
+
+    mlest2 <- suppressWarnings(optim(mlest$par, nll_mef5, uplo = UpLo, BLMod = BLMod,
+                                     method = optim.method, control = list(parscale = scale),
+                                     hessian = TRUE))
+
+    ## Compute the Akaike Information Criterion for the fitted model--------------------
+
+    AICbl <- (2 * length(start)) + (2 * mlest2$value)
+
+    ## Extract parameters of the boundary line------------------------------------------
+
+    param_values <- mlest2$par[1:(length(start) - 5)]
+    names(param_values) <- names(start)[1:(length(start) - 5)]
+
+    ## Plotting the data for viewing----------------------------------------------------
+
+    if(plot == TRUE) {
+      plot(vals, ...)
+      x <- vals[, 1]
+      y <- vals[, 2]
+      xdraw <- seq(min(x), max(x), length.out = line_smooth)
+      ydraw <- drawBL5(xdraw, param_values, BLMod)
+      lines(xdraw, ydraw, col = l_col, lwd = lwd)
+    }
+
+    ## Determine standard error for parameters------------------------------------------
+
+    estimates <- cbind(
+      Estimate = mlest2$par[1:(length(start) - 5)],
+      `Standard error` = sqrt(diag(solve(mlest2$hessian)))[1:(length(start) - 5)]
+    )
+
+    rownames(estimates) <- names(start)[1:(length(start) - 5)]
+
+    distribution <- cbind(
+      Estimate = mlest2$par[(length(start) - 4):length(start)],
+      `Standard error` = sqrt(diag(solve(mlest2$hessian)))[(length(start) - 4):length(start)]
+    )
+    rownames(distribution) <- c("mux", "muy", "sdx", "sdy", "rcorr")
+
+    ## Fitting the null model, an unbounded multivariate normal, and compute its AIC---
+
+    start2 <- c(start[(length(start) - 4):(length(start) - 1)], 0)
+    mvnmlest <- suppressWarnings(optim(start2, nllmvn5, method = optim.method))
+    AImvn <- (2 * 5) + (2 * mvnmlest$value)
+
+    ## Output preparation --------------------------------------------------------------
+
+    Equation <- equation # to print equation in output
+
+    AikakeIC <- matrix(NA, 2, 1, dimnames = list(c(), c("")))
+    AikakeIC[, 1] <- c(AImvn, AICbl)
+    rownames(AikakeIC) <- c("mvn", "BL")
+
+    result <- list(Model = model, Equation = equation, Parameters = estimates, AIC = AikakeIC, Distribution = distribution, Hessian = mlest2$hessian)
+    class(result) <- "cm"
+    return(result)
   }
 }
