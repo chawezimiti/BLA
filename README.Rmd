@@ -16,8 +16,7 @@ knitr::opts_chunk$set(
 # BLA
 
 <!-- badges: start -->
-![R-CMD-check](https://github.com/chawezimiti/BLA/actions/workflows/R-CMD-check.yaml/badge.svg)
-![CRAN Version](https://www.r-pkg.org/badges/1.0.0/BLA)
+
 <!-- badges: end -->
 
 ## Overview
