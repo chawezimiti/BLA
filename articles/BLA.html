@@ -368,7 +368,7 @@ arguments for the function, the help page can be launched.</p>
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">bolides</span></span></code></pre></div>
 <p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
 the independent and dependent variable respectively and
-<code>theta</code> is a vector of starting values . The
+<code>start</code> is a vector of starting values . The
 <code>model</code> argument is used to specify the model of the boundary
 line e.g. “blm” for the linear model. The <code>xmax</code> is an
 argument that describes the maximum value of the independent variable
@@ -380,7 +380,7 @@ function.</p>
 parameters of a proposed model. The initial starting values are
 optimized to find the parameters of the proposed model as in the
 <code><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim()</a></code> function in base <code>R</code>.</p>
-<p>To get the theta starting values, the <code><a href="../reference/BOLIDES.html">bolides()</a></code> function
+<p>To get the start starting values, the <code><a href="../reference/BOLIDES.html">bolides()</a></code> function
 is run with the argument <code>model="explore"</code>. This allows us to
 view the selected boundary points using the boundary line determination
 technique.</p>
@@ -396,9 +396,8 @@ technique.</p>
 <span><span class="co">#&gt;  Max.   :4.736   Max.   :14.159</span></span></code></pre>
 <p>From the plot, it can be seen that a “trapezium” model will be more
 appropriate for this data set. The function <code><a href="../reference/startValues.html">startValues()</a></code>
-can be used to determine initial start <code>theta</code> values. For
-more information on <code><a href="../reference/startValues.html">startValues()</a></code> function see
-<code>?startValues()</code>.</p>
+can be used to determine initial start values. For more information on
+<code><a href="../reference/startValues.html">startValues()</a></code> function see <code>?startValues()</code>.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>With a scatter plot of <em><code>y</code></em> against
@@ -414,9 +413,9 @@ done for other models as well. Once all the arguments are set, the
 function can be run</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">14</span>,<span class="fl">104</span>,<span class="op">-</span><span class="fl">22</span><span class="op">)</span> <span class="co"># start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. </span></span>
+<span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">14</span>,<span class="fl">104</span>,<span class="op">-</span><span class="fl">22</span><span class="op">)</span> <span class="co"># start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. </span></span>
 <span></span>
-<span><span class="va">model1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, theta <span class="op">=</span> <span class="va">theta</span>,model <span class="op">=</span> <span class="st">"trapezium"</span>,</span>
+<span><span class="va">model1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, start <span class="op">=</span> <span class="va">start</span>,model <span class="op">=</span> <span class="st">"trapezium"</span>,</span>
 <span>                xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
 <span>                ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield/ t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, </span>
 <span>                col<span class="op">=</span><span class="st">"grey"</span>, bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
@@ -476,7 +475,7 @@ launched.</p>
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">blbin</span></span></code></pre></div>
 <p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
 the independent and dependent variable respectively and
-<code>theta</code> is a vector of starting values . The
+<code>start</code> is a vector of starting values . The
 <code>model</code> argument is used to specify the model of the boundary
 line e.g. <code>model="blm"</code> for the linear model. The
 <code>bins</code> argument describes the size of the bins with a vector
@@ -484,7 +483,7 @@ of length 3 containing the minimum and maximum independent variable
 values, and the size of bins to be used for the data respectively. We
 assume that the 99<span class="math inline">\(^{\rm th}\)</span>
 percentile (<code>tau=0.99</code>) is the boundary.</p>
-<p>The initial start theta values can be determined as previously shown
+<p>The initial start start values can be determined as previously shown
 in the previous section</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bins</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.61</span>,<span class="fl">4.74</span>,<span class="fl">0.313</span><span class="op">)</span> </span>
@@ -502,13 +501,13 @@ in the previous section</p>
 appropriate for this data set.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
-<p>The values for <code>theta</code> can now be obtained and the
+<p>The values for <code>start</code> can now be obtained and the
 function can now be run.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.75</span>, <span class="fl">3.23</span>, <span class="fl">13.3</span>, <span class="fl">24.87</span>,<span class="op">-</span><span class="fl">2.95</span> <span class="op">)</span></span>
+<span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.75</span>, <span class="fl">3.23</span>, <span class="fl">13.3</span>, <span class="fl">24.87</span>,<span class="op">-</span><span class="fl">2.95</span> <span class="op">)</span></span>
 <span></span>
-<span><span class="va">model2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/blbin.html">blbin</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, <span class="va">bins</span>,theta <span class="op">=</span> <span class="va">theta</span>,model <span class="op">=</span> <span class="st">"trapezium"</span>, </span>
+<span><span class="va">model2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/blbin.html">blbin</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, <span class="va">bins</span>,start <span class="op">=</span> <span class="va">start</span>,model <span class="op">=</span> <span class="st">"trapezium"</span>, </span>
 <span>              tau<span class="op">=</span><span class="fl">0.99</span>, </span>
 <span>              ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, </span>
 <span>              xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
@@ -551,14 +550,14 @@ can be launched.</p>
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">blqr</span></span></code></pre></div>
 <p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
 the independent and dependent variable respectively and
-<code>theta</code> is a vector of starting values . The
+<code>start</code> is a vector of starting values . The
 <code>model</code> argument is used to specify the model of the boundary
 line e.g. “blm” for the linear model. The argument <code>tau</code>
 describes the quantile value described as boundary. We assume that the
 99<span class="math inline">\(^{\rm th}\)</span> quantile
 (<code>tau=0.99</code>) value is the boundary. This is an arbitrary
 assumption, and for this reason we treat the method as heuristic.</p>
-<p>The initial start theta values can be determined as previously shown
+<p>The initial start start values can be determined as previously shown
 in the previous section. however, the <code><a href="../reference/blqr.html">blqr()</a></code> function does
 not have the explore option and hence the <code><a href="../reference/startValues.html">startValues()</a></code>
 function is used just on the plot of <em><code>x</code></em> and
@@ -570,13 +569,13 @@ used for this data.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
-<p>The <code>theta</code>values can now be used in the
+<p>The <code>start</code>values can now be used in the
 <code><a href="../reference/blqr.html">blqr()</a></code> function.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.5</span>,<span class="fl">31</span>,<span class="op">-</span><span class="fl">4.5</span><span class="op">)</span></span>
+<span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.5</span>,<span class="fl">31</span>,<span class="op">-</span><span class="fl">4.5</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">model3</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/blqr.html">blqr</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, theta <span class="op">=</span> <span class="va">theta</span>, model <span class="op">=</span> <span class="st">"trapezium"</span>,</span>
+<span><span class="va">model3</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/blqr.html">blqr</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, start <span class="op">=</span> <span class="va">start</span>, model <span class="op">=</span> <span class="st">"trapezium"</span>,</span>
 <span>             xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, </span>
 <span>             ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>,</span>
 <span>             pch<span class="op">=</span><span class="fl">16</span>,tau<span class="op">=</span><span class="fl">0.99</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="co"># may take a few seconds to ran</span></span></code></pre></div>
@@ -650,25 +649,24 @@ parameters should always be written in alphabetical order as
 <em><strong>a</strong>, <strong>b</strong></em> and
 <strong><em>c</em></strong> for a three parameter function,
 <em><strong>a</strong>, <strong>b</strong>,<strong>c</strong></em> and
-<strong><em>d</em></strong> for four parameter function and so on.
-Currently, this is only set up for upto five parameter models.</p>
+<strong><em>d</em></strong> for four parameter function and so on.</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">custom_function</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">a</span>,<span class="va">b</span>,<span class="va">c</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">y</span><span class="op">&lt;-</span> <span class="va">a</span> <span class="op">-</span> <span class="va">b</span><span class="op">*</span><span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">c</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>The next step is to suggest the initial start <code>theta</code>
+<p>The next step is to suggest the initial start <code>start</code>
 values. These should be sensible values else the function will not
 converge. These should be arranges in alphabetical order as
-<code>theta=c(a,b,c)</code>. Replace a, b and c with numeric values of
+<code>start=c(a,b,c)</code>. Replace a, b and c with numeric values of
 your choice.</p>
 <p>The arguments of <code><a href="../reference/BOLIDES.html">bolides()</a></code> function can now be added. In
 this case, the argument model while be set to “other”. The arguments
 equation is now set to your custom function
 (<code>equation=custom_function</code>)</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">13.5</span>,<span class="fl">3</span>,<span class="fl">3.3</span><span class="op">)</span>  </span>
+<code class="sourceCode R"><span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">13.5</span>,<span class="fl">3</span>,<span class="fl">3.3</span><span class="op">)</span>  </span>
 <span></span>
-<span><span class="va">model4</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, theta <span class="op">=</span> <span class="va">theta</span>,model <span class="op">=</span> <span class="st">"other"</span>,</span>
+<span><span class="va">model4</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, start <span class="op">=</span> <span class="va">start</span>,model <span class="op">=</span> <span class="st">"other"</span>,</span>
 <span>                equation<span class="op">=</span><span class="va">custom_function</span>,</span>
 <span>                xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, </span>
 <span>                ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
@@ -684,7 +682,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; function(x,a,b,c){</span></span>
 <span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x5638c2dcca60&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x5569eaa08ab0&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>

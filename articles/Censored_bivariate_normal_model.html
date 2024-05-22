@@ -275,7 +275,7 @@ Firstly, create a data-frame containing <em><code>x</code></em> and
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="co">#This is an input dataframe containing the variables</span></span></code></pre></div>
 <p>Secondly, the <code><a href="../reference/cbvn.html">cbvn()</a></code> requires initial starting values,
-<code>theta</code>, which are parameters of the boundary line (the
+<code>start</code>, which are parameters of the boundary line (the
 censor) and the bivariate normal distribution. Starting values of the
 boundary line depend on the model that one wishes to fit to the data
 (see options in <code><a href="../reference/cbvn.html">?cbvn</a></code>) . In this case, we shall fit a
@@ -318,8 +318,8 @@ correlation of <em><code>x</code></em> and <em><code>y</code></em>.</p>
 <span><span class="co">#&gt; [1] 0.0346758</span></span></code></pre></div>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="co">#The parameters of the boundary line and the data can be combined in a #vector theta in the order </span></span>
-<span><span class="co">#theta&lt;-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))</span></span></code></pre></div>
+<span><span class="co">#The parameters of the boundary line and the data can be combined in a #vector start in the order </span></span>
+<span><span class="co">#start&lt;-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))</span></span></code></pre></div>
 <p>Another important argument is the standard deviation of the
 measurement error, <code>sigh</code>, of the response variable
 <code>y</code>. In some cases this might be estimated from observations
@@ -344,16 +344,16 @@ and we can check the likelihood profile.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">sigh</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.7</span>,<span class="fl">0.8</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/ble_profile.html">ble_profile</a></span><span class="op">(</span><span class="va">vals</span>,<span class="va">theta</span>,<span class="va">sigh</span>,model <span class="op">=</span> <span class="st">"lp"</span><span class="op">)</span> <span class="co"># may take a few minutes to run for large datasets</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/ble_profile.html">ble_profile</a></span><span class="op">(</span><span class="va">vals</span>,<span class="va">start</span>,<span class="va">sigh</span>,model <span class="op">=</span> <span class="st">"lp"</span><span class="op">)</span> <span class="co"># may take a few minutes to run for large datasets</span></span></code></pre></div>
 <p>From the likelihood profile, the <code>sigh</code> that maximizes the
 likelihood is around 0.65. We can use this for the value of
 <code>sigh</code>. Now that all the arguments required for
 <code><a href="../reference/cbvn.html">cbvn()</a></code> function are set, the boundary line can be
 fitted</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>,<span class="fl">3</span>,<span class="fl">9</span>,<span class="fl">0.50</span>,<span class="fl">1.9</span>,<span class="fl">0.05</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>,<span class="fl">3</span>,<span class="fl">9</span>,<span class="fl">0.50</span>,<span class="fl">1.9</span>,<span class="fl">0.05</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">model1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,theta<span class="op">=</span><span class="va">theta</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"P /log ppm"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">model1</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,start<span class="op">=</span><span class="va">start</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"P /log ppm"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
@@ -464,7 +464,7 @@ as before . Firstly, create a data-frame containing
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> <span class="co">#This is an input dataframe containing the variables</span></span></code></pre></div>
 <p>Secondly, the <code><a href="../reference/cbvn.html">cbvn()</a></code> requires initial starting values,
-<em><code>theta</code></em>, which are parameters of the boundary line
+<em><code>start</code></em>, which are parameters of the boundary line
 (the censor) and the bivariate normal distribution. In this case, we
 shall fit a linear+Plateau model (lp) and hence the parameters are the
 plateau value and the intercept and slope of the linear component. With
@@ -501,17 +501,17 @@ correlation of <em><code>x</code></em> and <em><code>y</code></em>.</p>
 <span><span class="co">#&gt; [1] 0.1169399</span></span></code></pre></div>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="co">#The parameters of the boundary line and the data can be combined in a #vector theta in the order </span></span>
-<span><span class="co">#theta&lt;-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))</span></span>
+<span><span class="co">#The parameters of the boundary line and the data can be combined in a #vector start in the order </span></span>
+<span><span class="co">#start&lt;-c(intercept, slope, max response, mean(x), mean(y), sd(x), sd(y), cor(x,y))</span></span>
 <span></span>
-<span><span class="va">theta</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">9</span>,<span class="fl">3</span>, <span class="fl">13.5</span>,<span class="fl">7.5</span>,<span class="fl">9</span>,<span class="fl">0.68</span>,<span class="fl">2.3</span>,<span class="fl">0.12</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">9</span>,<span class="fl">3</span>, <span class="fl">13.5</span>,<span class="fl">7.5</span>,<span class="fl">9</span>,<span class="fl">0.68</span>,<span class="fl">2.3</span>,<span class="fl">0.12</span><span class="op">)</span></span></code></pre></div>
 <p>The standard deviation of the measurement error,
 <em><code>sigh</code></em> was already determine as 0.7. Now that all
 the arguments required for <code><a href="../reference/cbvn.html">cbvn()</a></code> function are set, the
 boundary line can be fitted</p>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
-<span><span class="va">model2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,theta<span class="op">=</span><span class="va">theta</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"pH"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">model2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">vals</span>,start<span class="op">=</span><span class="va">start</span>,sigh<span class="op">=</span><span class="fl">0.7</span>,model <span class="op">=</span> <span class="st">"lp"</span>, xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"pH"</span><span class="op">)</span>, ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield /t ha"</span><span class="op">^</span><span class="op">{</span><span class="op">-</span><span class="fl">1</span><span class="op">}</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-23-1.png" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
