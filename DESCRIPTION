@@ -1,7 +1,7 @@
 Type: Package
 Package: BLA
 Title: Boundary Line Analysis
-Version: 0.0.1
+Version: 1.0.0
 Authors@R: c(
     person("Chawezi", "Miti", , "chawezi.miti@nottingham.ac.uk", role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0001-7776-8366")),
