@@ -4,11 +4,11 @@
 \alias{ble_profile}
 \title{Likelihood profile for various measurement error values}
 \usage{
-ble_profile(vals, sigh, model="lp", equation=NULL,  start, UpLo="U",
+ble_profile(data, sigh, model="lp", equation=NULL,  start, UpLo="U",
              optim.method="BFGS", plot=TRUE)
 }
 \arguments{
-\item{vals}{A dataframe with two numeric columns, independent (\code{x}) and
+\item{data}{A dataframe with two numeric columns, independent (\code{x}) and
 dependent (\code{y}) variables respectively.}
 
 \item{sigh}{A vector of the suggested standard deviations of the measurement error
@@ -160,11 +160,11 @@ The common errors encountered due to poor start values \enumerate{
 
 x<-log(SoilP$P)
 y<-SoilP$yield
-vals<-data.frame(x,y)
+data<-data.frame(x,y)
 start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
 sigh = c(0.4,0.6,0.7)
 
-ble_profile(vals,start=start,model = "trapezium", sigh = sigh)
+ble_profile(data,start=start,model = "trapezium", sigh = sigh)
 
 }
 \references{

@@ -8,7 +8,7 @@
 #' constitutes a likelihood profile. The value of \code{sigh} where the profile
 #' is maximized is selected.
 #'
-#' @param vals A dataframe with two numeric columns, independent (\code{x}) and
+#' @param data A dataframe with two numeric columns, independent (\code{x}) and
 #'   dependent (\code{y}) variables respectively.
 #' @param start A numeric vector of initial starting values for optimization
 #'   in fitting the boundary model. Its length and arrangement depend on the
@@ -152,26 +152,26 @@
 #' @export
 #' @rdname ble_profile
 #' @usage
-#' ble_profile(vals, sigh, model="lp", equation=NULL,  start, UpLo="U",
+#' ble_profile(data, sigh, model="lp", equation=NULL,  start, UpLo="U",
 #'              optim.method="BFGS", plot=TRUE)
 #'
 #' @examples
 #'
 #' x<-log(SoilP$P)
 #' y<-SoilP$yield
-#' vals<-data.frame(x,y)
+#' data<-data.frame(x,y)
 #' start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
 #' sigh = c(0.4,0.6,0.7)
 #'
-#' ble_profile(vals,start=start,model = "trapezium", sigh = sigh)
+#' ble_profile(data,start=start,model = "trapezium", sigh = sigh)
 #'
-ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", optim.method="BFGS", plot=TRUE){
+ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", optim.method="BFGS", plot=TRUE){
 
   cat("Note: This function may take longer to run.\n\n")
 
   ###### Initial data preparation ##################################
 
-  vals <- na.omit(as.data.table(vals))
+  data <- na.omit(as.data.table(data))
 
   UpLo=UpLo
   BLMod<-model
@@ -203,7 +203,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
       start<-start
       UpLo=UpLo
       BLMod<-BLMod
-      vals<-vals
+      data<-data
 
       ## Define likelihood functions------------------------------------------------------
 
@@ -222,12 +222,12 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
           cov <- rho * sdx * sdy
           bet <- cov / (sdx^2)
 
-          fx <- dnorm(vals[, x], mux, sdx)
-          muyc <- muy + ((vals[, x] - mux) * bet)
+          fx <- dnorm(data[, x], mux, sdx)
+          muyc <- muy + ((data[, x] - mux) * bet)
           sdyc <- sdy * sqrt(1 - rho^2)
 
-          c <- BLMod(vals[, x], beta0, beta1, beta2)
-          fy_x <- coffcturb(vals[, y], muyc, sdyc, -Inf, c, sigh[i])
+          c <- BLMod(data[, x], beta0, beta1, beta2)
+          fy_x <- coffcturb(data[, y], muyc, sdyc, -Inf, c, sigh[i])
 
           fxy <- fy_x * fx
           -sum(log(fxy))
@@ -262,7 +262,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
         cov <- rho * sdx * sdy
 
         Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
         -sum(lliks)
       }
 
@@ -299,7 +299,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
       start<-start
       UpLo=UpLo
       BLMod<-BLMod
-      vals<-vals
+      data<-data
 
       ## Define likelihood functions------------------------------------------------------
 
@@ -317,12 +317,12 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
           cov <- rho * sdx * sdy
           bet <- cov / (sdx^2)
 
-          fx <- dnorm(vals[, x], mux, sdx)
-          muyc <- muy + ((vals[, x] - mux) * bet)
+          fx <- dnorm(data[, x], mux, sdx)
+          muyc <- muy + ((data[, x] - mux) * bet)
           sdyc <- sdy * sqrt(1 - rho^2)
 
-          c <- BLMod(vals[, x], beta0, beta1)
-          fy_x <- coffcturb2(vals[, y], muyc, sdyc, -Inf, c, sigh[i])
+          c <- BLMod(data[, x], beta0, beta1)
+          fy_x <- coffcturb2(data[, y], muyc, sdyc, -Inf, c, sigh[i])
 
           fxy <- fy_x * fx
           -sum(log(fxy))
@@ -357,7 +357,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
         cov <- rho * sdx * sdy
 
         Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
         -sum(lliks)
       }
 
@@ -395,7 +395,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
       start<-start
       UpLo=UpLo
       BLMod<-BLMod
-      vals<-vals
+      data<-data
 
 
       ## Define likelihood functions-----------------------------------------------------
@@ -417,12 +417,12 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
           cov <- rho * sdx * sdy
           bet <- cov / (sdx^2)
 
-          fx <- dnorm(vals[, x], mux, sdx)
-          muyc <- muy + ((vals[, x] - mux) * bet)
+          fx <- dnorm(data[, x], mux, sdx)
+          muyc <- muy + ((data[, x] - mux) * bet)
           sdyc <- sdy * sqrt(1 - rho^2)
 
-          c <- BLMod(vals[, x], beta0, beta1, beta2, beta3, beta4)
-          fy_x <- coffcturb3(vals[, y], muyc, sdyc, -Inf, c, sigh[i])
+          c <- BLMod(data[, x], beta0, beta1, beta2, beta3, beta4)
+          fy_x <- coffcturb3(data[, y], muyc, sdyc, -Inf, c, sigh[i])
 
           fxy <- fy_x * fx
           -sum(log(fxy))
@@ -457,7 +457,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
         cov <- rho * sdx * sdy
 
         Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
         -sum(lliks)
       }
 
@@ -499,7 +499,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
       start<-start
       UpLo=UpLo
       BLMod<-BLMod
-      vals<-vals
+      data<-data
 
       ## Define likelihood functions------------------------------------------------------
 
@@ -521,12 +521,12 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
           cov <- rho * sdx * sdy
           bet <- cov / (sdx^2)
 
-          fx <- dnorm(vals[, x], mux, sdx)
-          muyc <- muy + ((vals[, x] - mux) * bet)
+          fx <- dnorm(data[, x], mux, sdx)
+          muyc <- muy + ((data[, x] - mux) * bet)
           sdyc <- sdy * sqrt(1 - rho^2)
 
-          c <- BLMod(vals[, x], beta1, beta2, beta01, beta02, beta3, beta4)
-          fy_x <- coffcturb4(vals[, y], muyc, sdyc, -Inf, c, sigh[i])
+          c <- BLMod(data[, x], beta1, beta2, beta01, beta02, beta3, beta4)
+          fy_x <- coffcturb4(data[, y], muyc, sdyc, -Inf, c, sigh[i])
 
           fxy <- fy_x * fx
           -sum(log(fxy))
@@ -561,7 +561,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
         cov <- rho * sdx * sdy
 
         Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
         -sum(lliks)
       }
 
@@ -618,7 +618,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
       start<-start
       UpLo=UpLo
       BLMod<-BLMod
-      vals<-vals
+      data<-data
 
       ## Define likelihood functions----------------------------------------------------
 
@@ -639,12 +639,12 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
           cov <- rho * sdx * sdy
           bet <- cov / (sdx^2)
 
-          fx <- dnorm(vals[, x], mux, sdx)
-          muyc <- muy + ((vals[, x] - mux) * bet)
+          fx <- dnorm(data[, x], mux, sdx)
+          muyc <- muy + ((data[, x] - mux) * bet)
           sdyc <- sdy * sqrt(1 - rho^2)
 
-          C <- do.call(BLMod, c(list(x=vals[, x]), param_list))
-          fy_x <- coffcturb5(vals[, y], muyc, sdyc, -Inf, C, sigh[i])
+          C <- do.call(BLMod, c(list(x=data[, x]), param_list))
+          fy_x <- coffcturb5(data[, y], muyc, sdyc, -Inf, C, sigh[i])
 
           fxy <- fy_x * fx
           -sum(log(fxy))
@@ -679,7 +679,7 @@ ble_profile<-function(vals, sigh, model="lp", equation=NULL, start, UpLo="U", op
         cov <- rho * sdx * sdy
 
         Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-        lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+        lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
         -sum(lliks)
       }
 

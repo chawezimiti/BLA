@@ -118,10 +118,10 @@ The exploratory tests indicated that the data provide evidence of a boundary, ou
 ?cbvn
 ```
 
-Argument values for the function `cbvn()` need to be set . Firstly, create a data-frame containing *`x`* and *`y`*, called `vals`.
+Argument values for the function `cbvn()` need to be set . Firstly, create a data-frame containing *`x`* and *`y`*, called `data`.
 
 ```{r}
-vals<-data.frame(x,y) #This is an input dataframe containing the variables
+data<-data.frame(x,y) #This is an input dataframe containing the variables
 ```
 
 Secondly, the `cbvn()` requires initial starting values, `start`, which are parameters of the boundary line (the censor) and the bivariate normal distribution. Starting values of the boundary line depend on the model that one wishes to fit to the data (see options in `?cbvn`) . In this case, we shall fit a linear+plateau model (lp) and hence the parameters are the plateau value and the intercept and slope of the linear component. The boundary line start values can be obtained using the function `startValues()`. For more information on the `startValues()` function run the code `?startValues`. With a scatter plot of *`y`* against *`x`* active in the plot window in `R`, run the function `start.values("lp")`, then click on the plot, the point you expect to be the lowest and the largest response of a linear model at the boundary. Note that starting values for other models can be determined by changing the model name from "lp" to the desired models (see `?startValues` help file).
@@ -156,7 +156,7 @@ The possible `sigh` values can be set to 0.5, 0.7 and 0.8 and we can check the l
 ```{r, eval=FALSE,fig.align='center', fig.dim=c(4,4)}
 
 sigh=c(0.5,0.7,0.8)
-ble_profile(vals,start,sigh,model = "lp") # may take a few minutes to run for large datasets
+ble_profile(data,start,sigh,model = "lp") # may take a few minutes to run for large datasets
 ```
 
 From the likelihood profile, the `sigh` that maximizes the likelihood is around 0.65. We can use this for the value of `sigh`. Now that all the arguments required for `cbvn()` function are set, the boundary line can be fitted
@@ -164,7 +164,7 @@ From the likelihood profile, the `sigh` that maximizes the likelihood is around 
 ```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4) }
 start<-c(4,3,13.6,3,9,0.50,1.9,0.05)
 
-model1<-cbvn(vals,start=start,sigh=0.7,model = "lp", xlab=expression("P /log ppm"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
+model1<-cbvn(data,start=start,sigh=0.7,model = "lp", xlab=expression("P /log ppm"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
 
 model1
 ```
@@ -244,10 +244,10 @@ This was already done using P and boundary existence was confirmed
 
 From the exploratory tests, they indicated that the data provides evidence of boundary existence, outliers have been identified and removed, and the variables *`x`* and *`y`* are normally distributed. We therefore, proceed to fit a boundary line model to the data set using the censored bivariate normal model. The function `cbvn()` fits the boundary line to the data.
 
-We determine the argument values for the function `cbvn()` as before . Firstly, create a data-frame containing *`x`* and *`y`,* called `vals`.
+We determine the argument values for the function `cbvn()` as before . Firstly, create a data-frame containing *`x`* and *`y`,* called `data`.
 
 ```{r}
-vals<-data.frame(x,y) #This is an input dataframe containing the variables
+data<-data.frame(x,y) #This is an input dataframe containing the variables
 ```
 
 Secondly, the `cbvn()` requires initial starting values, *`start`*, which are parameters of the boundary line (the censor) and the bivariate normal distribution. In this case, we shall fit a linear+Plateau model (lp) and hence the parameters are the plateau value and the intercept and slope of the linear component. With a scatter plot of *`y`* against *`x`* active in the plot window in `R`, run the function `start.values("lp")`, then click on the plot, the point you expect to be the lowest and the largest response of a linear model at the boundary. Note that starting values for other models can be determined by changing the model name from "lp" to the desired models (see `?startValues` help file)
@@ -277,7 +277,7 @@ The standard deviation of the measurement error, *`sigh`* was already determine 
 
 ```{r, eval=TRUE,fig.align='center', fig.dim=c(4,4) }
 
-model2<-cbvn(vals,start=start,sigh=0.7,model = "lp", xlab=expression("pH"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
+model2<-cbvn(data,start=start,sigh=0.7,model = "lp", xlab=expression("pH"), ylab=expression("Yield /t ha"^{-1}), pch=16, col="grey")
 
 model2
 ```

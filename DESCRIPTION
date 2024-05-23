@@ -14,7 +14,7 @@ Authors@R: c(
     person("Victor O", "Sadras", role = "ctb"),
     person("University of Nottingham/Rothamsted Research", role = "fnd")
   )
-Description: Fitting boundary line models to datasets and making statistical 
+Description: Fits boundary line models to datasets and making statistical 
     inferences about their parameters. Provides tools for testing datasets for evidence 
     of boundary presence, fitting boundary line models, and conducting post-hoc analyses 
     such as predicting boundary values and identifying the most limiting factor (Miti, 

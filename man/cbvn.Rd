@@ -4,11 +4,11 @@
 \alias{cbvn}
 \title{Fitting boundary line using censored bivariate normal model}
 \usage{
-cbvn(vals,model="lp", equation=NULL, start, sigh, UpLo="U", optim.method="BFGS",
+cbvn(data,model="lp", equation=NULL, start, sigh, UpLo="U", optim.method="BFGS",
       Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...)
 }
 \arguments{
-\item{vals}{A dataframe with two numeric columns, independent (\code{x}) and
+\item{data}{A dataframe with two numeric columns, independent (\code{x}) and
 dependent (\code{y}) variables respectively.}
 
 \item{model}{Selects the functional form of the boundary line. It includes
@@ -172,10 +172,10 @@ The common errors encountered due to poor start values \enumerate{
 
 x<-log(SoilP$P)
 y<-SoilP$yield
-vals<-data.frame(x,y)
+data<-data.frame(x,y)
 start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
 
-cbvn(vals,start=start,model = "trapezium", sigh = 0.7,
+cbvn(data,start=start,model = "trapezium", sigh = 0.7,
       xlab=expression("Phosphorus/ln(mg L"^-1*")"),
       ylab=expression("Yield/ t ha"^-1), pch=16,
       col="grey")

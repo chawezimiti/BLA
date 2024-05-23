@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Tools for fitting boundary line models to datasets and make statistical inferences about their parameters. Tests datasets for evidence of boundary presence, fits boundary line models, and conducts post-hoc analyses such as predicting boundary values and identifying the most limiting factor (Miti, Milne, Giller, Lark (2024) \doi{10.1016/j.fcr.2024.109365}).
+Fits boundary line models to datasets and making statistical inferences about their parameters. Provides tools for testing datasets for evidence of boundary presence, fitting boundary line models, and conducting post-hoc analyses such as predicting boundary values and identifying the most limiting factor (Miti, Milne, Giller, Lark (2024) \doi{10.1016/j.fcr.2024.109365}).
 }
 \references{
 Lark, R. M., & Milne, A. E. (2016). Boundary line analysis of the

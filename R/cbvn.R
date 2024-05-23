@@ -9,7 +9,7 @@
 #' proposed model. It then compares the results with an uncensored normal bivariate
 #' distribution to access the appropriateness of the censored model.
 #'
-#' @param vals A dataframe with two numeric columns, independent (\code{x}) and
+#' @param data A dataframe with two numeric columns, independent (\code{x}) and
 #'   dependent (\code{y}) variables respectively.
 #' @param start A numeric vector of initial starting values for optimization
 #'   in fitting the boundary model. Its length and arrangement depend on the
@@ -179,28 +179,28 @@
 #'
 #' @rdname cbvn
 #' @usage
-#' cbvn(vals,model="lp", equation=NULL, start, sigh, UpLo="U", optim.method="BFGS",
+#' cbvn(data,model="lp", equation=NULL, start, sigh, UpLo="U", optim.method="BFGS",
 #'       Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...)
 #'
 #' @examples
 #'
 #' x<-log(SoilP$P)
 #' y<-SoilP$yield
-#' vals<-data.frame(x,y)
+#' data<-data.frame(x,y)
 #' start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
 #'
-#' cbvn(vals,start=start,model = "trapezium", sigh = 0.7,
+#' cbvn(data,start=start,model = "trapezium", sigh = 0.7,
 #'       xlab=expression("Phosphorus/ln(mg L"^-1*")"),
 #'       ylab=expression("Yield/ t ha"^-1), pch=16,
 #'       col="grey")
 #'
-cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.method="BFGS",
+cbvn<-function(data, model="lp", equation=NULL, start, sigh, UpLo="U", optim.method="BFGS",
                Hessian=FALSE, plot=TRUE, line_smooth=1000, lwd=2, l_col="red",...){
 
 
   ########## Initial data preparations ##################################################
 
-  vals <- na.omit(as.data.table(vals))
+  data <- na.omit(as.data.table(data))
 
   sigh<-sigh # set value for the measurement error
   UpLo<-UpLo # set UpLo to "U" when fitting an upper boundary and "L" for a lower.
@@ -244,12 +244,12 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
         cov <- rho * sdx * sdy
         bet <- cov / (sdx^2)
 
-        fx <- dnorm(vals[, x], mux, sdx)
-        muyc <- muy + ((vals[, x] - mux) * bet)
+        fx <- dnorm(data[, x], mux, sdx)
+        muyc <- muy + ((data[, x] - mux) * bet)
         sdyc <- sdy * sqrt(1 - rho^2)
 
-        c <- BLMod(vals[, x], beta0, beta1, beta2)
-        fy_x <- coffcturb(vals[, y], muyc, sdyc, -Inf, c, sigh)
+        c <- BLMod(data[, x], beta0, beta1, beta2)
+        fy_x <- coffcturb(data[, y], muyc, sdyc, -Inf, c, sigh)
 
         fxy <- fy_x * fx
         -sum(log(fxy))
@@ -284,7 +284,7 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
       cov <- rho * sdx * sdy
 
       Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
       -sum(lliks)
     }
 
@@ -310,8 +310,8 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
     ## Plotting the data for visualization------------------------------------------------
 
     if (plot) {
-      plot(vals, ...)
-      xdraw <- seq(min(vals$x), max(vals$x), length.out = line_smooth)
+      plot(data, ...)
+      xdraw <- seq(min(data$x), max(data$x), length.out = line_smooth)
       ydraw <- BLMod(xdraw, beta0, beta1, beta2)
       lines(xdraw, ydraw, col = l_col, lwd = lwd)
     }
@@ -390,12 +390,12 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
         cov <- rho * sdx * sdy
         bet <- cov / (sdx^2)
 
-        fx <- dnorm(vals[, x], mux, sdx)
-        muyc <- muy + ((vals[, x] - mux) * bet)
+        fx <- dnorm(data[, x], mux, sdx)
+        muyc <- muy + ((data[, x] - mux) * bet)
         sdyc <- sdy * sqrt(1 - rho^2)
 
-        c <- BLMod(vals[, x], beta0, beta1)
-        fy_x <- coffcturb2(vals[, y], muyc, sdyc, -Inf, c, sigh)
+        c <- BLMod(data[, x], beta0, beta1)
+        fy_x <- coffcturb2(data[, y], muyc, sdyc, -Inf, c, sigh)
 
         fxy <- fy_x * fx
         -sum(log(fxy))
@@ -430,7 +430,7 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
       cov <- rho * sdx * sdy
 
       Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
       -sum(lliks)
     }
 
@@ -457,10 +457,10 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
 
     ## Plotting the data for viewing------------------------------------------------------
 
-    if(plot==TRUE){ plot(vals,...)
+    if(plot==TRUE){ plot(data,...)
 
-      x<-vals[,1]
-      y<-vals[,2]
+      x<-data[,1]
+      y<-data[,2]
 
       xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
       ydraw<-drawBL2((xdraw),beta0,beta1,BLMod)
@@ -532,12 +532,12 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
         cov <- rho * sdx * sdy
         bet <- cov / (sdx^2)
 
-        fx <- dnorm(vals[, x], mux, sdx)
-        muyc <- muy + ((vals[, x] - mux) * bet)
+        fx <- dnorm(data[, x], mux, sdx)
+        muyc <- muy + ((data[, x] - mux) * bet)
         sdyc <- sdy * sqrt(1 - rho^2)
 
-        c <- BLMod(vals[, x], beta0, beta1, beta2, beta3, beta4)
-        fy_x <- coffcturb3(vals[, y], muyc, sdyc, -Inf, c, sigh)
+        c <- BLMod(data[, x], beta0, beta1, beta2, beta3, beta4)
+        fy_x <- coffcturb3(data[, y], muyc, sdyc, -Inf, c, sigh)
 
         fxy <- fy_x * fx
         -sum(log(fxy))
@@ -572,7 +572,7 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
       cov <- rho * sdx * sdy
 
       Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
       -sum(lliks)
     }
 
@@ -601,10 +601,10 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
 
     ## Plotting the data for viewing-----------------------------------------------------
 
-    if(plot==TRUE){ plot(vals,...)
+    if(plot==TRUE){ plot(data,...)
 
-      x<-vals[,1]
-      y<-vals[,2]
+      x<-data[,1]
+      y<-data[,2]
       xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
       ydraw<-drawBL3((xdraw),beta0,beta1,beta2,beta3,beta4,BLMod)
       lines(xdraw,ydraw,col=l_col,lwd=lwd)
@@ -680,12 +680,12 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
         cov <- rho * sdx * sdy
         bet <- cov / (sdx^2)
 
-        fx <- dnorm(vals[, x], mux, sdx)
-        muyc <- muy + ((vals[, x] - mux) * bet)
+        fx <- dnorm(data[, x], mux, sdx)
+        muyc <- muy + ((data[, x] - mux) * bet)
         sdyc <- sdy * sqrt(1 - rho^2)
 
-        c <- BLMod(vals[, x], beta1, beta2, beta01, beta02, beta3, beta4)
-        fy_x <- coffcturb4(vals[, y], muyc, sdyc, -Inf, c, sigh)
+        c <- BLMod(data[, x], beta1, beta2, beta01, beta02, beta3, beta4)
+        fy_x <- coffcturb4(data[, y], muyc, sdyc, -Inf, c, sigh)
 
         fxy <- fy_x * fx
         -sum(log(fxy))
@@ -720,7 +720,7 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
       cov <- rho * sdx * sdy
 
       Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
       -sum(lliks)
     }
 
@@ -751,9 +751,9 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
 
     ## Plotting the data for viewing------------------------------------------------------
 
-    if(plot==TRUE){ plot(vals,...)
-      x<-vals[,1]
-      y<-vals[,2]
+    if(plot==TRUE){ plot(data,...)
+      x<-data[,1]
+      y<-data[,2]
       xdraw=seq(min(x),max(x),(max(x)-min(x))/((max(x)-min(x))*line_smooth))
       ydraw<-drawBL4((xdraw),beta01,beta02,beta1,beta2,beta3,beta4,BLMod)
       lines(xdraw,ydraw,col=l_col,lwd=lwd)
@@ -842,12 +842,12 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
         cov <- rho * sdx * sdy
         bet <- cov / (sdx^2)
 
-        fx <- dnorm(vals[, x], mux, sdx)
-        muyc <- muy + ((vals[, x] - mux) * bet)
+        fx <- dnorm(data[, x], mux, sdx)
+        muyc <- muy + ((data[, x] - mux) * bet)
         sdyc <- sdy * sqrt(1 - rho^2)
 
-        C <- do.call(BLMod, c(list(x=vals[, x]), param_list))
-        fy_x <- coffcturb5(vals[, y], muyc, sdyc, -Inf, C, sigh)
+        C <- do.call(BLMod, c(list(x=data[, x]), param_list))
+        fy_x <- coffcturb5(data[, y], muyc, sdyc, -Inf, C, sigh)
 
         fxy <- fy_x * fx
         -sum(log(fxy))
@@ -882,7 +882,7 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
       cov <- rho * sdx * sdy
 
       Sigma <- matrix(c(sdx^2, cov, cov, sdy^2), 2, 2)
-      lliks <- dmvnorm(vals, mean = c(mux, muy), sigma = Sigma, log = TRUE)
+      lliks <- dmvnorm(data, mean = c(mux, muy), sigma = Sigma, log = TRUE)
       -sum(lliks)
     }
 
@@ -909,9 +909,9 @@ cbvn<-function(vals, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
     ## Plotting the data for viewing----------------------------------------------------
 
     if(plot == TRUE) {
-      plot(vals, ...)
-      x <- vals[, 1]
-      y <- vals[, 2]
+      plot(data, ...)
+      x <- data[, 1]
+      y <- data[, 2]
       xdraw <- seq(min(x), max(x), length.out = line_smooth)
       ydraw <- drawBL5(xdraw, param_values, BLMod)
       lines(xdraw, ydraw, col = l_col, lwd = lwd)
