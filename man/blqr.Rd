@@ -166,12 +166,12 @@ using several starting values and the results with the smallest error
 
 x<-log(SoilP$P)
 y<-SoilP$yield
-start<-c(4,3,13.6, 35, -5)
+start<-c(4,3,13.6)
 
-blqr(x,y, start=start,model = "trapezium", tau=0.99,
-      xlab=expression("Phosphorus/ln(mg L"^-1*")"),
-      ylab=expression("Yield/ t ha"^-1), pch=16,
-      col="grey")
+blqr(x,y, start=start,model = "lp", tau=0.99,
+      xlab=expression("ET mm ha"^-1),
+      ylab=expression("Wheat yield/ ton ha"^-1),
+      pch=16, col="grey")
 
 }
 \references{

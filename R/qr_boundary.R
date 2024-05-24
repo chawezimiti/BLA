@@ -166,12 +166,12 @@
 #'
 #' x<-log(SoilP$P)
 #' y<-SoilP$yield
-#' start<-c(4,3,13.6, 35, -5)
+#' start<-c(4,3,13.6)
 #'
-#' blqr(x,y, start=start,model = "trapezium", tau=0.99,
-#'       xlab=expression("Phosphorus/ln(mg L"^-1*")"),
-#'       ylab=expression("Yield/ t ha"^-1), pch=16,
-#'       col="grey")
+#' blqr(x,y, start=start,model = "lp", tau=0.99,
+#'       xlab=expression("ET mm ha"^-1),
+#'       ylab=expression("Wheat yield/ ton ha"^-1),
+#'       pch=16, col="grey")
 #'
 blqr<-function(x,y,model, equation=NULL,start,tau=0.95,optim.method="Nelder-Mead",
                xmin=min(bound$x),xmax=max(bound$x),
@@ -182,15 +182,7 @@ blqr<-function(x,y,model, equation=NULL,start,tau=0.95,optim.method="Nelder-Mead
   BLMod<-model
   if(plot==TRUE){plot(x,y,...)}
 
-  data<-data.frame(x=x,y=y)
-
-  test<-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE)                    #removes NA's
-
-  if(length(test)>0){
-    bound<-data[-which(is.na(data$x)==TRUE|is.na(data$y)==TRUE),]}else{   #removes NA's
-      bound<-data
-    }
-
+  bound <- na.omit(as.data.table(data.frame(x=x,y=y))) #removes NA's
 
   ## Setting data limits for boundary model fitting --------------------------------------
 

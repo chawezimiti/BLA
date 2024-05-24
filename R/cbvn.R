@@ -187,9 +187,9 @@
 #' x<-log(SoilP$P)
 #' y<-SoilP$yield
 #' data<-data.frame(x,y)
-#' start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
+#' start<-c(4,3,13.6,3,9,0.50,1.9,0.05)
 #'
-#' cbvn(data,start=start,model = "trapezium", sigh = 0.7,
+#' cbvn(data,start=start,model = "lp", sigh = 0.7,
 #'       xlab=expression("Phosphorus/ln(mg L"^-1*")"),
 #'       ylab=expression("Yield/ t ha"^-1), pch=16,
 #'       col="grey")
