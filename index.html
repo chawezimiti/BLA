@@ -101,80 +101,171 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>The BLA <code>R</code> package provides a set of tools to fit boundary line models to a data set as proposed by Webb (1972). It includes a suite of methods which have been introduced since the original manually-drawn boundary lines were proposed. These include methods based on binning the independent variable, the BOLIDES algorithm of Schug <em>et al</em>. (1995), quantile regression and the censored bivariate normal model of Milne <em>et al</em>. (2006). It also provides data exploration methods to check for outliers and to provide initial evidence for a limiting boundary in data sets as initial steps before doing boundary line analysis. It includes functions to determine suitable starting values for boundary line parameters for estimation by numerical optimization procedures. Learn more in <code><a href="articles/Introduction_to_BLA.html">vignette("Introduction_to_BLA")</a></code>.</p>
+<p>The BLA <code>R</code> package provides a set of tools to fit boundary line models to a data set as proposed by Webb (1972). It includes a suite of methods which have been introduced since the original manually-drawn boundary lines were proposed. These include methods based on binning the independent variable, the BOLIDES algorithm of Schug <em>et al</em>. (1995), quantile regression and the statistically robust censored bivariate normal model of Milne <em>et al</em>. (2006). It also provides data exploration methods to check for outliers and to provide initial evidence for a limiting boundary in data sets as initial steps before doing boundary line analysis. It includes functions to determine suitable starting values for boundary line parameters for estimation by numerical optimization procedures. Learn more in <code><a href="articles/Introduction_to_BLA.html">vignette("Introduction_to_BLA")</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="how-can-i-install-the-package">How can I install the package?<a class="anchor" aria-label="anchor" href="#how-can-i-install-the-package"></a>
 </h2>
 <p>Install the current version of the package from CRAN.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BLA"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BLA"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="what-can-i-use-the-bla-package-for">What can I use the BLA package for?<a class="anchor" aria-label="anchor" href="#what-can-i-use-the-bla-package-for"></a>
 </h2>
-<p>The classical situation in which <code>BLA</code> is used is to model the relationship between some response variable for a biological system (e.g. the yield of a crop) and a variable which is potentially limiting on that response (e.g. soil pH). The approach is suitable for large data sets from surveys i.e. cases in which multiple potential limiting factors occur but are not controlled experimentally. In the example of crop yield and pH, one can determine the largest expected yield for a given pH value, also called the boundary pH value. There are various methods to fit the boundary model in the <code>BLA</code> package, encoded in the functions <code><a href="reference/blbin.html">blbin()</a></code>, <code><a href="reference/BOLIDES.html">bolides()</a></code>, <code><a href="reference/blqr.html">blqr()</a></code> and <code><a href="reference/cbvn.html">cbvn()</a></code>. The example below uses the <code><a href="reference/BOLIDES.html">bolides()</a></code> function:</p>
+<p>The classical situation in which <code>BLA</code> is used is to model the relationship between some response variable for a biological system (e.g. the yield of a crop) and a variable which is potentially limiting on that response (e.g. soil P concentration). The approach is suitable for large data sets from surveys i.e. cases in which multiple potential limiting factors occur but are not controlled experimentally. In the example of crop yield and soil P concentration, one can determine the largest expected yield for a given soil P concentration value, also called the boundary pH value. There are various methods to fit the boundary model in the <code>BLA</code> package, encoded in the functions <code><a href="reference/blbin.html">blbin()</a></code>, <code><a href="reference/BOLIDES.html">bolides()</a></code>, <code><a href="reference/blqr.html">blqr()</a></code> and <code><a href="reference/cbvn.html">cbvn()</a></code>. Additionally, the <code>BLA</code> provides function for initial data exploratory and post-hoc analysis.</p>
+<p>The example below uses the censored bivariate normal model, <code>cbvn(),</code> function to fit the boundary line:</p>
+<div class="section level3">
+<h3 id="load-the-package">Load the package<a class="anchor" aria-label="anchor" href="#load-the-package"></a>
+</h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chawezimiti.github.io/BLA/">BLA</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.uni-bielefeld.de/fakultaeten/wirtschaftswissenschaften/fakultaet/lehrende-ehemalige/pwolf/wolf_aplpack/index.xml" class="external-link">aplpack</a></span><span class="op">)</span><span class="co"># provides function for outlier detection</span></span>
-<span></span>
-<span><span class="co"># 1. Outlier detection using bagplot() function</span></span>
-<span></span>
-<span><span class="va">nobs</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">soil</span><span class="op">$</span><span class="va">pH</span><span class="op">)</span> </span>
-<span><span class="va">vals_ur</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="va">nobs</span>,<span class="fl">2</span><span class="op">)</span><span class="co">#  create a matrix: bagplot inputs data as a matrix</span></span>
-<span><span class="va">vals_ur</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">pH</span> </span>
-<span><span class="va">vals_ur</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">yield</span></span>
-<span></span>
-<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot</a></span><span class="op">(</span><span class="va">vals_ur</span>,create.plot <span class="op">=</span> <span class="cn">F</span> <span class="op">)</span> <span class="co"># bagplot identifies outliers</span></span>
-<span><span class="va">vals</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">bag</span><span class="op">$</span><span class="va">pxy.bag</span>,<span class="va">bag</span><span class="op">$</span><span class="va">pxy.outer</span><span class="op">)</span> <span class="co"># new excludes bivariate outliers</span></span>
-<span></span>
-<span><span class="co"># 2. Fit the boundary model in form of a linear plateau ("lp")</span></span>
-<span></span>
-<span><span class="va">x</span><span class="op">&lt;-</span><span class="va">vals</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
-<span><span class="va">y</span><span class="op">&lt;-</span><span class="va">vals</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span>
-<span><span class="va">start</span> <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">12.99</span>,<span class="fl">2</span>,<span class="fl">13</span> <span class="op">)</span> <span class="co"># initial start values for optimization</span></span>
-<span></span>
-<span><span class="va">model</span><span class="op">&lt;-</span><span class="fu"><a href="reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, start <span class="op">=</span> <span class="va">start</span>,model <span class="op">=</span> <span class="st">"lp"</span>,xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"pH"</span><span class="op">)</span>, </span>
-<span>        ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield/ t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, plot<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span>       col<span class="op">=</span><span class="st">"grey40"</span>, cex<span class="op">=</span><span class="fl">0.8</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.uni-bielefeld.de/fakultaeten/wirtschaftswissenschaften/fakultaet/lehrende-ehemalige/pwolf/wolf_aplpack/index.xml" class="external-link">aplpack</a></span><span class="op">)</span></span></code></pre></div>
+<p>In addition to the <code>BLA</code>, the <code>aplpack</code> package is loaded which provides the <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot()</a></code> function for outlier detection.</p>
+</div>
+<div class="section level3">
+<h3 id="exploratory-analysis">Exploratory analysis<a class="anchor" aria-label="anchor" href="#exploratory-analysis"></a>
+</h3>
+<p>There are three important exploratory steps required prior to fitting boundary line models when using <code><a href="reference/cbvn.html">cbvn()</a></code>. These include (1) checking the distribution of the potential limiting and response variables to access if they fulfill the assumption of normality, (2) detection of outliers, and (3) the determination of evidence of boundary existence in a dataset.</p>
+<ol style="list-style-type: decimal">
+<li><strong>Testing for normality</strong></li>
+</ol>
+<p>The function <code><a href="reference/summastat.html">summastat()</a></code> can be used for this purpose. Starting with soil P concentration:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">soil</span><span class="op">$</span><span class="va">P</span> </span>
+<span><span class="fu"><a href="reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#&gt;         Mean Median Quartile.1 Quartile.3 Variance       SD Skewness</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; [1,] 25.9647     22         16         32 207.0066 14.38772 1.840844</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; [1,]       0.3571429 5.765138           43</span></span></code></pre></div>
+<p>From the plots and the summary statistics, the <code>x</code> variable can not be assumed to be from a normal distribution and hence requires transformation to fulfill the assumption of normality. You can do this by taking the natural log of <code>x</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/summastat.html">summastat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co">#&gt;          Mean   Median Quartile.1 Quartile.3  Variance        SD  Skewness</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [1,] 3.126361 3.091042   2.772589   3.465736 0.2556936 0.5056615 0.1297406</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt;      Octile skewness    Kurtosis No. outliers</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; [1,]      0.08395839 -0.05372586            0</span></span></code></pre></div>
+<p>Normality can now be assumed after transformation. Next, you check the variable <code>yield</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="va">soil</span><span class="op">$</span><span class="va">yield</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt;          Mean  Median Quartile.1 Quartile.3 Variance       SD   Skewness</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt; [1,] 9.254813 9.36468   8.203703   10.39477 3.456026 1.859039 -0.4819805</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; [1,]     -0.05793291 1.292635            7</span></span></code></pre></div>
+<p>From the plots and the summary statistics, the variable <code>y</code> can be assumed to be from a normal distribution.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Outlier identification and removal</strong></li>
+</ol>
+<p>This is done using the <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot()</a></code> function from the <code>aplpack</code> package. Its input is a <code>matrix</code> and hence we assign the <code>x</code> and <code>y</code> variables to a matrix <code>data_ur</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span>  <span class="va">nobs</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">soil</span><span class="op">$</span><span class="va">P</span><span class="op">)</span> </span>
+<span>  <span class="va">data_ur</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="va">nobs</span>,<span class="fl">2</span><span class="op">)</span><span class="co">#  create a matrix: bagplot inputs data as a matrix</span></span>
+<span>  <span class="va">data_ur</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">soil</span><span class="op">$</span><span class="va">P</span><span class="op">)</span> </span>
+<span>  <span class="va">data_ur</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">yield</span></span>
+<span></span>
+<span>  <span class="va">bag</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot</a></span><span class="op">(</span><span class="va">data_ur</span>,create.plot <span class="op">=</span> <span class="cn">F</span> <span class="op">)</span> <span class="co"># bagplot identifies outliers</span></span>
+<span></span>
+<span>  <span class="va">data</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">bag</span><span class="op">$</span><span class="va">pxy.bag</span>,<span class="va">bag</span><span class="op">$</span><span class="va">pxy.outer</span><span class="op">)</span> <span class="co"># new excludes bivariate outliers</span></span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Evidence of boundary presence</strong></li>
+</ol>
+<p>This is done using the function <code><a href="reference/expl_boundary.html">expl_boundary()</a></code></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">data</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
+<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">data</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span>
+<span></span>
+<span>  <span class="fu"><a href="reference/expl_boundary.html">expl_boundary</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,<span class="fl">10</span>,<span class="fl">1000</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Note: This function may take a few minutes to run for large datasets.</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co">#&gt;     Index Section    value</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="co">#&gt; 1      sd    Left 1.045711</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; 2      sd   Right 1.115379</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt; 3 Mean sd    Left 1.129992</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt; 4 Mean sd   Right 1.204543</span></span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; 5 p_value    Left 0.041000</span></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; 6 p_value   Right 0.029000</span></span></code></pre></div>
+<p>The p-values in the left and right sections are less than 0.05, indicating evidence of boundary existence. This justifies the fitting of a boundary line model to the dataset.</p>
+</div>
+<div class="section level3">
+<h3 id="boundary-model-fitting">Boundary model fitting<a class="anchor" aria-label="anchor" href="#boundary-model-fitting"></a>
+</h3>
+<p>Based on the structure of the data at the upper edge, a trapezium model can be fitted. Take note that any other model of your choice that is biologically plausible can be fitted. Below is an example of how you can use the <code><a href="reference/cbvn.html">cbvn()</a></code> function to fit the boundary line.</p>
+<p>It arguments include (1) a dataframe,<code>data</code>, containing the <code>x</code> and <code>y</code> variables, (2) a vector of initial <code>start</code> values for the optimization that includes the parameters of the boundary model and for the distribution (i.e. <code>mean(x)</code>, <code>mean(y)</code>, <code>sd(x)</code>, <code>sd(y)</code> and <code>cor(x,y)</code>), and (3) the measurement error value, <code>sigh</code>, for the response variable. The rest of the inputs are related to the plot features as in the function <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> from base <code>R</code>.</p>
+<p>The start values for the preferred model can be determined using the <code><a href="reference/startValues.html">startValues()</a></code> function. Set the argument <code>model</code> to the desired model e.g. <code>model="trapezium"</code>, run the function and click on the plot of <code>y</code> against <code>x</code>, the points that make up the structure of the model at the upper edges of the data scatter.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
+<p>Using the obtained values for the model, create a vector of start values.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">data</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span> </span>
+<span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.6</span>, <span class="fl">35</span>,<span class="op">-</span><span class="fl">5</span>,<span class="fl">3</span>,<span class="fl">9</span>,<span class="fl">0.50</span>,<span class="fl">1.9</span>,<span class="fl">0.05</span><span class="op">)</span> <span class="co"># initial start values for optimization</span></span>
+<span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/cbvn.html">cbvn</a></span><span class="op">(</span><span class="va">data</span>, start <span class="op">=</span> <span class="va">start</span>, model <span class="op">=</span> <span class="st">"trapezium"</span>, sigh<span class="op">=</span><span class="fl">0.7</span>, </span>
+<span>                 xlab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Soil P"</span><span class="op">)</span>, ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield/ t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, </span>
+<span>                 pch <span class="op">=</span> <span class="fl">16</span>, plot <span class="op">=</span> <span class="cn">TRUE</span>, col <span class="op">=</span> <span class="st">"grey40"</span>, cex <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-10-1.png" width="100%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model</span></span>
 <span><span class="co">#&gt; $Model</span></span>
-<span><span class="co">#&gt; [1] "lp"</span></span>
+<span><span class="co">#&gt; [1] "trapezium"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Equation</span></span>
-<span><span class="co">#&gt; [1] y = min (β₁ + β₂x, β₀)</span></span>
+<span><span class="co">#&gt; [1] y = min (β₁ + β₂x, β₀, β₃ + β₄x)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
-<span><span class="co">#&gt;     Estimate</span></span>
-<span><span class="co">#&gt; β₁ -4.981956</span></span>
-<span><span class="co">#&gt; β₂  2.847364</span></span>
-<span><span class="co">#&gt; β₀ 14.011192</span></span>
+<span><span class="co">#&gt;          Estimate Standard error</span></span>
+<span><span class="co">#&gt; β₁     4.29795522    1.035391840</span></span>
+<span><span class="co">#&gt; β₂     3.23397375    0.460850826</span></span>
+<span><span class="co">#&gt; β₀    13.15187257    0.206656034</span></span>
+<span><span class="co">#&gt; β₃    33.17267393    1.693458789</span></span>
+<span><span class="co">#&gt; β₄    -5.22857503    0.393758941</span></span>
+<span><span class="co">#&gt; mux    3.12597270    0.006451086</span></span>
+<span><span class="co">#&gt; muy    9.30482617    0.022879293</span></span>
+<span><span class="co">#&gt; sdx    0.50053107    0.004561474</span></span>
+<span><span class="co">#&gt; sdy    1.60754420    0.018448808</span></span>
+<span><span class="co">#&gt; rcorr  0.04150832    0.014806076</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $RMS</span></span>
-<span><span class="co">#&gt; [1] 0.1733124</span></span></code></pre></div>
-<p>The boundary yield given the pH for each farm can be predicted using the function <code><a href="reference/predictBL.html">predictBL()</a></code> :</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pH_values</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">pH</span></span>
-<span><span class="va">pH_values</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">==</span><span class="cn">T</span><span class="op">)</span><span class="op">]</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>,na.rm<span class="op">=</span><span class="cn">T</span><span class="op">)</span> <span class="co"># replace missing values with mean of pH</span></span>
-<span><span class="va">predicted_yield</span><span class="op">&lt;-</span><span class="fu"><a href="reference/predictBL.html">predictBL</a></span><span class="op">(</span><span class="va">model</span>,<span class="va">pH_values</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $AIC</span></span>
+<span><span class="co">#&gt;             </span></span>
+<span><span class="co">#&gt; mvn 32429.55</span></span>
+<span><span class="co">#&gt; BL  32391.07</span></span></code></pre></div>
+<p>The output gives the name of model fitted which is a “trapezium” in the case, its equation form, its parameters (the first 5 rows of the Parameters) and corresponding standard errors, and the AIC values for the boundary model, BL, and a corresponding multivariate normal model, mvn. Since the AIC for the BL is smaller than mvn, the boundary line model is appropriate.</p>
+</div>
+<div class="section level3">
+<h3 id="predicting-boundary-yield-and-critical-soil-p-value">Predicting boundary yield and critical soil P value<a class="anchor" aria-label="anchor" href="#predicting-boundary-yield-and-critical-soil-p-value"></a>
+</h3>
+<p>The boundary yield given the soil P concentration for each data point can be predicted using the function <code><a href="reference/predictBL.html">predictBL()</a></code> :</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">P_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">soil</span><span class="op">$</span><span class="va">P</span><span class="op">)</span></span>
+<span><span class="va">P_values</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># replace missing values with mean pH</span></span>
+<span><span class="va">predicted_yield</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/predictBL.html">predictBL</a></span><span class="op">(</span><span class="va">model</span>, <span class="va">P_values</span><span class="op">)</span></span>
+<span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">predicted_yield</span><span class="op">)</span> <span class="co"># predicted yield for the first six farms</span></span>
-<span><span class="co">#&gt; [1] 13.98149 14.01119 14.01119 13.07033 14.01119 13.63981</span></span></code></pre></div>
-<p>The critical pH value can be determined from the model parameters. The critical pH is the pH beyond which yield increase response is not expected.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">intercept</span><span class="op">&lt;-</span><span class="va">model</span><span class="op">$</span><span class="va">Parameters</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
-<span><span class="va">slope</span><span class="op">&lt;-</span><span class="va">model</span><span class="op">$</span><span class="va">Parameters</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
-<span><span class="va">plateau</span><span class="op">&lt;-</span><span class="va">model</span><span class="op">$</span><span class="va">Parameters</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span></span>
+<span><span class="co">#&gt; [1] 11.74445 11.40372 11.74445 11.40372 11.40372 12.33408</span></span></code></pre></div>
+<p>The critical P value is the point beyond which yield increase is not expected. You can calculate it from the model parameters as follows:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">intercept</span> <span class="op">&lt;-</span> <span class="va">model</span><span class="op">$</span><span class="va">Parameters</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span><span class="va">slope</span> <span class="op">&lt;-</span> <span class="va">model</span><span class="op">$</span><span class="va">Parameters</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span>
+<span><span class="va">plateau</span> <span class="op">&lt;-</span> <span class="va">model</span><span class="op">$</span><span class="va">Parameters</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span></span>
 <span></span>
-<span><span class="va">critical_pH</span><span class="op">&lt;-</span> <span class="op">(</span><span class="va">plateau</span><span class="op">-</span><span class="va">intercept</span><span class="op">)</span><span class="op">/</span><span class="va">slope</span></span>
+<span><span class="va">critical_P</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">plateau</span> <span class="op">-</span> <span class="va">intercept</span><span class="op">)</span> <span class="op">/</span> <span class="va">slope</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">critical_pH</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 6.670432</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">critical_P</span><span class="op">)</span><span class="op">)</span><span class="co"># results are in mg/l</span></span>
+<span><span class="co">#&gt; [1] 15.45268</span></span></code></pre></div>
 <p>Other boundary line post-hoc analysis procedures can be conducted. For more information, See <code><a href="articles/Censored_bivariate_normal_model.html">vignette("Censored_bivariate_normal_model")</a></code> and <code><a href="articles/Introduction_to_BLA.html">vignette("Introduction_to_BLA")</a></code>.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
