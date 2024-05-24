@@ -45,7 +45,7 @@ the data. This is also implemented in the simulation step in the
 \examples{
 x<-evapotranspiration$`ET(mm)`
 y<-evapotranspiration$`yield(t/ha)`
-expl_boundary(x,y,10,1000)
+expl_boundary(x,y,10,100) # recommendation is to set simulations to greater than 1000
 
 }
 \references{

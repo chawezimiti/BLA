@@ -158,13 +158,13 @@ The common errors encountered due to poor start values \enumerate{
 }
 \examples{
 
-x<-log(SoilP$P)
-y<-SoilP$yield
+x<-evapotranspiration$`ET(mm)`
+y<-evapotranspiration$`yield(t/ha)`
 data<-data.frame(x,y)
-start<-c(4,3,13.6, 35, -5,3,9,0.50,1.9,0.05)
-sigh = c(0.4,0.6,0.7)
+start<-c(0.5,0.02,289.6,2.4,83.7,1.07,0.287)
+sigh <- c(0.5,0.6,0.7,0.8,0.9)
 
-ble_profile(data,start=start,model = "trapezium", sigh = sigh)
+ble_profile(data,start=start,model = "blm", sigh = sigh)
 
 }
 \references{
