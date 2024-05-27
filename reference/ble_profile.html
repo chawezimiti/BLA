@@ -43,8 +43,14 @@ is maximized is selected."><meta property="og:image" content="https://chawezimit
     <a class="dropdown-item" href="../articles/Introduction_to_BLA.html">Introduction to boundary line analysis</a>
   </div>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-news">News</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-news">
+    <h6 class="dropdown-header" data-toc-skip>Releases</h6>
+    <a class="dropdown-item" href="https://chawezimiti.github.io/BLA_blog/">Introducing BLA R package </a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="../news/index.html">Changelog</a>
+  </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -265,8 +271,6 @@ Biometrics 17: 89–110.</p>
 <span class="r-in"><span><span class="va">sigh</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">0.6</span>,<span class="fl">0.7</span>,<span class="fl">0.8</span>,<span class="fl">0.9</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">ble_profile</span><span class="op">(</span><span class="va">data</span>,start<span class="op">=</span><span class="va">start</span>,model <span class="op">=</span> <span class="st">"blm"</span>, sigh <span class="op">=</span> <span class="va">sigh</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Note: This function may take longer to run.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="ble_profile-1.png" alt="" width="700" height="433"></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $`log-likelihood`</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -5019.942 -5015.588 -5011.836 -5009.193 -5008.254</span>
