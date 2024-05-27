@@ -23,10 +23,6 @@ navbar:
       aria-label: LinkedIn
 
 news:
-  title: "News"
-  articles:
-    - title: "Changelog"
-      href: news/changelog.html
-    - title: "Updates"
-      href: news/changelog.html
-
+  releases:
+  - text: "Introducing BLA R package "
+    href: https://chawezimiti.github.io/BLA_blog/
