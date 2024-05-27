@@ -18,9 +18,9 @@ This Vignette describe the theory of boundary line analysis and the process fitt
 
 # Background
 
-When a biological response, *`y`*, is observed as function of a single factor of interest, *`x`*, in an uncontrolled environment i.e. when the influence of other factors is not controlled, a scatter of observations is observed due to the many sources of variation. If, for example, *`x`* along with other factors contributes in some additive way to variation of *`y`* then  then a bivariate normal distribution may be expected. However, more complex effects are possible. For example, if the data set is large enough to contain a wide range of combinations of conditions, and x and other factors influence y in accordance with some non-linear process as characterized by the law of the minimum, or the law of the optimum (see Miti *et al*, 2024a), then the data points that are observed in most favourable conditions for the response *`y`* will fall at the upper edges of the data cloud, which would be the maximum possible response of *`y`* given some value of *`x`*. The data points that fall below the maximum response are as a result of the limiting effect of other factors that are not controlled for. Webb (1972) suggested a methodology that can be used to describe the relationship of data points at the upper edges of such data sets which is the most likely relationship of *`y`* and *`x`* when all other factors are not limiting. He referred to this relationship as the boundary line.
+When a biological response, *`y`*, is observed as function of a single factor of interest, *`x`*, in an uncontrolled environment i.e. when the influence of other factors is not controlled, a scatter of observations is observed due to the many sources of variation. If, for example, *`x`* along with other factors contributes in some additive way to variation of *`y`* then then a bivariate normal distribution may be expected. However, more complex effects are possible. For example, if the data set is large enough to contain a wide range of combinations of conditions, and x and other factors influence y in accordance with some non-linear process as characterized by the law of the minimum, or the law of the optimum (see Miti *et al*, 2024a), then the data points that are observed in most favourable conditions for the response *`y`* will fall at the upper edges of the data cloud, which would be the maximum possible response of *`y`* given some value of *`x`*. The data points that fall below the maximum response are as a result of the limiting effect of other factors that are not controlled for. Webb (1972) suggested a methodology that can be used to describe the relationship of data points at the upper edges of such data sets which is the most likely relationship of *`y`* and *`x`* when all other factors are not limiting. He referred to this relationship as the boundary line.
 
-The initial boundary line method by Webb (1972) involved the selection of data points at the upper edges of the data cloud visually. The boundary line model was then fitted to the selected data points to describe the relationship. Currently, many other procedures of fitting the boundary line model to the dataset have been developed to improve the procedure some of which are statistical and some heuristic. These include binning, BOLIDES, quantile regression, makowski quantile regression and the censored bivariate normal methods. Similarly, data exploratory methods have been developed that provide evidence of boundary existence in a dataset which therefore, justifies the use of boundary line analysis on a data set (Milne *et al*. 2006). Colleagues of Webb (1972), who provided the initial data on which boundary line analysis was first applied, were not convinced that the data realized a boundary, hence the need for testing of data sets for presence of boundary. If a boundary exists in data set, it is expected that the distribution of points at the upper edges of data cloud would be clustered and not randomly distributed because response can not go beyond the observed boundary. Evidence for such a distribution provides grounds for proceeding to a boundary line analysis, and Miti *et al*. (2024b) describe the method which this package provides to evaluate this evidence.  It should be noted that more powerful testing against an alternative bivariate normal distribution can be done after fitting a boundary line model with the `cbvn()` function.
+The initial boundary line method by Webb (1972) involved the selection of data points at the upper edges of the data cloud visually. The boundary line model was then fitted to the selected data points to describe the relationship. Currently, many other procedures of fitting the boundary line model to the dataset have been developed to improve the procedure some of which are statistical and some heuristic. These include binning, BOLIDES, quantile regression, makowski quantile regression and the censored bivariate normal methods. Similarly, data exploratory methods have been developed that provide evidence of boundary existence in a dataset which therefore, justifies the use of boundary line analysis on a data set (Milne *et al*. 2006). Colleagues of Webb (1972), who provided the initial data on which boundary line analysis was first applied, were not convinced that the data realized a boundary, hence the need for testing of data sets for presence of boundary. If a boundary exists in data set, it is expected that the distribution of points at the upper edges of data cloud would be clustered and not randomly distributed because response can not go beyond the observed boundary. Evidence for such a distribution provides grounds for proceeding to a boundary line analysis, and Miti *et al*. (2024b) describe the method which this package provides to evaluate this evidence. It should be noted that more powerful testing against an alternative bivariate normal distribution can be done after fitting a boundary line model with the `cbvn()` function.
 
 The `BLA` package provides a group of functions to carryout boundary line analysis on a data set in `R` software. It includes functions to explore data, test evidence of boundary in a data set, fit the boundary line and do post-hoc analysis after fitting a boundary line.
 
@@ -120,7 +120,6 @@ y<-SoilP$yield
 vals <- data.frame(x,y)
 ```
 
-
 The variables *`x`* and *`y`* and now be extracted from the results of the bag plot with outliers removed
 
 ```{r}
@@ -130,7 +129,7 @@ y<-vals[,2]
 
 ### Test for presence of boundary in dataset
 
-The function `exp_boundary()` can be used to evaluate evidence that observations are clustered near an upper boundary in a data set, testing this against an unbounded bivariate normal distribution as a null hypothesis. The standard deviation (*sd*) of the the Euclidean distance of the boundary points to the centre of the data set is used to measure the density of the points at the upper edges of the data. The smaller the *sd* value, the denser the distribution. This function uses the convex hull to select the points at the upper boundary. The default is selecting the first 10 consecutive convex hulls (`shells=10`). The convex hulls are then splits into two sections, the right and left sections, and evidence of boundary existence in both sections is checked by determining the probability of having the observed density of points at the upper edges of the data under the bivariate normal null hypothesis.  More detail is provided by Miti *et al*. 2024b. We reject the null hypothesis if p< 0.05.
+The function `exp_boundary()` can be used to evaluate evidence that observations are clustered near an upper boundary in a data set, testing this against an unbounded bivariate normal distribution as a null hypothesis. The standard deviation (*sd*) of the the Euclidean distance of the boundary points to the centre of the data set is used to measure the density of the points at the upper edges of the data. The smaller the *sd* value, the denser the distribution. This function uses the convex hull to select the points at the upper boundary. The default is selecting the first 10 consecutive convex hulls (`shells=10`). The convex hulls are then splits into two sections, the right and left sections, and evidence of boundary existence in both sections is checked by determining the probability of having the observed density of points at the upper edges of the data under the bivariate normal null hypothesis. More detail is provided by Miti *et al*. 2024b. We reject the null hypothesis if p\< 0.05.
 
 ```{r,fig.align='center', fig.dim=c(5,4)}
 bound_test<-expl_boundary(x,y,shells = 10, simulations = 100, 
@@ -265,7 +264,7 @@ plot(x,y)
 startValues("trapezium")
 ```
 
-The `start `values can now be used in the `blqr()` function.
+The `start`values can now be used in the `blqr()` function.
 
 ```{r,fig.align='center', fig.dim=c(4,4)}
 
@@ -337,23 +336,22 @@ options(scipen = original_scipen)# Restore the original scipen value
 
 # References
 
-1. Cade, B. S., & Noon, B. R. (2003). A gentle introduction to quantile regression for ecologists. Frontiers in Ecology and the Environment, 1(8), 412-420. https://doi.org/10.1890/1540-9295(2003)001[0412:AGITQR]2.0.CO;2
+1.  Cade, B. S., & Noon, B. R. (2003). A gentle introduction to quantile regression for ecologists. Frontiers in Ecology and the Environment, 1(8), 412-420. [https://doi.org/10.1890/1540-9295(2003)001[0412:AGITQR]2.0.CO;2](https://doi.org/10.1890/1540-9295(2003)001%5B0412:AGITQR%5D2.0.CO;2){.uri}
 
+2.  Lark, R. M., Gillingham, V., Langton, D., & Marchant, B. P. (2020). Boundary line models for soil nutrient concentrations and wheat yield in national-scale datasets. European Journal of Soil Science, 71 , 334-351. <https://doi.org/10.1111/ejss.12891>
 
-2. Lark, R. M., Gillingham, V., Langton, D., & Marchant, B. P. (2020). Boundary line models for soil nutrient concentrations and wheat yield in national-scale datasets. European Journal of Soil Science, 71 , 334-351. https://doi.org/10.1111/ejss.12891
+3.  Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing biological data for the presence of a boundary. Annals of Applied Biology, 149 , 213-222. <https://doi.org/10.1111/j.1744-7348.2006.00085.x>
 
-3. Milne, A. E., Wheeler, H. C., & Lark, R. M. (2006). On testing biological data for the presence of a boundary. Annals of Applied Biology, 149 , 213-222. https://doi.org/10.1111/j.1744-7348.2006.00085.x
+4.  Miti, C., Milne, A., Giller, K., Sadras, V., & Lark, R. (2024). Exploration of data for analysis using boundary line methodology. Computers and Electronics in Agriculture, 219. <https://doi.org/10.1016/j.compag.2024.108794>
 
-4. Miti, C., Milne, A., Giller, K., Sadras, V., & Lark, R. (2024). Exploration of data for analysis using boundary line methodology. Computers and Electronics in Agriculture, 219. https://doi.org/10.1016/j.compag.2024.108794
+5.  Miti, C., Milne, A., Giller, K., & Lark, R. (2024). The concepts and quantification of yield gap using boundary lines. a review. Field Crops Research, 311. <https://doi.org/10.1016/j.fcr.2024.109365>.
 
-5. Miti, C., Milne, A., Giller, K., & Lark, R. (2024). The concepts and quantification of yield gap using boundary lines. a review. Field Crops Research, 311. https://doi.org/10.1016/j.fcr.2024.109365.
+6.  Nelder, J.A. 1961. The fitting of a generalization of the logistic curve. Biometrics 17: 89–110. <https://doi.org/10.2307/2527498>
 
-6. Nelder, J.A. 1961. The fitting of a generalization of the logistic curve. Biometrics 17: 89–110. https://doi.org/10.2307/2527498
+7.  Rousseeuw, P. J., Ruts, I., & Tukey, J. W. (1999). The bagplot: A bivariate boxplot. The American Statistician, 53, 382–387. <https://doi.org/10.1080/00031305.1999.10474494>
 
-7. Rousseeuw, P. J., Ruts, I., & Tukey, J. W. (1999). The bagplot: A bivariate boxplot. The American Statistician, 53, 382–387. https://doi.org/10.1080/00031305.1999.10474494
+8.  Shatar, T. M., & McBratney, A. B. (2004). Boundary-line analysis of field-scale yield response to soil properties. Journal of Agricultural Science, 142 , 553-560.
 
-8. Shatar, T. M., & McBratney, A. B. (2004). Boundary-line analysis of field-scale yield response to soil properties. Journal of Agricultural Science, 142 , 553-560.
+9.  Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line determination technique (bolides). In P. C. Robert, R. H. Rust, & W. E. Larson (Eds.), site specific management for agricultural systems (p. 899-908). Wiley Online Library. <https://doi.org/10.2134/1995.site-specificmanagement.c66>
 
-9. Schnug, E., Heym, J. M., & Murphy, D. P. L. (1995). Boundary line determination technique (bolides). In P. C. Robert, R. H. Rust, & W. E. Larson (Eds.), site specific management for agricultural systems (p. 899-908). Wiley Online Library. https://doi.org/10.2134/1995.site-specificmanagement.c66 
-
-10. Webb, R. A. (1972). Use of the boundary line in analysis of biological data. Journal of Horticultural Science, 47, 309--319. https://doi.org/10.1080/00221589.1972.11514472
+10. Webb, R. A. (1972). Use of the boundary line in analysis of biological data. Journal of Horticultural Science, 47, 309--319. <https://doi.org/10.1080/00221589.1972.11514472>
