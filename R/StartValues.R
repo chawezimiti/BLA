@@ -58,7 +58,7 @@ startValues<-function(model = "explore", p = NULL, digits = 2, ...) {
               explore = 0)
 
   if (model %in% c("blm", "lp", "qd", "trapezium", "logistic", "inv-logistic", "double-logistic", "mit", "schmidt")) {
-    cat(paste("Select", n, "points on the plot that make up the", model, "model in ascending order of x\n\n"))
+    message(paste("Select", n, "points on the plot that make up the", model, "model in ascending order of x\n\n"))
   } else if (model == "explore") {
     slope <- 0
     intercept <- 0

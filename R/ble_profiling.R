@@ -167,8 +167,6 @@
 #'
 ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", optim.method="BFGS", plot=TRUE){
 
-  cat("Note: This function may take longer to run.\n\n")
-
   ###### Initial data preparation ##################################
 
   data <- na.omit(as.data.table(data))
