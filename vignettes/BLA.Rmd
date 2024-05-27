@@ -41,6 +41,7 @@ library(aplpack)
 The package `aplpack` has also been loaded for use in the outlier detection function `bagplot()`.
 
 ```{r, echo=FALSE}
+original_scipen <- getOption("scipen")
 options(scipen = 999)#  disabling scientific notation i.e 1.1*10^2
 ```
 
@@ -329,6 +330,10 @@ The parameters of the models are shown in the results. A prediction of the bound
 ## Closing remarks
 
 The boundary line fitting methods illustrated here all use the optimization function to determine the parameters of the proposed models. To remove the risk of local optimum parameters, it is advised that the models are ran on several starting values and the results with the smallest error can be selected. Each method produces the error value in the output. It is residue mean square (RMS) for `blbin()` and `bolides()` while `blqr()` it is the residue sum squares (RSS). For the `cbvn()`, use the likelihood value.
+
+```{r, echo=FALSE}
+options(scipen = original_scipen)# Restore the original scipen value
+```
 
 # References
 

@@ -84,6 +84,10 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
   ## setting the output area -------------------------------------------------------------
 
   if(plot==TRUE){
+
+    old_par <- par(no.readonly = TRUE) # Save the current graphical parameters
+    on.exit(par(old_par))# Ensure the original graphical parameters are restored on exit
+
     plot_layout<-rbind(c(1,1,2),c(1,1,3))
     layout(plot_layout)
     plot(dat,...)}
@@ -255,8 +259,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     hist(ED_all_sd_fall,freq = FALSE,xlab="sd",main = "Right")
     lines(density(ED_all_sd_fall), lwd = 1, col = "red")
     abline(v=ED2_sd, col="red",lty=2)
-
-    par(mfrow=c(1,1))}
+  }
 
   data.frame(Index,Section,value)
 }

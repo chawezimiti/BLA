@@ -96,7 +96,15 @@ summastat<-function(x,sigf, varname, plot=TRUE){
         uw<-max(x[-posoll])}
 
     ol<-c(ols,oll) # combined outlier set
+
+    ### Setting the graphic space---------------------------------------------------------
+
+    old_par <- par(no.readonly = TRUE) # Save the current graphical parameters
+    on.exit(par(old_par))# Ensure the original graphical parameters are restored on exit
     par(mfrow=c(1,2))
+
+    ##------------------------------------------------------------------------------------
+
     ymax<-max((hist(x,plot=F))$counts)
     hist(x,main="",col="AliceBlue", xlab=varname,ylim=c(0,(ymax*1.25)))
 
@@ -119,7 +127,6 @@ summastat<-function(x,sigf, varname, plot=TRUE){
     qqline(x)
     points(qqn$x[ol],qqn$y[ol],pch=16,col="red")
 
-    par(mfrow=c(1,1))
   }
 
   return(outp)
