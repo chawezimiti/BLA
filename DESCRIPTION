@@ -3,8 +3,7 @@ Package: BLA
 Title: Boundary Line Analysis
 Version: 1.0.0
 Authors@R: c(
-    person("Chawezi", "Miti", , "chawezi.miti@nottingham.ac.uk", 
-           role = c("cre", "aut", "cph"),
+    person("Chawezi", "Miti", , "chawezi.miti@nottingham.ac.uk", role = c("cre", "aut", "cph"),
            comment = c(ORCID = "0000-0001-7776-8366")),
     person("Richard M", "Lark", role = "aut",
            comment = c(ORCID = "0000-0003-2571-8521")),
@@ -15,15 +14,16 @@ Authors@R: c(
     person("Victor O", "Sadras", role = "ctb"),
     person("University of Nottingham/Rothamsted Research", role = "fnd")
   )
-Description: Fits boundary line models to datasets as proposed by 
-    Webb (1972) <doi:10.1080/00221589.1972.11514472> and makes statistical inferences 
-    about their parameters. Provides additional tools for testing datasets for evidence 
-    of boundary presence and selecting initial starting values for model optimization 
-    prior to fitting the boundary line models. It also includes tools for conducting 
-    post-hoc analyses such as predicting boundary values and identifying the most 
-    limiting factor (Miti, Milne, Giller, Lark (2024) <doi:10.1016/j.fcr.2024.109365>). 
-    This ensures a comprehensive analysis for datasets that exhibit upper boundary 
-    structures.
+Description: Fits boundary line models to datasets as proposed by Webb
+    (1972) <doi:10.1080/00221589.1972.11514472> and makes statistical
+    inferences about their parameters. Provides additional tools for
+    testing datasets for evidence of boundary presence and selecting
+    initial starting values for model optimization prior to fitting the
+    boundary line models. It also includes tools for conducting post-hoc
+    analyses such as predicting boundary values and identifying the most
+    limiting factor (Miti, Milne, Giller, Lark (2024)
+    <doi:10.1016/j.fcr.2024.109365>). This ensures a comprehensive
+    analysis for datasets that exhibit upper boundary structures.
 License: GPL (>= 3)
 URL: https://chawezimiti.github.io/BLA/
 BugReports: https://github.com/chawezimiti/BLA/issues
