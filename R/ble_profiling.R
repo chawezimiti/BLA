@@ -161,7 +161,7 @@
 #' y<-evapotranspiration$`yield(t/ha)`
 #' data<-data.frame(x,y)
 #' start<-c(0.5,0.02,289.6,2.4,83.7,1.07,0.287)
-#' sigh <- c(0.5,0.6,0.7,0.8,0.9)
+#' sigh <- c(0.6,0.7,0.8,0.9)
 #'
 #' ble_profile(data,start=start,model = "blm", sigh = sigh)
 #'

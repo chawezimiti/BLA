@@ -170,15 +170,15 @@ The common errors encountered due to poor start values \enumerate{
 }
 \examples{
 
-x<-log(SoilP$P)
-y<-SoilP$yield
+x<-evapotranspiration$`ET(mm)`
+y<-evapotranspiration$`yield(t/ha)`
 data<-data.frame(x,y)
-start<-c(4,3,13.6,3,9,0.50,1.9,0.05)
+start<-c(0.5,0.02,289.6,2.4,83.7,1.07,0.287)
 
-cbvn(data,start=start,model = "lp", sigh = 0.7,
-      xlab=expression("Phosphorus/ln(mg L"^-1*")"),
-      ylab=expression("Yield/ t ha"^-1), pch=16,
-      col="grey")
+cbvn(data, start=start, model = "blm", sigh=0.51,
+        xlab=expression("ET/ mm ha"^-1),
+        ylab=expression("Yield/ ton ha"^-1),
+        pch=16, col="grey", line_smooth = 100)
 
 }
 \references{
