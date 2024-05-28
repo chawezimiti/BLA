@@ -48,7 +48,7 @@
 #'
 expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
 
-  message("Note: This function may take a few minutes to run for large datasets.\n")
+  if(simulations>=1000) message("Note: This function might take longer to execute when running a large number of simulations.\n")
 
 
   ## Selection of the x_min and x_max index values----------------------------------------
