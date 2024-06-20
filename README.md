@@ -4,6 +4,14 @@
 # BLA
 
 <!-- badges: start -->
+
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+![CRAN/METACRAN Version](https://img.shields.io/cran/v/BLA) ![GitHub R
+package
+version](https://img.shields.io/github/r-package/v/chawezimiti/BLA)
+[![R-CMD-check](https://github.com/chawezimiti/BLA/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/chawezimiti/BLA/actions/workflows/check-standard.yaml)
+
 <!-- badges: end -->
 
 ## Overview
@@ -146,7 +154,7 @@ This is done using the function `expl_boundary()`
   y <- data[,2]
 
   expl_boundary(x,y,10,1000)
-#> Note: This function may take a few minutes to run for large datasets.
+#> Note: This function might take longer to execute when running a large number of simulations.
 ```
 
 <img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" />
@@ -154,10 +162,10 @@ This is done using the function `expl_boundary()`
     #>     Index Section    value
     #> 1      sd    Left 1.045711
     #> 2      sd   Right 1.115379
-    #> 3 Mean sd    Left 1.129992
-    #> 4 Mean sd   Right 1.204543
-    #> 5 p_value    Left 0.041000
-    #> 6 p_value   Right 0.029000
+    #> 3 Mean sd    Left 1.131102
+    #> 4 Mean sd   Right 1.203786
+    #> 5 p_value    Left 0.035000
+    #> 6 p_value   Right 0.041000
 
 The p-values in the left and right sections are less than 0.05,
 indicating evidence of boundary existence. This justifies the fitting of

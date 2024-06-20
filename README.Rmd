@@ -17,6 +17,12 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+![CRAN/METACRAN Version](https://img.shields.io/cran/v/BLA)
+![GitHub R package version](https://img.shields.io/github/r-package/v/chawezimiti/BLA)
+[![R-CMD-check](https://github.com/chawezimiti/BLA/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/chawezimiti/BLA/actions/workflows/check-standard.yaml)
+
+
 <!-- badges: end -->
 
 ## Overview
