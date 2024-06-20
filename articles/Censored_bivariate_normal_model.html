@@ -139,7 +139,7 @@ and pH.</p>
 </h2>
 <p>Load the <code>BLA</code> package using the <code><a href="https://rdrr.io/r/base/library.html" class="external-link">library()</a></code>
 function. In addition, the <code>aplpack</code> package is also loaded.
-The <code>aplpack</code> package contains the <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot()</a></code>
+The <code>aplpack</code> package contains the <code>bagplot()</code>
 function which is used to identify outliers in a data set.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://chawezimiti.github.io/BLA/">BLA</a></span><span class="op">)</span></span></code></pre></div>
@@ -217,7 +217,7 @@ values under our target model.</p>
 <p>2. Removal of outliers</p>
 <p>Boundary line analysis is sensitive to outlying values and hence it
 is required that they are identified and removed. This can be done using
-the <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot()</a></code> function of the <code>aplpack</code> package.
+the <code>bagplot()</code> function of the <code>aplpack</code> package.
 The bag plot, a bivariate box plot, has four main components, (1) a
 depth median (equivalent to the median in a box plot) which is
 represents the centre of the data set, (2) The bag which contains 50% of
@@ -232,7 +232,7 @@ outside the bag but are not outliers.</p>
 <span></span>
 <span><span class="co"># Input the dataframe into the bagplot() function</span></span>
 <span></span>
-<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot</a></span><span class="op">(</span><span class="va">df</span>,show.whiskers <span class="op">=</span> <span class="cn">FALSE</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,create.plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu">bagplot</span><span class="op">(</span><span class="va">df</span>,show.whiskers <span class="op">=</span> <span class="cn">FALSE</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,create.plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Combine data points from "bag" and within the loop i.e. exclude the outliers</span></span>
 <span></span>
@@ -439,7 +439,7 @@ P.</p>
 <span></span>
 <span><span class="co"># Input the dataframe into the bagplot() function.</span></span>
 <span></span>
-<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot</a></span><span class="op">(</span><span class="va">df</span>,show.whiskers <span class="op">=</span> <span class="cn">FALSE</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,create.plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu">bagplot</span><span class="op">(</span><span class="va">df</span>,show.whiskers <span class="op">=</span> <span class="cn">FALSE</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>,create.plot <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Combine data points from "bag" and within the loop</span></span>
 <span></span>

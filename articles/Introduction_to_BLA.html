@@ -181,7 +181,7 @@ load it to your R session using the <code><a href="https://rdrr.io/r/base/librar
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.uni-bielefeld.de/fakultaeten/wirtschaftswissenschaften/fakultaet/lehrende-ehemalige/pwolf/wolf_aplpack/index.xml" class="external-link">aplpack</a></span><span class="op">)</span></span></code></pre></div>
 <p>The package <code>aplpack</code> has also been loaded for use in the
-outlier detection function <code><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot()</a></code>.</p>
+outlier detection function <code>bagplot()</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
@@ -293,7 +293,7 @@ loop</p></li>
 <span><span class="va">vals_ur</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">&lt;-</span><span class="va">x</span> </span>
 <span><span class="va">vals_ur</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span><span class="op">&lt;-</span><span class="va">y</span></span>
 <span></span>
-<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/aplpack/man/bagplot.html" class="external-link">bagplot</a></span><span class="op">(</span><span class="va">vals_ur</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>, show.whiskers <span class="op">=</span><span class="cn">F</span>,create.plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># run the bagplot function</span></span>
+<span><span class="va">bag</span><span class="op">&lt;-</span><span class="fu">bagplot</span><span class="op">(</span><span class="va">vals_ur</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span><span class="op">)</span>, show.whiskers <span class="op">=</span><span class="cn">F</span>,create.plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># run the bagplot function</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bag"</span>,<span class="st">"loop"</span>,<span class="st">"outliers"</span>, <span class="st">"d.median"</span><span class="op">)</span>,</span>
 <span>        pch <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15</span>,<span class="fl">15</span>,<span class="fl">16</span>,<span class="fl">8</span><span class="op">)</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>,<span class="st">"lightblue"</span>,<span class="st">"red"</span>,<span class="st">"red"</span><span class="op">)</span>,</span>
 <span>       cex<span class="op">=</span><span class="fl">0.7</span><span class="op">)</span></span>
@@ -687,7 +687,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; function(x,a,b,c){</span></span>
 <span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55ae03efe5a0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x5594285572e8&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
