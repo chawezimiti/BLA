@@ -11,6 +11,7 @@ stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://
 package
 version](https://img.shields.io/github/r-package/v/chawezimiti/BLA)
 [![R-CMD-check](https://github.com/chawezimiti/BLA/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/chawezimiti/BLA/actions/workflows/check-standard.yaml)
+![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/BLA)
 
 <!-- badges: end -->
 
@@ -162,9 +163,9 @@ This is done using the function `expl_boundary()`
     #>     Index Section    value
     #> 1      sd    Left 1.045711
     #> 2      sd   Right 1.115379
-    #> 3 Mean sd    Left 1.131102
-    #> 4 Mean sd   Right 1.203786
-    #> 5 p_value    Left 0.035000
+    #> 3 Mean sd    Left 1.132397
+    #> 4 Mean sd   Right 1.201709
+    #> 5 p_value    Left 0.037000
     #> 6 p_value   Right 0.041000
 
 The p-values in the left and right sections are less than 0.05,

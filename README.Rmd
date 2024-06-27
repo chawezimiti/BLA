@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 ![CRAN/METACRAN Version](https://img.shields.io/cran/v/BLA)
 ![GitHub R package version](https://img.shields.io/github/r-package/v/chawezimiti/BLA)
 [![R-CMD-check](https://github.com/chawezimiti/BLA/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/chawezimiti/BLA/actions/workflows/check-standard.yaml)
+![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/BLA)
 
 
 <!-- badges: end -->
