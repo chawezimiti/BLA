@@ -14,13 +14,16 @@
 #'   (default is 10).
 #' @param simulations The number of simulations for the null bivariate normally
 #'   distributed data sets used to test the hypothesis (default is 1000).
+#' @param method This describes the measure of boundary points compaction. The methods
+#'   include \code{"sd-enclidean"} for the euclidean distance standard deviation of the
+#'   each boundary point to the center of data, \code{"Area"} for the perimeter around
+#'   the boundary points and \code{"Perimeter"} for the area covering the boundary points.
 #' @param plot If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
 #'   is not part of output (default is \code{TRUE}).
 #' @param ... Additional graphical parameters as with the \code{par()} function.
 #'
-#' @returns A dataframe with the p-values of obtaining the observed standard deviation
-#'   of the euclidean distances of vertices in the upper peels to the center of the
-#'   dataset for the left and right sections of the dataset.
+#' @returns A dataframe containing the measures of peel compaction in the left and right
+#'   sections of the data with their corresponding probability values.
 #'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
 #' @import MASS stats
@@ -46,26 +49,26 @@
 #' y<-evapotranspiration$`yield(t/ha)`
 #' expl_boundary(x,y,10,100) # recommendation is to set simulations to greater than 1000
 #'
-expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
+expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plot=TRUE,...){
 
   if(simulations>=1000) message("Note: This function might take longer to execute when running a large number of simulations.\n")
 
 
   ## Selection of the x_min and x_max index values----------------------------------------
 
-   upper.peel<-function(peel){
+  upper.peel<-function(peel){
     min.x.index<-which(peel[,2]==max(peel[,2][which(peel[,1]==min(peel[,1]))]) & peel[,1]==min(peel[,1])) # selection of min
     max.x.index<-which(peel[,2]==max(peel[,2][which(peel[,1]==max(peel[,1]))]) & peel[,1]==max(peel[,1])) # and max.x.index
 
     if(min.x.index<max.x.index){                                                                          # even when two values
-        op<-peel[min.x.index:max.x.index,]                                                                  # occur. The highest is used
-      }else{
-        op<-rbind(peel[(min.x.index:nrow(peel)),],
+      op<-peel[min.x.index:max.x.index,]                                                                  # occur. The highest is used
+    }else{
+      op<-rbind(peel[(min.x.index:nrow(peel)),],
                 peel[(1:max.x.index),]
-        )
-      }
-      return(op)
+      )
     }
+    return(op)
+  }
 
   ## Removing NA'S from the data ---------------------------------------------------------
 
@@ -143,11 +146,26 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     points(df1$x,df1$y,col="red", pch=16)
     points(df2$x,df2$y,col="blue", pch=16)}
 
-  ## Calculating the euclidean distance of vertices to center-----------------------------
+  pointL<-df1
+  pointR<-df2
+
+  ## Clustering matrics-------------------------------------------------------------------
+
+  #### 1. Calculating the euclidean distance of vertices to center------------------------
 
   ED1_sd<-sd(sqrt((mean(x)-df1[,1])^2+(mean(y)-df1[,2])^2))
   ED2_sd<-sd(sqrt((mean(x)-df2[,1])^2+(mean(y)-df2[,2])^2))
 
+  #### 2. Calculating the perimeter and of the boundary points----------------------------
+
+  perimL <- AP(df1)$Perimeter # left section
+  perimR <- AP(df2)$Perimeter# right section
+
+  areaL <- AP(df1)$Area # left section
+  areaR <- AP(df2)$Area# right section
+
+  polygonL <- AP(df1)$Polygon # left section
+  polygonR <- AP(df2)$Polygon # right section
 
   ### Monte Carlo simulation for evidence testing  ---------------------------------------
 
@@ -155,6 +173,10 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
   ED2_sim<-list()
   ED_all_sd_rise<-vector()
   ED_all_sd_fall<-vector()
+  perimL_sim<-vector()
+  perimR_sim<-vector()
+  areaL_sim<-vector()
+  areaR_sim<-vector()
 
   for(j in 1:simulations){
 
@@ -216,6 +238,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     df1 <- do.call("rbind", left)
     df2 <- do.call("rbind", right)
 
+    # 1. Enclidean distance measure-------------------------------------------------------
 
     ED1_2<-sqrt((mean(x)-df1[,1])^2+(mean(y)-df1[,2])^2)
     ED2_2<-sqrt((mean(x)-df2[,1])^2+(mean(y)-df2[,2])^2)
@@ -223,10 +246,23 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     ED1_sim[[j]]<-ED1_2
     ED2_sim[[j]]<-ED2_2
 
+    # 2. Perimeter measure---------------------------------------------------------------
+
+    perimL_2 <- AP(df1)$Perimeter # left section
+    perimR_2 <- AP(df2)$Perimeter# right section
+    areaL_2 <- AP(df1)$Area # left section
+    areaR_2 <- AP(df2)$Area# right section
+
+    perimL_sim[j]<-perimL_2
+    perimR_sim[j]<-perimR_2
+    areaL_sim[j]<-areaL_2
+    areaR_sim[j]<-areaR_2
   }
+  #---------------------------------------------------------------------------------------
 
   for(i in 1:simulations){
     ED_all_sd_rise[i]<-sd(ED1_sim[[i]])
+
   }
 
 
@@ -235,7 +271,9 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
     ED_all_sd_fall[i]<-sd(ED2_sim[[i]])
   }
 
-  ## Calculating the sd test indices------------------------------------------------------
+  ## Calculating test indices-------------------------------------------------------------
+
+  ### 1. sd test indices------------------------------------------------------------------
 
   p_sd_rise<-length(which(ED_all_sd_rise<=ED1_sd))/length(ED_all_sd_rise)
   p_sd_fall<-length(which(ED_all_sd_fall<=ED2_sd))/length(ED_all_sd_fall)
@@ -243,23 +281,91 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,plot=TRUE,...){
   MeanSDr<-mean(ED_all_sd_rise)
   MeanSDf<-mean(ED_all_sd_fall)
 
+  ### 2. Perimeter area test indices-----------------------------------------------------------
+
+  p_perim_rise<-length(which(perimL_sim<=perimL))/length(perimL_sim)
+  p_perim_fall<-length(which(perimR_sim<=perimR))/length(perimR_sim)
+
+  p_area_rise<-length(which(areaL_sim<=areaL))/length(areaL_sim)
+  p_area_fall<-length(which(areaR_sim<=areaR))/length(areaR_sim)
+
+  MeanperimL<-mean(perimL_sim)
+  MeanperimR<-mean(perimR_sim)
+
+  MeanareaL<-mean(areaL_sim)
+  MeanareaR<-mean(areaR_sim)
+
   ## Output preparation-------------------------------------------------------------------
 
-  Index<-c("sd","sd","Mean sd","Mean sd","p_value","p_value")
-  value<-c(ED1_sd,ED2_sd,MeanSDr,MeanSDf,p_sd_rise, p_sd_fall)
-  Section<-c("Left","Right","Left","Right","Left","Right")
+  if(method=="sd-enclidean"){
 
-  ## Plotting the data points for visualization-------------------------------------------
+    Index<-c("sd","sd")
+    Section<-c("Left","Right")
+    value<-c(ED1_sd,ED2_sd)
+    Mean<-c(MeanSDr,MeanSDf)
+    p_value<-c(p_sd_rise, p_sd_fall)
 
-  if(plot==TRUE){
-    hist(ED_all_sd_rise,freq = FALSE, xlab="sd",main = "Left")
-    lines(density(ED_all_sd_rise), lwd = 1, col = "red")
-    abline(v=ED1_sd, col="red",lty=2)
+    ## Plotting the data points for visualization-------------------------------------------
 
-    hist(ED_all_sd_fall,freq = FALSE,xlab="sd",main = "Right")
-    lines(density(ED_all_sd_fall), lwd = 1, col = "red")
-    abline(v=ED2_sd, col="red",lty=2)
+    if(plot==TRUE){
+      hist(ED_all_sd_rise,freq = FALSE, xlab="sd",main = "Left")
+      lines(density(ED_all_sd_rise), lwd = 1, col = "red")
+      abline(v=ED1_sd, col="red",lty=2)
+
+      hist(ED_all_sd_fall,freq = FALSE,xlab="sd",main = "Right")
+      lines(density(ED_all_sd_fall), lwd = 1, col = "red")
+      abline(v=ED2_sd, col="red",lty=2)
+    }
+
   }
 
-  data.frame(Index,Section,value)
+  if(method=="Perimeter"){
+
+    Index<-c("Perimeter","Perimeter")
+    Section<-c("Left","Right")
+    value<-c(perimL,perimR)
+    Mean<-c(MeanperimL,MeanperimR)
+    p_value<-c(p_perim_rise, p_perim_fall)
+
+    ## Plotting the data points for visualization-------------------------------------------
+
+    if(plot==TRUE){
+
+      hist(perimL_sim,freq = FALSE, xlab="Perimeter",main = "Left")
+      lines(density(perimL_sim), lwd = 1, col = "red")
+      abline(v=perimL, col="red",lty=2)
+
+      hist(perimR_sim,freq = FALSE,xlab="Perimeter",main = "Right")
+      lines(density(perimR_sim), lwd = 1, col = "red")
+      abline(v=perimR, col="red",lty=2)
+    }
+  }
+
+  if(method=="Area"){
+
+    Index<-c("Area","Area")
+    Section<-c("Left","Right")
+    value<-c(areaL,areaR)
+    Mean<-c(MeanareaL,MeanareaR)
+    p_value<-c(p_area_rise, p_area_fall)
+
+
+    ## Plotting the data points for visualization-----------------------------------------
+
+    if(plot==TRUE){
+
+      hist(areaL_sim,freq = FALSE, xlab="Perimeter",main = "Left")
+      lines(density(areaL_sim), lwd = 1, col = "red")
+      abline(v=areaL, col="red",lty=2)
+
+      hist(areaR_sim,freq = FALSE,xlab="Perimeter",main = "Right")
+      lines(density(areaR_sim), lwd = 1, col = "red")
+      abline(v=areaR, col="red",lty=2)
+    }
+  }
+
+
+  result<-data.frame(Index,Section,value,Mean,p_value)
+
+  return(result)
 }

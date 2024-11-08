@@ -4,7 +4,15 @@
 \alias{expl_boundary}
 \title{Testing evidence of boundary existence in dataset}
 \usage{
-expl_boundary(x, y, shells = 10, simulations = 1000, plot = TRUE, ...)
+expl_boundary(
+  x,
+  y,
+  shells = 10,
+  simulations = 1000,
+  method = "sd-enclidean",
+  plot = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A numeric vector of values for the independent variable.}
@@ -17,15 +25,19 @@ expl_boundary(x, y, shells = 10, simulations = 1000, plot = TRUE, ...)
 \item{simulations}{The number of simulations for the null bivariate normally
 distributed data sets used to test the hypothesis (default is 1000).}
 
+\item{method}{This describes the measure of boundary points compaction. The methods
+include \code{"sd-enclidean"} for the euclidean distance standard deviation of the
+each boundary point to the center of data, \code{"Area"} for the perimeter around
+the boundary points and \code{"Perimeter"} for the area covering the boundary points.}
+
 \item{plot}{If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
 is not part of output (default is \code{TRUE}).}
 
 \item{...}{Additional graphical parameters as with the \code{par()} function.}
 }
 \value{
-A dataframe with the p-values of obtaining the observed standard deviation
-  of the euclidean distances of vertices in the upper peels to the center of the
-  dataset for the left and right sections of the dataset.
+A dataframe containing the measures of peel compaction in the left and right
+  sections of the data with their corresponding probability values.
 }
 \description{
 This function determines the probability of having bounding effects in a scatter

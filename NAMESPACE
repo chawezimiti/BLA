@@ -2,6 +2,7 @@
 
 S3method(print,cm)
 S3method(print,wm)
+export(AP)
 export(blbin)
 export(ble_profile)
 export(blqr)
