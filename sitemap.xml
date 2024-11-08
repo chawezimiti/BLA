@@ -1,99 +1,36 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/404.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/articles/BLA.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/articles/Censored_bivariate_normal_model.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/articles/Introduction_to_BLA.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/index.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/BLA-package.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/BOLIDES.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/SoilP.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/SoilpH.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/blbin.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/ble_profile.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/blqr.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/cbvn.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/evapotranspiration.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/expl_boundary.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/kurt.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/limfactor.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/na.drop.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/ocskew.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/predictBL.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/print.cm.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/print.wm.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/seHessian.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/skew.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/soil.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/startValues.html</loc>
-  </url>
-  <url>
-    <loc>https://chawezimiti.github.io/BLA/reference/summastat.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://chawezimiti.github.io/BLA/404.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/LICENSE.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/articles/BLA.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/articles/Censored_bivariate_normal_model.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/articles/Introduction_to_BLA.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/articles/index.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/authors.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/index.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/news/index.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/AP.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/BLA-package.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/BOLIDES.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/SoilP.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/SoilpH.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/blbin.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/ble_profile.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/blqr.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/cbvn.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/evapotranspiration.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/expl_boundary.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/index.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/kurt.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/limfactor.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/na.drop.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/ocskew.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/predictBL.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/print.cm.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/print.wm.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/seHessian.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/skew.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/soil.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/startValues.html</loc></url>
+<url><loc>https://chawezimiti.github.io/BLA/reference/summastat.html</loc></url>
 </urlset>
+

@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="BLA">
 <title>Boundary Line Analysis • BLA</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -17,83 +16,54 @@
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Roboto-0.4.9/font.css" rel="stylesheet">
 <link href="../deps/Roboto_Slab-0.4.9/font.css" rel="stylesheet">
-<!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Boundary Line Analysis">
-<meta property="og:description" content="BLA">
-<meta property="og:image" content="https://chawezimiti.github.io/BLA/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Boundary Line Analysis">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary" data-bs-theme="dark"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">BLA</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1.9000</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="active nav-item">
-  <a class="nav-link" href="../articles/BLA.html">Get started</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
+<li class="active nav-item"><a class="nav-link" href="../articles/BLA.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/Censored_bivariate_normal_model.html">Use of censored bivariate normal model function for yield gap analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/Introduction_to_BLA.html">Introduction to boundary line analysis</a></li>
+  </ul>
 </li>
 <li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/Censored_bivariate_normal_model.html">Use of censored bivariate normal model function for yield gap analysis</a>
-    <a class="dropdown-item" href="../articles/Introduction_to_BLA.html">Introduction to boundary line analysis</a>
-  </div>
-</li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-news">News</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-news">
-    <h6 class="dropdown-header" data-toc-skip>Releases</h6>
-    <a class="dropdown-item" href="https://chawezimiti.github.io/BLA_blog/">Introducing BLA R package </a>
-    <div class="dropdown-divider"></div>
-    <a class="dropdown-item" href="../news/index.html">Changelog</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-news" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">News</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-news">
+<li><h6 class="dropdown-header" data-toc-skip>Releases</h6></li>
+    <li><a class="dropdown-item" href="https://chawezimiti.github.io/BLA_blog/">Introducing BLA R package </a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../news/index.html">Changelog</a></li>
+  </ul>
 </li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/chawezimiti/BLA/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
-<li class="nav-item">
-  <a class="external-link nav-link" href="http://twitter.com/ChaweziMiti" aria-label="Twitter">
-    <span class="fa fa-twitter"></span>
-     
-  </a>
-</li>
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://www.linkedin.com/in/chawezi-miti-051077b8/" aria-label="LinkedIn">
-    <span class="fa fa-linkedin"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/chawezimiti/BLA/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="http://twitter.com/ChaweziMiti" aria-label="Twitter"><span class="fa fa-twitter"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://www.linkedin.com/in/chawezi-miti-051077b8/" aria-label="LinkedIn"><span class="fa fa-linkedin"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -105,7 +75,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Boundary Line Analysis</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/chawezimiti/BLA/blob/HEAD/vignettes/BLA.Rmd" class="external-link"><code>vignettes/BLA.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/chawezimiti/BLA/blob/main/vignettes/BLA.Rmd" class="external-link"><code>vignettes/BLA.Rmd</code></a></small>
       <div class="d-none name"><code>BLA.Rmd</code></div>
     </div>
 
@@ -234,18 +204,17 @@ and wheat yield in the data set to <em><code>x</code></em> and
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt;         Mean Median Quartile.1 Quartile.3 Variance       SD Skewness</span></span>
-<span><span class="co">#&gt; [1,] 25.9647     22         16         32 207.0066 14.38772 1.840844</span></span>
+<pre><code><span><span class="co">#&gt;        Mean Median Quartile.1 Quartile.3 Variance       SD Skewness</span></span>
+<span><span class="co">#&gt; [1,] 25.966     22         16         32 207.0301 14.38854 1.840588</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
-<span><span class="co">#&gt; [1,]       0.3571429 5.765138           43</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; [1,]       0.3571429   5.7639           43</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></code></pre>
 <p><img src="BLA_files/figure-html/unnamed-chunk-6-2.png" width="384" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt;          Mean  Median Quartile.1 Quartile.3 Variance       SD   Skewness</span></span>
-<span><span class="co">#&gt; [1,] 9.254813 9.36468   8.203703   10.39477 3.456026 1.859039 -0.4819805</span></span>
+<pre><code><span><span class="co">#&gt;          Mean  Median Quartile.1 Quartile.3 Variance       SD  Skewness</span></span>
+<span><span class="co">#&gt; [1,] 9.254274 9.36436    8.20355    10.3944 3.454814 1.858713 -0.482355</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
-<span><span class="co">#&gt; [1,]     -0.05793291 1.292635            7</span></span></code></pre>
+<span><span class="co">#&gt; [1,]     -0.05802283 1.294174            7</span></span></code></pre>
 <p>From the results, wheat yield (<em><code>y</code></em>) variables can
 be considered to be normally distributed while the soil P
 (<em><code>x</code></em>) is skewed. For a variable to be assumed to be
@@ -254,16 +223,15 @@ from a normal distribution, the indices skewness should be between -1 to
 the distribution is given as well.</p>
 <p>The soil P can be log transformed and check the summary statistics
 and plot</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-7-1.png" width="384" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt;          Mean   Median Quartile.1 Quartile.3  Variance        SD  Skewness</span></span>
-<span><span class="co">#&gt; [1,] 3.126361 3.091042   2.772589   3.465736 0.2556936 0.5056615 0.1297406</span></span>
+<pre><code><span><span class="co">#&gt;        Mean   Median Quartile.1 Quartile.3  Variance        SD  Skewness</span></span>
+<span><span class="co">#&gt; [1,] 3.1264 3.091042   2.772589   3.465736 0.2557263 0.5056939 0.1295244</span></span>
 <span><span class="co">#&gt;      Octile skewness    Kurtosis No. outliers</span></span>
-<span><span class="co">#&gt; [1,]      0.08395839 -0.05372586            0</span></span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># transforms soil P to log </span></span></code></pre></div>
+<span><span class="co">#&gt; [1,]      0.08395839 -0.05404542            0</span></span>
+<span></span>
+<span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># transforms soil P to log </span></span></code></pre>
 <p>From the results, variable log of soil P can be assumed to be from a
 normal distribution.</p>
 </div>
@@ -287,7 +255,7 @@ the bag but are not outliers</p></li>
 <li><p><strong>Outliers</strong> which are values outside the
 loop</p></li>
 </ol>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">vals_ur</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>,<span class="fl">2</span><span class="op">)</span> <span class="co">#Create a matrix with x and y as required by the bag plot function</span></span>
 <span><span class="va">vals_ur</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span><span class="op">&lt;-</span><span class="va">x</span> </span>
@@ -302,7 +270,7 @@ loop</p></li>
 <p>The variables <em><code>x</code></em> and <em><code>y</code></em> and
 now be extracted from the results of the bag plot with outliers
 removed</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span><span class="op">&lt;-</span><span class="va">vals</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span></span>
 <span><span class="va">y</span><span class="op">&lt;-</span><span class="va">vals</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span></code></pre></div>
 </div>
@@ -325,20 +293,16 @@ having the observed density of points at the upper edges of the data
 under the bivariate normal null hypothesis. More detail is provided by
 Miti <em>et al</em>. 2024b. We reject the null hypothesis if p&lt;
 0.05.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bound_test</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/expl_boundary.html">expl_boundary</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,shells <span class="op">=</span> <span class="fl">10</span>, simulations <span class="op">=</span> <span class="fl">100</span>, </span>
 <span>                          pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="co"># </span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-11-1.png" width="480" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">bound_test</span></span>
-<span><span class="co">#&gt;     Index Section    value</span></span>
-<span><span class="co">#&gt; 1      sd    Left 1.045711</span></span>
-<span><span class="co">#&gt; 2      sd   Right 1.115379</span></span>
-<span><span class="co">#&gt; 3 Mean sd    Left 1.134728</span></span>
-<span><span class="co">#&gt; 4 Mean sd   Right 1.200326</span></span>
-<span><span class="co">#&gt; 5 p_value    Left 0.030000</span></span>
-<span><span class="co">#&gt; 6 p_value   Right 0.020000</span></span></code></pre></div>
+<span><span class="co">#&gt;   Index Section    value     Mean p_value</span></span>
+<span><span class="co">#&gt; 1    sd    Left 1.045711 1.134728    0.03</span></span>
+<span><span class="co">#&gt; 2    sd   Right 1.115379 1.200326    0.02</span></span></code></pre></div>
 <p>The p-values in the left and right sections are both less than 0.05.
 These results indicate evidence of an upper boundary in both the left
 and right sections of the scatter. This suggests that there is a
@@ -369,7 +333,7 @@ determination technique proposed by Schnug <em>et al.</em> (1995). To
 fit the boundary line using the BOLIDES algorithm , the
 <code><a href="../reference/BOLIDES.html">bolides()</a></code> function can be used. To check the required
 arguments for the function, the help page can be launched.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">bolides</span></span></code></pre></div>
 <p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
 the independent and dependent variable respectively and
@@ -389,7 +353,7 @@ optimized to find the parameters of the proposed model as in the
 is run with the argument <code>model="explore"</code>. This allows us to
 view the selected boundary points using the boundary line determination
 technique.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,model <span class="op">=</span> <span class="st">"explore"</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;        x               y         </span></span>
@@ -403,20 +367,20 @@ technique.</p>
 appropriate for this data set. The function <code><a href="../reference/startValues.html">startValues()</a></code>
 can be used to determine initial start values. For more information on
 <code><a href="../reference/startValues.html">startValues()</a></code> function see <code>?startValues()</code>.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>With a scatter plot of <em><code>y</code></em> against
 <em><code>x</code></em> active in the plot window in <code>R</code>, run
 the function <code>startValues("trapezium")</code>, then use the mouse
 to click on the plot at five boundary points that follow the trapezium
 model in order of increasing <em><code>x</code></em> values.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span> <span class="co"># then select the five points at the edge of the dataset that make up the trapezium model in order of increasing x values.</span></span></code></pre></div>
 <p>The proposed start values will be produced. Note that this can be
 done for other models as well. Once all the arguments are set, the
 function can be run</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">14</span>,<span class="fl">104</span>,<span class="op">-</span><span class="fl">22</span><span class="op">)</span> <span class="co"># start values is a vector of five consists of intercept, slope, plateau yield, intercept2 and slope2. </span></span>
 <span></span>
@@ -425,7 +389,7 @@ function can be run</p>
 <span>                ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield/ t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, </span>
 <span>                col<span class="op">=</span><span class="st">"grey"</span>, bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model1</span></span>
 <span><span class="co">#&gt; $Model</span></span>
@@ -455,7 +419,7 @@ soil P and therefore, these values must first be log transformed before
 the prediction is made. We can use the function <code><a href="../reference/predictBL.html">predictBL()</a></code>
 for this purpose. For more information on this function, see
 <code>?predictBL()</code> .</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">P</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.5</span>, <span class="fl">7.4</span>, <span class="fl">12.2</span>, <span class="fl">20.1</span>, <span class="fl">54.5</span><span class="op">)</span></span>
 <span><span class="va">P_log</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">P</span><span class="op">)</span></span>
@@ -470,13 +434,13 @@ for this purpose. For more information on this function, see
 </h4>
 <p>The binning methodology involves splitting the data into several
 sections in the x-axis and selecting a boundary point in each section
-based on a set criteria (mostly the 95<span class="math inline">\(^{\rm
-th}\)</span> and 99<span class="math inline">\(^{\rm th}\)</span>
+based on a set criteria (mostly the 95<span class="math inline">$^{\rm
+th}$</span> and 99<span class="math inline">$^{\rm th}$</span>
 percentile) (Shatar and McBratney, 2004). To fit the boundary line using
 the binning method, the <code><a href="../reference/blbin.html">blbin()</a></code> function can be used. To
 check the required arguments for the function, the help page can be
 launched.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">blbin</span></span></code></pre></div>
 <p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
 the independent and dependent variable respectively and
@@ -486,11 +450,11 @@ line e.g. <code>model="blm"</code> for the linear model. The
 <code>bins</code> argument describes the size of the bins with a vector
 of length 3 containing the minimum and maximum independent variable
 values, and the size of bins to be used for the data respectively. We
-assume that the 99<span class="math inline">\(^{\rm th}\)</span>
+assume that the 99<span class="math inline">$^{\rm th}$</span>
 percentile (<code>tau=0.99</code>) is the boundary.</p>
 <p>The initial start start values can be determined as previously shown
 in the previous section</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bins</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.61</span>,<span class="fl">4.74</span>,<span class="fl">0.313</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="fu"><a href="../reference/blbin.html">blbin</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, <span class="va">bins</span>,model <span class="op">=</span> <span class="st">"explore"</span>, tau<span class="op">=</span><span class="fl">0.99</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
@@ -504,11 +468,11 @@ in the previous section</p>
 <span><span class="co">#&gt;  Max.   :4.591   Max.   :13.37</span></span></code></pre>
 <p>From the plot, it can be seen that a “trapezium” model will be more
 appropriate for this data set.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
 <p>The values for <code>start</code> can now be obtained and the
 function can now be run.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.75</span>, <span class="fl">3.23</span>, <span class="fl">13.3</span>, <span class="fl">24.87</span>,<span class="op">-</span><span class="fl">2.95</span> <span class="op">)</span></span>
 <span></span>
@@ -518,7 +482,7 @@ function can now be run.</p>
 <span>              xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
 <span>              pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span>, bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-21-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model2</span></span>
 <span><span class="co">#&gt; $Model</span></span>
@@ -551,7 +515,7 @@ regression (Cade and Noon, 2003). To fit the boundary line using the
 quantile regression method, the <code><a href="../reference/blqr.html">blqr()</a></code> function can be
 used. To check the required arguments for the function, the help page
 can be launched.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="va">blqr</span></span></code></pre></div>
 <p>The arguments <em><code>x</code></em> and <em><code>y</code></em> are
 the independent and dependent variable respectively and
@@ -559,7 +523,7 @@ the independent and dependent variable respectively and
 <code>model</code> argument is used to specify the model of the boundary
 line e.g. “blm” for the linear model. The argument <code>tau</code>
 describes the quantile value described as boundary. We assume that the
-99<span class="math inline">\(^{\rm th}\)</span> quantile
+99<span class="math inline">$^{\rm th}$</span> quantile
 (<code>tau=0.99</code>) value is the boundary. This is an arbitrary
 assumption, and for this reason we treat the method as heuristic.</p>
 <p>The initial start start values can be determined as previously shown
@@ -569,14 +533,14 @@ function is used just on the plot of <em><code>x</code></em> and
 <em><code>y</code></em> directly according to the suggested model from
 the structure at the upper edge of the data. The trapezium model will be
 used for this data.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/startValues.html">startValues</a></span><span class="op">(</span><span class="st">"trapezium"</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>start</code>values can now be used in the
 <code><a href="../reference/blqr.html">blqr()</a></code> function.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">3</span>,<span class="fl">13.5</span>,<span class="fl">31</span>,<span class="op">-</span><span class="fl">4.5</span><span class="op">)</span></span>
 <span></span>
@@ -585,7 +549,7 @@ used for this data.</p>
 <span>             ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>,</span>
 <span>             pch<span class="op">=</span><span class="fl">16</span>,tau<span class="op">=</span><span class="fl">0.99</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="co"># may take a few seconds to ran</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-24-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model3</span></span>
 <span><span class="co">#&gt; $Model</span></span>
@@ -635,7 +599,7 @@ functions.</p>
 first step is to check the structure of the boundary points using the
 argument <code>model="explore"</code> in the <code><a href="../reference/BOLIDES.html">bolides()</a></code>
 function.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,model<span class="op">=</span><span class="st">"explore"</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-25-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;        x               y         </span></span>
@@ -646,16 +610,16 @@ function.</p>
 <span><span class="co">#&gt;  3rd Qu.:4.520   3rd Qu.:13.575  </span></span>
 <span><span class="co">#&gt;  Max.   :4.736   Max.   :14.159</span></span></code></pre>
 <p>Lets say you want to fit a model</p>
-<p><span class="math display">\[
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><msub><mi>β</mi><mn>0</mn></msub><mo>−</mo><msub><mi>β</mi><mn>1</mn></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>−</mo><msub><mi>β</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">
 y=\beta_0 - \beta_1(x-\beta_2)^2
-\]</span></p>
+</annotation></semantics></math></p>
 <p>The model is written in form of an <code>R</code> function and the
 parameters should always be written in alphabetical order as
 <em><strong>a</strong>, <strong>b</strong></em> and
 <strong><em>c</em></strong> for a three parameter function,
 <em><strong>a</strong>, <strong>b</strong>,<strong>c</strong></em> and
 <strong><em>d</em></strong> for four parameter function and so on.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">custom_function</span><span class="op">&lt;-</span><span class="kw">function</span><span class="op">(</span><span class="va">x</span>,<span class="va">a</span>,<span class="va">b</span>,<span class="va">c</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">y</span><span class="op">&lt;-</span> <span class="va">a</span> <span class="op">-</span> <span class="va">b</span><span class="op">*</span><span class="op">(</span><span class="va">x</span><span class="op">-</span><span class="va">c</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
 <span><span class="op">}</span></span></code></pre></div>
@@ -668,7 +632,7 @@ your choice.</p>
 this case, the argument model while be set to “other”. The arguments
 equation is now set to your custom function
 (<code>equation=custom_function</code>)</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">start</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">13.5</span>,<span class="fl">3</span>,<span class="fl">3.3</span><span class="op">)</span>  </span>
 <span></span>
 <span><span class="va">model4</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, start <span class="op">=</span> <span class="va">start</span>,model <span class="op">=</span> <span class="st">"other"</span>,</span>
@@ -677,17 +641,18 @@ equation is now set to your custom function
 <span>                ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
 <span>                pch<span class="op">=</span><span class="fl">16</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.8</span>,<span class="fl">14.5</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"grey"</span>,bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BLA_files/figure-html/unnamed-chunk-27-1.png" width="384" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model4</span></span>
 <span><span class="co">#&gt; $Model</span></span>
 <span><span class="co">#&gt; [1] "other"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Equation</span></span>
-<span><span class="co">#&gt; function(x,a,b,c){</span></span>
-<span><span class="co">#&gt;   y&lt;- a - b*(x-c)^2</span></span>
+<span><span class="co">#&gt; function (x, a, b, c) </span></span>
+<span><span class="co">#&gt; {</span></span>
+<span><span class="co">#&gt;     y &lt;- a - b * (x - c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x55763d1489a0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x558027193828&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
@@ -752,7 +717,7 @@ systems (p. 899-908). Wiley Online Library. <a href="https://doi.org/10.2134/19
 biological data. Journal of Horticultural Science, 47, 309–319. <a href="https://doi.org/10.1080/00221589.1972.11514472" class="external-link uri">https://doi.org/10.1080/00221589.1972.11514472</a></p></li>
 </ol>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -763,15 +728,15 @@ biological data. Journal of Horticultural Science, 47, 309–319. <a href="https
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
