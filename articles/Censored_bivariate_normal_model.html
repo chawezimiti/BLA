@@ -160,17 +160,17 @@ values under our target model.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-4-1.png" width="384" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt;        Mean Median Quartile.1 Quartile.3 Variance       SD Skewness</span></span>
-<span><span class="co">#&gt; [1,] 25.966     22         16         32 207.0301 14.38854 1.840588</span></span>
+<pre><code><span><span class="co">#&gt;         Mean Median Quartile.1 Quartile.3 Variance       SD Skewness</span></span>
+<span><span class="co">#&gt; [1,] 25.9647     22         16         32 207.0066 14.38772 1.840844</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
-<span><span class="co">#&gt; [1,]       0.3571429   5.7639           43</span></span>
+<span><span class="co">#&gt; [1,]       0.3571429 5.765138           43</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> </span></code></pre>
 <p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-4-2.png" width="384" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt;        Mean   Median Quartile.1 Quartile.3  Variance        SD  Skewness</span></span>
-<span><span class="co">#&gt; [1,] 3.1264 3.091042   2.772589   3.465736 0.2557263 0.5056939 0.1295244</span></span>
+<pre><code><span><span class="co">#&gt;          Mean   Median Quartile.1 Quartile.3  Variance        SD  Skewness</span></span>
+<span><span class="co">#&gt; [1,] 3.126361 3.091042   2.772589   3.465736 0.2556936 0.5056615 0.1297406</span></span>
 <span><span class="co">#&gt;      Octile skewness    Kurtosis No. outliers</span></span>
-<span><span class="co">#&gt; [1,]      0.08395839 -0.05404542            0</span></span>
+<span><span class="co">#&gt; [1,]      0.08395839 -0.05372586            0</span></span>
 <span></span>
 <span><span class="va">x</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="co"># since x required a transformation to assume it is from a normal distribution.</span></span>
 <span></span>
@@ -178,10 +178,10 @@ values under our target model.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></code></pre>
 <p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-4-3.png" width="384" style="display: block; margin: auto;"></p>
-<pre><code><span><span class="co">#&gt;          Mean  Median Quartile.1 Quartile.3 Variance       SD  Skewness</span></span>
-<span><span class="co">#&gt; [1,] 9.254274 9.36436    8.20355    10.3944 3.454814 1.858713 -0.482355</span></span>
+<pre><code><span><span class="co">#&gt;          Mean  Median Quartile.1 Quartile.3 Variance       SD   Skewness</span></span>
+<span><span class="co">#&gt; [1,] 9.254813 9.36468   8.203703   10.39477 3.456026 1.859039 -0.4819805</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
-<span><span class="co">#&gt; [1,]     -0.05802283 1.294174            7</span></span></code></pre>
+<span><span class="co">#&gt; [1,]     -0.05793291 1.292635            7</span></span></code></pre>
 <p>2. Removal of outliers</p>
 <p>Boundary line analysis is sensitive to outlying values and hence it
 is required that they are identified and removed. This can be done using
@@ -390,9 +390,9 @@ P.</p>
 <span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="Censored_bivariate_normal_model_files/figure-html/unnamed-chunk-17-1.png" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;          Mean Median Quartile.1 Quartile.3  Variance        SD   Skewness</span></span>
-<span><span class="co">#&gt; [1,] 7.566487   7.74       7.12        8.1 0.4339926 0.6587811 -0.7964527</span></span>
+<span><span class="co">#&gt; [1,] 7.566206   7.74       7.12        8.1 0.4344038 0.6590931 -0.7968046</span></span>
 <span><span class="co">#&gt;      Octile skewness    Kurtosis No. outliers</span></span>
-<span><span class="co">#&gt; [1,]      -0.3594771 -0.07929512            0</span></span></code></pre>
+<span><span class="co">#&gt; [1,]      -0.3594771 -0.07912815            0</span></span></code></pre>
 <p>2. Removal of outliers</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span> </span>
