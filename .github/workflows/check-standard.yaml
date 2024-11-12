@@ -53,5 +53,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: R-check-results-${{ github.run_id }}  # Add a unique ID
+          name: R-check-results-${{ github.run_id }}-${{ github.job }}  # Unique name per job
           path: '**/*.Rcheck/'
