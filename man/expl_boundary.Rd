@@ -4,15 +4,7 @@
 \alias{expl_boundary}
 \title{Testing evidence of boundary existence in dataset}
 \usage{
-expl_boundary(
-  x,
-  y,
-  shells = 10,
-  simulations = 1000,
-  method = "sd-enclidean",
-  plot = TRUE,
-  ...
-)
+expl_boundary(x,y,shells=10,simulations=1000,method="sd-enclidean",plot=TRUE,...)
 }
 \arguments{
 \item{x}{A numeric vector of values for the independent variable.}

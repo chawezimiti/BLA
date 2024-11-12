@@ -44,6 +44,9 @@
 #' for analysis using boundary line methodology. Computers and Electronics in Agriculture
 #' 219 (2024) 108794.
 #'
+#' @usage
+#' expl_boundary(x,y,shells=10,simulations=1000,method="sd-enclidean",plot=TRUE,...)
+#'
 #' @examples
 #' x<-evapotranspiration$`ET(mm)`
 #' y<-evapotranspiration$`yield(t/ha)`
@@ -185,6 +188,8 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
     right<-list()
 
     ## simulation of data using summary statistics of the available data------------------
+
+    set.seed(j)
 
     dat<-mvrnorm(n,mu=c(mean(x),mean(y)),Sigma)
 

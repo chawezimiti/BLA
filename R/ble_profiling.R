@@ -266,6 +266,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
 
       ## Optimization of the model-------------------------------------------------------
 
+      likelihood[i] <- tryCatch({
       mlest <- suppressWarnings(optim(start, nll_mef, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
@@ -275,7 +276,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
                                        method = optim.method, control = list(parscale = scale),
                                        hessian = TRUE))
 
-      likelihood[i]<-mlest2$value*-1
+      mlest2$value*-1}, error=function(e) NA)
 
     }
 
@@ -362,6 +363,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
 
       ## Optimization of the model--------------------------------------------------------
 
+      likelihood[i] <- tryCatch({
       mlest <- suppressWarnings(optim(start, nll_mef2, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
@@ -371,7 +373,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
                                        method = optim.method, control = list(parscale = scale),
                                        hessian = TRUE))
 
-      likelihood[i]<-mlest2$value*-1
+      mlest2$value*-1}, error = function(e) NA)
 
     }
 
@@ -462,6 +464,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
 
       ## Optimization of the model--------------------------------------------------------
 
+      likelihood[i] <- tryCatch({
       mlest <- suppressWarnings(optim(start, nll_mef3, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
@@ -471,7 +474,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
                                        method = optim.method, control = list(parscale = scale),
                                        hessian = TRUE))
 
-    likelihood[i]<-mlest2$value*-1
+      mlest2$value*-1}, error = function(e) NA)
     }
 
   }
@@ -566,6 +569,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
 
       ## Optimization of the model--------------------------------------------------------
 
+      likelihood[i] <- tryCatch({
       mlest <- suppressWarnings(optim(start, nll_mef4, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
@@ -575,7 +579,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
                                        method = optim.method, control = list(parscale = scale),
                                        hessian = TRUE))
 
-      likelihood[i]<-mlest2$value*-1
+      mlest2$value*-1}, error = function(e) NA)
     }
 
   }
@@ -683,6 +687,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
 
       ## Optimization of the model--------------------------------------------------------
 
+      likelihood[i] <- tryCatch({
       mlest <- suppressWarnings(optim(start, nll_mef5, uplo = UpLo, BLMod = BLMod,
                                       method = optim.method, hessian = TRUE))
 
@@ -692,7 +697,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
                                        method = optim.method, control = list(parscale = scale),
                                        hessian = TRUE))
 
-      likelihood[i]<-mlest2$value*-1
+      mlest2$value*-1}, error = function(e) NA)
 
     }
   }
