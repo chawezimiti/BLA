@@ -49,9 +49,9 @@ jobs:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
 
-      - name: Upload .Rcheck directory as artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: R-check-results-${{ github.run_id }}-${{ github.job }}  # Unique name per job
-          path: '**/*.Rcheck/'
+#      - name: Upload .Rcheck directory as artifact
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: R-check-results-${{ github.run_id }}-${{ github.job }}  # Unique name per job
+#          path: '**/*.Rcheck/'
