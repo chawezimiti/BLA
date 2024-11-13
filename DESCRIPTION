@@ -34,7 +34,8 @@ Imports:
     MASS,
     mvtnorm,
     numDeriv,
-    stats
+    stats,
+    concaveman
 Suggests: 
     knitr,
     rmarkdown,

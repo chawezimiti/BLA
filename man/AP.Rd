@@ -4,10 +4,10 @@
 \alias{AP}
 \title{Calculate perimeter and area of data scatter}
 \usage{
-AP(dat)
+AP(points)
 }
 \arguments{
-\item{dat}{A dataframe with two columns.}
+\item{points}{A dataframe with two columns.}
 }
 \value{
 The area and perimeter covered bivariate data points, and the selected

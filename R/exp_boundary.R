@@ -26,7 +26,7 @@
 #'   sections of the data with their corresponding probability values.
 #'
 #' @author Chawezi Miti <chawezi.miti@@nottingham.ac.uk>
-#' @import MASS stats
+#' @import MASS stats concaveman
 #' @export
 #'
 #' @details
@@ -152,7 +152,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
   pointL<-df1
   pointR<-df2
 
-  ## Clustering matrics-------------------------------------------------------------------
+  ## Clustering metrics-------------------------------------------------------------------
 
   #### 1. Calculating the euclidean distance of vertices to center------------------------
 
@@ -164,11 +164,9 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
   perimL <- AP(df1)$Perimeter # left section
   perimR <- AP(df2)$Perimeter# right section
 
-  areaL <- AP(df1)$Area # left section
-  areaR <- AP(df2)$Area# right section
+  areaL <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Area # left section
+  areaR <- AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Area# right section
 
-  polygonL <- AP(df1)$Polygon # left section
-  polygonR <- AP(df2)$Polygon # right section
 
   ### Monte Carlo simulation for evidence testing  ---------------------------------------
 
@@ -255,8 +253,8 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
 
     perimL_2 <- AP(df1)$Perimeter # left section
     perimR_2 <- AP(df2)$Perimeter# right section
-    areaL_2 <- AP(df1)$Area # left section
-    areaR_2 <- AP(df2)$Area# right section
+    areaL_2 <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Area # left section
+    areaR_2 <- AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Area# right section
 
     perimL_sim[j]<-perimL_2
     perimR_sim[j]<-perimR_2
@@ -359,11 +357,11 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
 
     if(plot==TRUE){
 
-      hist(areaL_sim,freq = FALSE, xlab="Perimeter",main = "Left")
+      hist(areaL_sim,freq = FALSE, xlab="Area",main = "Left")
       lines(density(areaL_sim), lwd = 1, col = "red")
       abline(v=areaL, col="red",lty=2)
 
-      hist(areaR_sim,freq = FALSE,xlab="Perimeter",main = "Right")
+      hist(areaR_sim,freq = FALSE,xlab="Area",main = "Right")
       lines(density(areaR_sim), lwd = 1, col = "red")
       abline(v=areaR, col="red",lty=2)
     }
