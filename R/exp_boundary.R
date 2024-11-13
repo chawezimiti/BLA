@@ -352,7 +352,6 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
     Mean<-c(MeanareaL,MeanareaR)
     p_value<-c(p_area_rise, p_area_fall)
 
-
     ## Plotting the data points for visualization-----------------------------------------
 
     if(plot==TRUE){
