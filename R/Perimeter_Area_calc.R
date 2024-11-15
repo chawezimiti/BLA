@@ -15,32 +15,6 @@
 #'
 AP<- function(points) {
 
-  #Combine x and y into a data frame
-
-  data <- data.frame(x = points[,1], y = points[,2])
-
-  #Separate data frames for max y and min y for each x
-  max_data <- data[order(data$x, -data$y), ]  # Sort by x ascending, y descending
-  max_data <- max_data[!duplicated(max_data$x), ]  # Keep only max y for each x
-  max_data$selection <- "max"  # Add a column to indicate max selection
-
-  min_data <- data[order(data$x, data$y), ]  # Sort by x ascending, y ascending
-  min_data <- min_data[!duplicated(min_data$x), ]  # Keep only min y for each x
-  min_data$selection <- "min"  # Add a column to indicate min selection
-
-  #Combine max and min data into a single data frame
-
-  result <- rbind(max_data, min_data)
-  point<- result
-
-  #Create the polygon by ordering max points (in ascending x) and min points (in descending x)
-  polygon_points <- rbind(
-    result[result$selection == "max", ],  # Max points in ascending x
-    result[result$selection == "min", ][nrow(result[result$selection == "min", ]):1, ]  # Min points in descending x
-    )
-
-  # Calculate the perimeter of the polygon
-
   perimeter <- function(points) {
     # Initialize perimeter
     perimeter <- 0
@@ -61,7 +35,7 @@ AP<- function(points) {
   }
 
   # Calculate the perimeter
-  perimeter <- perimeter(point)
+  perimeter <- perimeter(points) #chage back to point
 
   # Calculate the area of the polygon using the Shoelace formula
 

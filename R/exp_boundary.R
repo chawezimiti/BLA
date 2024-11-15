@@ -161,8 +161,8 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
 
   #### 2. Calculating the perimeter and of the boundary points----------------------------
 
-  perimL <- AP(df1)$Perimeter # left section
-  perimR <- AP(df2)$Perimeter# right section
+  perimL <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Perimeter # left section
+  perimR <-AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Perimeter# right section
 
   areaL <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Area # left section
   areaR <- AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Area# right section
@@ -190,14 +190,6 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
     set.seed(j)
 
     dat<-mvrnorm(n,mu=c(mean(x),mean(y)),Sigma)
-
-    ## Removal of outliers from the simulated data----------------------------------------
-
-    cov.robust <- cov.rob(dat)
-    md <- mahalanobis(dat, cov.robust$center, cov.robust$cov)
-    threshold <- qchisq(0.995, df=ncol(dat))  # 1% significance level
-    outliers <- md > threshold
-    dat <- dat[!outliers, ]
 
     ## Determination of convex hull for the simulated data--------------------------------
 
@@ -251,8 +243,8 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
 
     # 2. Perimeter measure---------------------------------------------------------------
 
-    perimL_2 <- AP(df1)$Perimeter # left section
-    perimR_2 <- AP(df2)$Perimeter# right section
+    perimL_2 <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Perimeter # left section
+    perimR_2 <- AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Perimeter# right section
     areaL_2 <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Area # left section
     areaR_2 <- AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Area# right section
 
@@ -367,7 +359,7 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
   }
 
 
-  result<-data.frame(Index,Section,value,Mean,p_value)
+  result<-data.frame(Index,Section,value, Mean,p_value)
 
   return(result)
 }
