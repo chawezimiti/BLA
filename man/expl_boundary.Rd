@@ -4,7 +4,8 @@
 \alias{expl_boundary}
 \title{Testing evidence of boundary existence in dataset}
 \usage{
-expl_boundary(x,y,shells=10,simulations=1000,method="sd-enclidean",plot=TRUE,...)
+expl_boundary(x,y,shells=10,simulations=1000,method="sd-enclidean",alpha=1,
+              plot=TRUE,...)
 }
 \arguments{
 \item{x}{A numeric vector of values for the independent variable.}
@@ -21,6 +22,10 @@ distributed data sets used to test the hypothesis (default is 1000).}
 include \code{"sd-enclidean"} for the euclidean distance standard deviation of the
 each boundary point to the center of data, \code{"Area"} for the perimeter around
 the boundary points and \code{"Perimeter"} for the area covering the boundary points.}
+
+\item{alpha}{a relative measure of concavity of polygon if method is set to \code{"Area"}
+or \code{"Perimeter"}. 1 results in a relatively detailed shape, Infinity results in
+a convex hull. We recommend values in the range of 1 - 5.}
 
 \item{plot}{If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
 is not part of output (default is \code{TRUE}).}
