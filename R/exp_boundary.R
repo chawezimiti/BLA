@@ -18,6 +18,9 @@
 #'   include \code{"sd-enclidean"} for the euclidean distance standard deviation of the
 #'   each boundary point to the center of data, \code{"Area"} for the perimeter around
 #'   the boundary points and \code{"Perimeter"} for the area covering the boundary points.
+#' @param alpha a relative measure of concavity of polygon if method is set to \code{"Area"}
+#'   or \code{"Perimeter"}. 1 results in a relatively detailed shape, Infinity results in
+#'   a convex hull. We recommend values in the range of 1 - 5.
 #' @param plot If \code{TRUE}, a plot is part of the output. If \code{FALSE}, plot
 #'   is not part of output (default is \code{TRUE}).
 #' @param ... Additional graphical parameters as with the \code{par()} function.
@@ -45,14 +48,15 @@
 #' 219 (2024) 108794.
 #'
 #' @usage
-#' expl_boundary(x,y,shells=10,simulations=1000,method="sd-enclidean",plot=TRUE,...)
+#' expl_boundary(x,y,shells=10,simulations=1000,method="sd-enclidean",alpha=1,
+#'               plot=TRUE,...)
 #'
 #' @examples
 #' x<-evapotranspiration$`ET(mm)`
 #' y<-evapotranspiration$`yield(t/ha)`
 #' expl_boundary(x,y,10,100) # recommendation is to set simulations to greater than 1000
 #'
-expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plot=TRUE,...){
+expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",alpha=1,plot=TRUE,...){
 
   if(simulations>=1000) message("Note: This function might take longer to execute when running a large number of simulations.\n")
 
@@ -161,11 +165,11 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
 
   #### 2. Calculating the perimeter and of the boundary points----------------------------
 
-  perimL <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Perimeter # left section
-  perimR <-AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Perimeter# right section
+  perimL <- AP(concaveman(as.matrix(df1), concavity = alpha, length_threshold = 0))$Perimeter # left section
+  perimR <-AP(concaveman(as.matrix(df2), concavity = alpha, length_threshold = 0))$Perimeter# right section
 
-  areaL <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Area # left section
-  areaR <- AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Area# right section
+  areaL <- AP(concaveman(as.matrix(df1), concavity = alpha, length_threshold = 0))$Area # left section
+  areaR <- AP(concaveman(as.matrix(df2), concavity = alpha, length_threshold = 0))$Area# right section
 
 
   ### Monte Carlo simulation for evidence testing  ---------------------------------------
@@ -243,10 +247,10 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
 
     # 2. Perimeter measure---------------------------------------------------------------
 
-    perimL_2 <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Perimeter # left section
-    perimR_2 <- AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Perimeter# right section
-    areaL_2 <- AP(concaveman(as.matrix(df1), concavity = 1, length_threshold = 0))$Area # left section
-    areaR_2 <- AP(concaveman(as.matrix(df2), concavity = 1, length_threshold = 0))$Area# right section
+    perimL_2 <- AP(concaveman(as.matrix(df1), concavity = alpha, length_threshold = 0))$Perimeter # left section
+    perimR_2 <- AP(concaveman(as.matrix(df2), concavity = alpha, length_threshold = 0))$Perimeter# right section
+    areaL_2 <- AP(concaveman(as.matrix(df1), concavity = alpha, length_threshold = 0))$Area # left section
+    areaR_2 <- AP(concaveman(as.matrix(df2), concavity = alpha, length_threshold = 0))$Area# right section
 
     perimL_sim[j]<-perimL_2
     perimR_sim[j]<-perimR_2
