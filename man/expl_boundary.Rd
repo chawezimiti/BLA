@@ -64,6 +64,9 @@ Computational Statistics, 42-47. Physica-Verlag, Vienna.
 Miti. c., Milne. A. E., Giller. K. E. and Lark. R. M (2024). Exploration of data
 for analysis using boundary line methodology. Computers and Electronics in Agriculture
 219 (2024) 108794.
+
+Park, J.-S. and Oh, S.-J. (2012).A new concave hull algorithm and concaveness measure
+for n-dimensional datasets.Journal of Information science and engineering,28(3):587–600.
 }
 \author{
 Chawezi Miti <chawezi.miti@nottingham.ac.uk>

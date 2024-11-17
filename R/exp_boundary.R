@@ -47,6 +47,9 @@
 #' for analysis using boundary line methodology. Computers and Electronics in Agriculture
 #' 219 (2024) 108794.
 #'
+#' Park, J.-S. and Oh, S.-J. (2012).A new concave hull algorithm and concaveness measure
+#' for n-dimensional datasets.Journal of Information science and engineering,28(3):587–600.
+#'
 #' @usage
 #' expl_boundary(x,y,shells=10,simulations=1000,method="sd-enclidean",alpha=1,
 #'               plot=TRUE,...)
