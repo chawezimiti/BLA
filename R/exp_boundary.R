@@ -278,11 +278,11 @@ expl_boundary<-function(x,y,shells=10,simulations=1000,method="sd-enclidean",plo
 
   ### 2. Perimeter area test indices-----------------------------------------------------------
 
-  p_perim_rise<-length(which(perimL_sim<=perimL))/length(perimL_sim)
-  p_perim_fall<-length(which(perimR_sim<=perimR))/length(perimR_sim)
+  p_perim_rise<-pnorm(perimL, mean = mean(perimL_sim), sd = sd(perimL_sim))
+  p_perim_fall<-pnorm(perimR, mean = mean(perimR_sim), sd = sd(perimR_sim))
 
-  p_area_rise<-length(which(areaL_sim<=areaL))/length(areaL_sim)
-  p_area_fall<-length(which(areaR_sim<=areaR))/length(areaR_sim)
+  p_area_rise<-pnorm(areaL, mean = mean(areaL_sim), sd = sd(areaL_sim))
+  p_area_fall<-pnorm(areaR, mean = mean(areaR_sim), sd = sd(areaR_sim))
 
   MeanperimL<-mean(perimL_sim)
   MeanperimR<-mean(perimR_sim)
