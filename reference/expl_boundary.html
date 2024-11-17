@@ -68,7 +68,8 @@ of an unbounded bivariate normal distribution.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">expl_boundary</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,shells<span class="op">=</span><span class="fl">10</span>,simulations<span class="op">=</span><span class="fl">1000</span>,method<span class="op">=</span><span class="st">"sd-enclidean"</span>,plot<span class="op">=</span><span class="cn">TRUE</span>,<span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">expl_boundary</span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,shells<span class="op">=</span><span class="fl">10</span>,simulations<span class="op">=</span><span class="fl">1000</span>,method<span class="op">=</span><span class="st">"sd-enclidean"</span>,alpha<span class="op">=</span><span class="fl">1</span>,</span>
+<span>              plot<span class="op">=</span><span class="cn">TRUE</span>,<span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -98,6 +99,12 @@ distributed data sets used to test the hypothesis (default is 1000).</p></dd>
 include <code>"sd-enclidean"</code> for the euclidean distance standard deviation of the
 each boundary point to the center of data, <code>"Area"</code> for the perimeter around
 the boundary points and <code>"Perimeter"</code> for the area covering the boundary points.</p></dd>
+
+
+<dt id="arg-alpha">alpha<a class="anchor" aria-label="anchor" href="#arg-alpha"></a></dt>
+<dd><p>a relative measure of concavity of polygon if method is set to <code>"Area"</code>
+or <code>"Perimeter"</code>. 1 results in a relatively detailed shape, Infinity results in
+a convex hull. We recommend values in the range of 1 - 5.</p></dd>
 
 
 <dt id="arg-plot">plot<a class="anchor" aria-label="anchor" href="#arg-plot"></a></dt>
