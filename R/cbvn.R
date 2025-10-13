@@ -921,14 +921,14 @@ cbvn<-function(data, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
 
     estimates <- cbind(
       Estimate = mlest2$par[1:(length(start) - 5)],
-      `Standard error` = sqrt(diag(solve(mlest2$hessian)))[1:(length(start) - 5)]
+      `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[1:(length(start) - 5)]
     )
 
     rownames(estimates) <- names(start)[1:(length(start) - 5)]
 
     distribution <- cbind(
       Estimate = mlest2$par[(length(start) - 4):length(start)],
-      `Standard error` = sqrt(diag(solve(mlest2$hessian)))[(length(start) - 4):length(start)]
+      `Standard error` = seHessian(mlest2$hessian, hessian = FALSE, silent = FALSE)[(length(start) - 4):length(start)]
     )
     rownames(distribution) <- c("mux", "muy", "sdx", "sdy", "rcorr")
 
