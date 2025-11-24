@@ -189,7 +189,7 @@ ble_profile<-function(data, sigh, model="lp", equation=NULL, start, UpLo="U", op
       logistic = function(x, beta0, beta1, beta2) beta0 / (1 + exp(beta2 * (beta1 - x))),
       `inv-logistic` = function(x, beta0, beta1, beta2) beta0 - (beta0 / (1 + exp(beta2 * (beta1 - x)))),
       logisticND = function(x, beta0, beta1, beta2) beta0 / (1 + beta1 * exp(-x * beta2)),
-      schmidt = function(x, beta0, beta1, beta2) beta0 - beta2 * (x - beta1)^2,
+      schmidt = function(x, beta0, beta1, beta2) beta0 - beta1 * (x - beta2)^2,
       qd = function(x, beta0, beta1, beta2) beta1 + beta2 * x + beta0 * x^2
     )
 
