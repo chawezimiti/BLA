@@ -202,14 +202,14 @@ and wheat yield in the data set to <em><code>x</code></em> and
 <span><span class="va">y</span><span class="op">&lt;-</span><span class="va">soil</span><span class="op">$</span><span class="va">yield</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-6-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;         Mean Median Quartile.1 Quartile.3 Variance       SD Skewness</span></span>
 <span><span class="co">#&gt; [1,] 25.9647     22         16         32 207.0066 14.38772 1.840844</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
 <span><span class="co">#&gt; [1,]       0.3571429 5.765138           43</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></code></pre>
-<p><img src="BLA_files/figure-html/unnamed-chunk-6-2.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-6-2.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;          Mean  Median Quartile.1 Quartile.3 Variance       SD   Skewness</span></span>
 <span><span class="co">#&gt; [1,] 9.254813 9.36468   8.203703   10.39477 3.456026 1.859039 -0.4819805</span></span>
 <span><span class="co">#&gt;      Octile skewness Kurtosis No. outliers</span></span>
@@ -224,7 +224,7 @@ the distribution is given as well.</p>
 and plot</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/summastat.html">summastat</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-7-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-7-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;          Mean   Median Quartile.1 Quartile.3  Variance        SD  Skewness</span></span>
 <span><span class="co">#&gt; [1,] 3.126361 3.091042   2.772589   3.465736 0.2556936 0.5056615 0.1297406</span></span>
 <span><span class="co">#&gt;      Octile skewness    Kurtosis No. outliers</span></span>
@@ -295,7 +295,7 @@ Miti <em>et al</em>. 2024b. We reject the null hypothesis if p&lt;
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bound_test</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/expl_boundary.html">expl_boundary</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,shells <span class="op">=</span> <span class="fl">10</span>, simulations <span class="op">=</span> <span class="fl">100</span>, </span>
 <span>                          pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="co"># </span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-11-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-11-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">bound_test</span></span>
@@ -354,7 +354,7 @@ view the selected boundary points using the boundary line determination
 technique.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,model <span class="op">=</span> <span class="st">"explore"</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-13-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;        x               y         </span></span>
 <span><span class="co">#&gt;  Min.   :1.609   Min.   : 7.513  </span></span>
 <span><span class="co">#&gt;  1st Qu.:2.583   1st Qu.:10.817  </span></span>
@@ -387,7 +387,7 @@ function can be run</p>
 <span>                xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
 <span>                ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Yield/ t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, pch<span class="op">=</span><span class="fl">16</span>, </span>
 <span>                col<span class="op">=</span><span class="st">"grey"</span>, bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model1</span></span>
@@ -457,7 +457,7 @@ in the previous section</p>
 <code class="sourceCode R"><span><span class="va">bins</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.61</span>,<span class="fl">4.74</span>,<span class="fl">0.313</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="fu"><a href="../reference/blbin.html">blbin</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>, <span class="va">bins</span>,model <span class="op">=</span> <span class="st">"explore"</span>, tau<span class="op">=</span><span class="fl">0.99</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-19-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-19-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;        x               y        </span></span>
 <span><span class="co">#&gt;  Min.   :1.792   Min.   :10.71  </span></span>
 <span><span class="co">#&gt;  1st Qu.:2.487   1st Qu.:11.98  </span></span>
@@ -480,7 +480,7 @@ function can now be run.</p>
 <span>              ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"t ha"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, </span>
 <span>              xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
 <span>              pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span>, bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-21-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-21-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model2</span></span>
@@ -547,7 +547,7 @@ used for this data.</p>
 <span>             xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, </span>
 <span>             ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>,</span>
 <span>             pch<span class="op">=</span><span class="fl">16</span>,tau<span class="op">=</span><span class="fl">0.99</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span> <span class="co"># may take a few seconds to ran</span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-24-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-24-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model3</span></span>
@@ -600,7 +600,7 @@ argument <code>model="explore"</code> in the <code><a href="../reference/BOLIDES
 function.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/BOLIDES.html">bolides</a></span><span class="op">(</span><span class="va">x</span>,<span class="va">y</span>,model<span class="op">=</span><span class="st">"explore"</span>, pch<span class="op">=</span><span class="fl">16</span>, col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-25-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-25-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <pre><code><span><span class="co">#&gt;        x               y         </span></span>
 <span><span class="co">#&gt;  Min.   :1.609   Min.   : 7.513  </span></span>
 <span><span class="co">#&gt;  1st Qu.:2.583   1st Qu.:10.817  </span></span>
@@ -639,7 +639,7 @@ equation is now set to your custom function
 <span>                xlab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, </span>
 <span>                ylab<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Phosphorus/ln(mg L"</span><span class="op">^</span><span class="op">-</span><span class="fl">1</span><span class="op">*</span><span class="st">")"</span><span class="op">)</span>, </span>
 <span>                pch<span class="op">=</span><span class="fl">16</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3.8</span>,<span class="fl">14.5</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"grey"</span>,bp_col<span class="op">=</span><span class="st">"grey"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BLA_files/figure-html/unnamed-chunk-27-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="BLA_files/figure-html/unnamed-chunk-27-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">model4</span></span>
@@ -651,7 +651,7 @@ equation is now set to your custom function
 <span><span class="co">#&gt; {</span></span>
 <span><span class="co">#&gt;     y &lt;- a - b * (x - c)^2</span></span>
 <span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; &lt;bytecode: 0x56406d9754b0&gt;</span></span>
+<span><span class="co">#&gt; &lt;bytecode: 0x55ac51fbd3c8&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $Parameters</span></span>
 <span><span class="co">#&gt;    Estimate</span></span>
@@ -727,7 +727,7 @@ biological data. Journal of Horticultural Science, 47, 309–319. <a href="https
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
