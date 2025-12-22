@@ -663,7 +663,7 @@ model4
 #> {
 #>     y <- a - b * (x - c)^2
 #> }
-#> <bytecode: 0x55fdf9fcc150>
+#> <bytecode: 0x55e4ee534a60>
 #> 
 #> $Parameters
 #>    Estimate
