@@ -20,3 +20,20 @@ This is a resubmission. In this version I have:
 
 - This is a first submission and hence can not eliminate the new release note.
 
+
+## Test environments
+- Windows 11, R 4.5.2
+- win-builder (devel)
+
+## R CMD check results
+0 errors | 0 warnings | 0 notes
+
+## Comments
+- This update changes the maintainer email address.
+
+
+
+
+
+
+
