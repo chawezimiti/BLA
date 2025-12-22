@@ -21,12 +21,12 @@ Source:
 [`DESCRIPTION`](https://github.com/chawezimiti/BLA/blob/main/DESCRIPTION)
 
 Miti C, Lark R, Milne A, Giller K (2025). *BLA: Boundary Line Analysis*.
-R package version 1.0.1.9000, <https://chawezimiti.github.io/BLA/>.
+R package version 1.0.2, <https://chawezimiti.github.io/BLA/>.
 
     @Manual{,
       title = {BLA: Boundary Line Analysis},
       author = {Chawezi Miti and Richard M Lark and Alice E Milne and Ken E Giller},
       year = {2025},
-      note = {R package version 1.0.1.9000},
+      note = {R package version 1.0.2},
       url = {https://chawezimiti.github.io/BLA/},
     }
