@@ -645,7 +645,7 @@ cbvn<-function(data, model="lp", equation=NULL, start, sigh, UpLo="U", optim.met
 
   if(model=="double-logistic"){
 
-    if (length(start) != 11) stop("start must have exactly eleven values")
+    if (length(start) != 10) stop("start must have exactly eleven values")
 
     ## Define model functions-------------------------------------------------------------
 
